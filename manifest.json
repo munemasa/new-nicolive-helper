@@ -1,0 +1,72 @@
+{
+  "manifest_version": 2,
+  "name": "NicoLive Helper X-2",
+  "version": "0.1",
+  "applications": {
+    "gecko": {
+      "id": "nicolivehelperxx@miku39.jp",
+      "strict_min_version": "57.0"
+    }
+  },
+  "description": "NicoLive Helper X-2",
+  "homepage_url": "http://com.nicovideo.jp/community/co105163",
+  "icons": {
+    "48": "icons/icon-48.png",
+    "96": "icons/icon-96.png"
+  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "permissions": [
+    "*://*.nicovideo.jp/*",
+    "https://api.twitter.com/*",
+    "contextMenus",
+    "notifications",
+    "storage",
+    "tabs",
+    "activeTab",
+    "clipboardWrite",
+    "downloads"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://live.nicovideo.jp/watch/*",
+        "*://live2.nicovideo.jp/watch/*"
+      ],
+      "js": [
+        "content_scripts/nicolivehelperx.js"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://www.nicovideo.jp/watch/*"
+      ],
+      "js": [
+        "content_scripts/nicolivehelperx_videoplayer.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "browser_action": {
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "96": "icons/icon-96.png"
+    },
+    "default_title": "NicoLive Helper X-2"
+  },
+  "commands": {
+    "execute_sidebar_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+X"
+      }
+    }
+  },
+  "background": {
+    "scripts": [
+      "libs/utils.js",
+      "bg/background.js"
+    ]
+  }
+}

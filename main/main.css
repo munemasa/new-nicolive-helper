@@ -1,0 +1,190 @@
+html, body {
+    /*font-family: 'Hiragino Kaku Gothic Pro', 'ヒラギノ角ゴ Pro W3', Meiryo, メイリオ, Osaka, 'MS PGothic', arial, helvetica, sans-serif;*/
+    font-family: helvetica, arial, 'hiragino kaku gothic pro', meiryo, 'ms pgothic', sans-serif;
+    font-size: 9pt;
+    height: 100%;
+}
+
+/*----------------------*/
+/* bootstrapのスタイル調整 */
+/*----------------------*/
+.nav-tabs .nav-link.active {
+    font-weight: bold;
+    text-shadow: 1px 1px 2px grey;
+}
+
+.custom-select {
+    width: auto !important;
+}
+
+.badge {
+    font-size: 8pt;
+}
+
+/*----------------------------------------------------------------------*/
+
+.margin-lr-4 {
+    margin: 0 4px;
+}
+
+header {
+    background-color: #ededef;
+
+    cursor: default;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.tab-content {
+    /*background-color: #007fff;*/
+    /*border: #dad55e 4px solid;*/
+}
+
+footer {
+    background-color: #ededef;
+
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    cursor: default;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.flex1 {
+    flex: 1;
+    overflow: auto;
+    height: 100%;
+}
+
+/*----- リクエストタブ -----*/
+#tab-request {
+    height: 100%;
+}
+
+#tab-request-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/*----- コメントタブ -----*/
+#tab-comment {
+    height: 100%;
+}
+
+#tab-comment-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#comment-command {
+    max-width: 7em;
+}
+
+.comment_username {
+    display: block;
+    width: 7em;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-right: 4px;
+}
+
+/*----- -----*/
+
+table.video-list {
+    width: 100%;
+    border: black 1px solid;
+}
+
+/*
+ 動画情報のスタイル
+ */
+
+.nico-videoinfo-item {
+
+}
+
+.nico-description {
+    display: block;
+}
+
+.nico-thumbnail {
+    width: 65px;
+    height: 50px;
+    -moz-transition: width 0.25s, height 0.25s;
+}
+
+.nico-thumbnail:hover {
+    /*
+        width: 130px;
+        height: 100px;
+    */
+}
+
+.nico-bitrate {
+    font-size: 9pt;
+    padding-left: 2px;
+    padding-right: 2px;
+    display: block;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: #000;
+    color: #fff;
+    opacity: 0.7;
+}
+
+/* コメントの背景色 */
+.nico_yourpost {
+    font-weight: bold;
+}
+
+tr.color1 {
+    background-color: #f2eef8;
+}
+
+tr.color2 {
+    background-color: #eef0ff;
+}
+
+tr.color3 {
+    background-color: #eef8ff;
+}
+
+tr.color4 {
+    background-color: #eeffff;
+}
+
+tr.color5 {
+    background-color: #eefff8;
+}
+
+/* 緑(自貼りカラー) */
+tr.color6 {
+    background-color: #eeffee;
+}
+
+tr.color7 {
+    background-color: #f8ffee;
+}
+
+tr.color8 {
+    background-color: #ffffee;
+}
+
+tr.white {
+    background-color: white;
+}
+
+/* 主用の色 */
+tr.color_caster {
+    background-color: #ffeeee;
+}

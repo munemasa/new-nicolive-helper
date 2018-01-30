@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>NicoLive Helper X-2</title>
+
+  <link rel="stylesheet" href="../libs/external/bootstrap/bootstrap.css">
+  <link rel="stylesheet" href="../libs/external/jquery-ui/jquery-ui.min.css">
+  <link rel="stylesheet" href="../libs/external/jquery.contextMenu.css">
+  <script src="../libs/external/jquery-3.2.1.min.js"></script>
+  <script src="../libs/external/jquery-ui/jquery-ui.min.js"></script>
+  <script src="../libs/external/jquery.contextMenu.js"></script>
+  <script src="../libs/external/popper.js"></script>
+  <script src="../libs/external/bootstrap/bootstrap.js"></script>
+  <link rel="stylesheet" href="../libs/external/bootstrap/glyphicons.css">
+
+  <link rel="stylesheet" href="main.css">
+  <script src="../libs/utils.js"></script>
+  <script src="../libs/nicoapi.js"></script>
+
+  <script src="config.js"></script>
+  <script src="datastruct.js"></script>
+  <script src="windowmanage.js"></script>
+  <script src="comm.js"></script>
+  <script src="request.js"></script>
+  <script src="comment.js"></script>
+  <script src="main.js"></script>
+
+</head>
+<body>
+
+<!------------ タブ名 ------------>
+<header>
+  <div class="margin-lr-4">
+    <span id="community-id">co000000</span>
+    <span id="live-title">[オフライン]</span>
+    <span>放送主：<span id="live-caster">---</span></span>
+  </div>
+
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="tab" href="#tab-request" role="tab">
+        リクエスト
+        <span id="number-of-requests" class="badge badge-secondary">0</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="tab" href="#tab-stock" role="tab">
+        ストック
+        <span id="number-of-stocks" class="badge badge-secondary">0</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="tab" href="#tab-comment" role="tab">コメント</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="tab" href="#tab-history" role="tab">再生履歴</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="tab" href="#tab-debug" role="tab">デバッグ</a>
+    </li>
+  </ul>
+</header>
+
+<div class="tab-content">
+  <div class="tab-pane" id="tab-request" role="tabpanel">
+    <div id="tab-request-body" class="margin-lr-4">
+      <div>リクエスト</div>
+      <div class="form-inline" style="display:flex;">
+        <div class="btn-group" style="margin-right:2px;">
+          <button id="btn-shuffle-request" type="button" class="btn btn-outline-primary btn-sm">シャッフル</button>
+          <button type="button" class="btn btn-outline-primary btn-sm dropdown-toggle dropdown-toggle-split"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+          <div class="dropdown-menu">
+            <a id="menu-sort-by-comment-no" class="dropdown-item" href="#"><span
+                    class="glyphicon glyphicon-sort-by-order"></span> コメント番号順に並べ替え</a>
+            <a id="comprstockests" class="dropdown-item" href="#"><span class="glyphicon glyphicon-compressed"></span>
+              重複リクエストを圧縮</a>
+            <div class="dropdown-divider"></div>
+            <a id="menu-remove-all-requests" class="dropdown-item" href="#"><span
+                    class="glyphicon glyphicon-trash"></span> リクエストを全て削除</a>
+          </div>
+        </div>
+        <input id="input-request-video" type="text" placeholder="動画ID..." style="flex:1;">
+        <button id="btn-add-request" class="btn btn-sm btn-outline-primary">追加</button>
+        <span id="total-request-time" style="margin-left:4px;">0分00秒</span>
+      </div>
+      <div class="flex1">
+        <table class="video-list">
+          <tr>
+            <td>aaa</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="tab-stock" role="tabpanel">
+    ストック
+  </div>
+
+
+  <div class="tab-pane" id="tab-comment" role="tabpanel">
+    <div id="tab-comment-body" class="margin-lr-4">
+      <div style="display:flex;">
+        <select class="custom-select">
+          <option value="0" selected>運営</option>
+          <option value="1">視聴者</option>
+          <option value="2">BSP</option>
+        </select>
+        <div class="input-group" style="flex:1;">
+          <input id="comment-command" class="form-control" type="text" placeholder="コマンド">
+          <input id="txt-input-comment" class="form-control" name="comment" maxlength="1024"
+                 autocomplete="on" list="comment-autocomplete"
+                 placeholder="コメントを入力してください...">
+          <div class="input-group-append">
+            <button id="btn-send-comment" class="btn btn-outline-primary" type="button">送信</button>
+          </div>
+        </div>
+        <datalist id="comment-autocomplete">
+        </datalist>
+      </div>
+      <div id="comment-view" class="flex1">
+        <table id="comment-table">
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="tab-pane" id="tab-history" role="tabpanel">
+    再生履歴
+  </div>
+  <div class="tab-pane" id="tab-debug" role="tabpanel">
+    デバッグ
+    <div style="display: flex; flex-direction:column;">
+      <div style="flex:1; border: #e83e8c 2px solid;">
+        uppper
+      </div>
+      <div>
+        lower
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer style="display:flex;">
+  footer
+</footer>
+
+
+<!-- 動画情報のテンプレート -->
+<template id="template-video-info">
+  <tr class="nico-video-row" style="border-bottom: 1px solid gray;">
+    <td class="nico-index">#1<br>C#1<br>+0:00</td>
+    <td>
+      <a class="nico-link" href="#" target="_blank">
+        <div style="position:relative; float:left; margin-right:6px;">
+          <img class="nico-thumbnail" src="">
+          <span class="nico-bitrate"></span>
+        </div>
+      </a>
+      <div class="nico-title"></div>
+      <div class="nico-video-prop"></div>
+      <hr>
+      <div class="nico-description" style="display:none;"></div>
+      <hr>
+      <div class="nico-tags" style="display:none;"></div>
+      <div class="btn-toolbar" style="margin-top:1px;" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+          <button type="button" class="btn btn-outline-primary btn-sm" function="play">
+            <span class="glyphicon glyphicon-play"></span> 再生
+          </button>
+          <button type="button" class="btn btn-outline-primary btn-sm" function="move_up">
+            <span class="glyphicon glyphicon-arrow-up"></span>
+          </button>
+          <button type="button" class="btn btn-outline-primary btn-sm" function="move_down">
+            <span class="glyphicon glyphicon-arrow-down"></span>
+          </button>
+          <button type="button" class="btn btn-outline-primary btn-sm" function="prepare">
+            <span class="glyphicon glyphicon-import"></span> 先読み
+          </button>
+        </div>
+        <div class="btn-group mr-2" role="group" aria-label="Second group">
+          <button type="button" class="btn btn-outline-secondary btn-sm" function="move_top">
+            <span class="glyphicon glyphicon-arrow-up"></span>
+            <span class="glyphicon glyphicon-arrow-up"></span>
+          </button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" function="move_bottom">
+            <span class="glyphicon glyphicon-arrow-down"></span>
+            <span class="glyphicon glyphicon-arrow-down"></span>
+          </button>
+        </div>
+        <div class="btn-group" role="group" aria-label="Third group">
+          <button type="button" class="btn btn-outline-danger btn-sm" function="remove">
+            <span class="glyphicon glyphicon-remove"></span> 削除
+          </button>
+        </div>
+      </div>
+    </td>
+  </tr>
+</template>
+
+</body>
+</html>
