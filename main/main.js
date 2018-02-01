@@ -499,6 +499,161 @@ var NicoLiveHelper = {
         return p1;
     },
 
+    /**
+     * 動画情報の表示用のエレメントを作成して返す.
+     * @param vinfo
+     * @returns {Node}
+     */
+    createVideoInfoElement: function( vinfo ){
+        let t = document.querySelector( '#template-video-info' );
+        let clone2 = document.importNode( t.content, true );
+        let elem = clone2.firstElementChild;
+        elem.setAttribute( 'nico_video_id', vinfo.video_id );
+
+        let thumbnail_image = elem.querySelector( '.nico-thumbnail' );
+        let bitrate = elem.querySelector( '.nico-bitrate' );
+        let title = elem.querySelector( '.nico-title' );
+        let video_prop = elem.querySelector( '.nico-video-prop' );
+        let description = elem.querySelector( '.nico-description' );
+        let tags = elem.querySelector( '.nico-tags' );
+        let link = elem.querySelector( '.nico-link' );
+
+        if( vinfo.no_live_play ){
+            $( title ).addClass( 'no_live_play' );
+        }
+        if( vinfo.is_self_request ){
+            $( elem ).addClass( 'self_request' );
+            $( title ).addClass( 'self_request' );
+        }
+
+        link.setAttribute( "href", "http://www.nicovideo.jp/watch/" + vinfo.video_id );
+
+        thumbnail_image.src = vinfo.thumbnail_url;
+        thumbnail_image.addEventListener( 'mouseover', ( ev ) =>{
+            NicoLiveHelper.showThumbnail( ev, vinfo.video_id );
+        } );
+        thumbnail_image.addEventListener( 'mouseout', ( ev ) =>{
+            NicoLiveHelper.hideThumbnail();
+        } );
+
+        bitrate.textContent = vinfo.highbitrate.substring( 0, vinfo.highbitrate.length - 3 ) + 'k/' + vinfo.movie_type;
+        title.textContent = vinfo.video_id + ' ' + vinfo.title;
+        let tmp = GetDateString( vinfo.first_retrieve * 1000, true );
+        video_prop.textContent = '投:' + tmp + ' 再:' + FormatCommas( vinfo.view_counter )
+            + ' コ:' + FormatCommas( vinfo.comment_num ) + ' マ:' + FormatCommas( vinfo.mylist_counter ) + ' 時間:' + vinfo.length;
+
+        //--- description
+        // description.textContent = vinfo.description;
+        {
+            let div2 = document.createElement( 'div' );
+            let str;
+            str = vinfo.description.split( /(mylist\/\d+|sm\d+|nm\d+)/ );
+            for( let i = 0; i < str.length; i++ ){
+                let s = str[i];
+                if( s.match( /mylist\/\d+/ ) ){
+                    let a = document.createElement( 'a' );
+                    let mylist = s;
+                    a.setAttribute( "href", "http://www.nicovideo.jp/" + mylist );
+                    a.setAttribute( "target", "_blank" );
+                    a.setAttribute( "style", "text-decoration: underline;" );
+                    a.appendChild( document.createTextNode( s ) );
+                    div2.appendChild( a );
+                }else if( s.match( /(sm|nm)\d+/ ) ){
+                    let a = document.createElement( 'a' );
+                    let vid = s;
+                    a.setAttribute( "href", "http://www.nicovideo.jp/watch/" + vid );
+                    a.setAttribute( "target", "_blank" );
+                    a.setAttribute( "style", "text-decoration: underline;" );
+
+                    a.addEventListener( 'mouseover', ( ev ) =>{
+                        NicoLiveHelper.showThumbnail( ev, vid );
+                    } );
+                    a.addEventListener( 'mouseout', ( ev ) =>{
+                        NicoLiveHelper.hideThumbnail();
+                    } );
+                    a.appendChild( document.createTextNode( s ) );
+                    div2.appendChild( a );
+                }else{
+                    div2.appendChild( document.createTextNode( s ) );
+                }
+            }
+            description.appendChild( div2 );
+        }
+
+        vinfo.tags['jp'].forEach( ( elem, idx, arr ) =>{
+            let tag = document.createElement( 'span' );
+            tag.setAttribute( 'class', 'badge badge-secondary' );
+            tag.textContent = elem + ' ';
+
+            if( vinfo.tags_locked['jp'][idx] ){
+                let lockicon = document.createElement( 'span' );
+                lockicon.setAttribute( 'class', 'glyphicon glyphicon-lock' );
+                lockicon.setAttribute( 'aria-hidden', 'true' );
+                tag.append( lockicon );
+            }
+
+            tags.appendChild( tag );
+            tags.appendChild( document.createTextNode( ' ' ) );
+        } );
+        return elem;
+    },
+
+    /**
+     * リストに含まれている動画の合計時間を返す.
+     * @param list
+     * @returns {{min: (Number|*), sec: (number|*)}}
+     */
+    calcTotalVideoTime: function( list ){
+        let t = 0;
+        let s;
+
+        for( let i = 0, item; item = list[i]; i++ ){
+            s = item.length_ms;
+            t += s;
+        }
+        t /= 1000;
+        let min, sec;
+        min = parseInt( t / 60 );
+        sec = t % 60;
+        if( sec < 10 ){
+            sec = '0' + sec;
+        }
+        return {"min": min, "sec": sec};
+    },
+
+    /**
+     * 動画サムネイルを表示する.
+     * @param event DOMイベント
+     * @param video_id 動画ID
+     */
+    showThumbnail: function( event, video_id ){
+        document.querySelector( '#iframe-thumbnail' ).src = "http://ext.nicovideo.jp/thumb/" + video_id;
+        let x, y;
+        // 312x176
+        x = event.clientX;
+        y = event.clientY;
+        if( y + 176 > window.innerHeight ){
+            y = y - 176 - 10;
+        }
+        if( x + 312 > window.innerWidth ){
+            x = x - 312 - 10;
+        }
+        document.querySelector( '#iframe-thumbnail' ).style.left = x + 5 + "px";
+        document.querySelector( '#iframe-thumbnail' ).style.top = y + 5 + "px";
+        document.querySelector( '#iframe-thumbnail' ).style.display = 'block';
+        document.querySelector( '#iframe-thumbnail' ).width = 312;
+        document.querySelector( '#iframe-thumbnail' ).height = 176;
+        document.querySelector( '#iframe-thumbnail' ).style.opacity = 1;
+    },
+
+    /**
+     * 動画サムネイルを非表示にする.
+     */
+    hideThumbnail: function(){
+        document.querySelector( '#iframe-thumbnail' ).width = 312;
+        document.querySelector( '#iframe-thumbnail' ).height = 0;
+        document.querySelector( '#iframe-thumbnail' ).style.opacity = 0;
+    },
 
     test: async function(){
     },

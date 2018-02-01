@@ -21,6 +21,7 @@
  */
 
 var Config = {
+    play_interval: 7,
 
     comment: {
         display_lines: 500,

@@ -85,6 +85,10 @@ footer {
     height: 100%;
 }
 
+#comment-view {
+    margin-top: 2px;
+}
+
 #comment-command {
     max-width: 7em;
 }
@@ -99,27 +103,32 @@ footer {
 
 /*----- -----*/
 
-table.video-list {
+.video-list {
     width: 100%;
-    border: black 1px solid;
+}
+
+.video-list hr {
+    padding: 0;
+    margin: 0;
+    border-width: 1px 0px 0px 0px;
+    border-style: dashed;
 }
 
 /*
  動画情報のスタイル
  */
-
-.nico-videoinfo-item {
-
-}
-
 .nico-description {
     display: block;
+}
+
+.nico-tags {
+    width: 100%;
+    overflow: auto;
 }
 
 .nico-thumbnail {
     width: 65px;
     height: 50px;
-    -moz-transition: width 0.25s, height 0.25s;
 }
 
 .nico-thumbnail:hover {
@@ -140,6 +149,10 @@ table.video-list {
     background-color: #000;
     color: #fff;
     opacity: 0.7;
+}
+
+iframe {
+    -moz-transition: height 0.25s, opacity 0.25s;
 }
 
 /* コメントの背景色 */
