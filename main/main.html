@@ -103,7 +103,7 @@
     <!-- コメント -->
     <div id="tab-comment-body" class="margin-lr-4">
       <div style="display:flex;">
-        <select class="custom-select">
+        <select id="type-of-comment" class="custom-select">
           <option value="0" selected>運営</option>
           <option value="1">視聴者</option>
           <option value="2">BSP</option>
@@ -118,6 +118,7 @@
           </div>
         </div>
         <datalist id="comment-autocomplete">
+          <option value="auto complete"></option>
         </datalist>
       </div>
       <div id="comment-view" class="flex1">

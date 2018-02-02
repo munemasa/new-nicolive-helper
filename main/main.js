@@ -55,7 +55,7 @@ var NicoLiveHelper = {
      * @param text コメント
      * @param mail コマンド欄
      * @param name 名前
-     * @param isPerm ずっと表示させる. "true" or "false" の文字列を渡す. 旧/permの役割
+     * @param isPerm ずっと表示させる. true or false. 旧/permの役割
      */
     postCasterComment: function( text, mail, name, isPerm ){
         if( text == '' ) return;

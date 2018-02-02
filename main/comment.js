@@ -326,6 +326,49 @@ let NicoLiveComment = {
         }
     },
 
+    sendComment: function(){
+        let txt = $( '#txt-input-comment' )
+        let comment = txt.val();
+        let mail = $( '#comment-command' ).val();
+
+        if( !comment ) return;
+        mail = mail || '';
+
+        console.log( `送信: ${comment} ${mail}` );
+
+        let type = parseInt( $( '#type-of-comment' ).val() );
+        let isPerm = false;
+
+        switch( type ){
+        case 0: // 主コメ
+            if( comment.indexOf( '/perm ' ) === 0 ){
+                comment = comment.substring( 6 );
+                isPerm = true;
+            }
+            NicoLiveHelper.postCasterComment( comment, mail, '', isPerm );
+            break;
+
+        case 1: // リスナーコメ
+            NicoLiveHelper.sendComment( mail, comment );
+            break;
+
+        case 2: // TODO BSPコメ
+            break;
+        }
+
+        txt.val( '' );
+
+        // 入力文字をオートコンプリートリストに登録
+        let opt = document.createElement( 'option' );
+        opt.setAttribute( 'value', comment );
+        let tmp = document.querySelector( '#comment-autocomplete' );
+        tmp.insertBefore( opt, tmp.firstChild );
+
+        if( $( tmp ).children( 'option' ).length > 5 ){
+            tmp.removeChild( tmp.lastChild );
+        }
+    },
+
     contextMenu: function( key, options ){
         let $elem = options.$trigger;
 
@@ -343,6 +386,16 @@ let NicoLiveComment = {
     },
 
     initUI: function(){
+        $( '#btn-send-comment' ).on( 'click', ( ev ) =>{
+            this.sendComment();
+        } );
+
+        $( '#txt-input-comment' ).on( 'keydown', ( ev ) =>{
+            if( ev.keyCode == 13 ){
+                this.sendComment();
+            }
+        } );
+
         $.contextMenu( {
             selector: '#comment-table .comment_username',
             build: function( $triggerElement, e ){
