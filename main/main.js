@@ -31,6 +31,67 @@ var NicoLiveHelper = {
     threadId: '',
     postkey: '',
 
+    /**
+     * 放送に接続しているかを返す.
+     * @return {boolean}
+     */
+    isConnected: function(){
+        return !!this.connecttime;
+    },
+
+    isCaster: function(){
+        try{
+            // 公式放送だと isOperator が存在していない
+            // TODO 生主判定はどっち？
+            // return !!this.liveProp.user.isOperator;
+            return this.liveProp.user.isBroadcaster;
+        }catch( e ){
+            return true;
+        }
+    },
+
+    /**
+     * 新配信で運営コメント送信をする.
+     * @param text コメント
+     * @param mail コマンド欄
+     * @param name 名前
+     * @param isPerm ずっと表示させる. "true" or "false" の文字列を渡す. 旧/permの役割
+     */
+    postCasterComment: function( text, mail, name, isPerm ){
+        if( text == '' ) return;
+        if( !this.isCaster() ) return;
+        mail = mail || '';
+        name = name || '';
+        isPerm = !!isPerm;
+
+        let url = this.liveProp.program.broadcasterComment.postApiUrl;
+
+        // TODO 現状主コメは80文字までなのでマクロ展開する余地があるかどうか
+        // text = this.replaceMacros( text, info );
+
+        let xhr = CreateXHR( 'PUT', url );
+        xhr.onreadystatechange = () =>{
+            if( xhr.readyState != 4 ) return;
+            if( xhr.status != 200 ){
+                console.log( `${xhr.status} ${xhr.responseText}` );
+                let error = JSON.parse( xhr.responseText );
+                console.log( `コメント送信: ${error.meta.errorMessage || error.meta.errorCode}` );
+                // this.showAlert( `コメント送信: ${error.meta.errorMessage || error.meta.errorCode}` );
+                return;
+            }
+            console.log( `Comment posted: ${xhr.responseText}` );
+        };
+
+        xhr.setRequestHeader( 'x-public-api-token', this.liveProp.site.relive.csrfToken );
+
+        let form = new FormData();
+        form.append( 'text', text );
+        form.append( 'command', mail );
+        form.append( 'name', name );
+        form.append( 'isPermanent', isPerm );
+        xhr.send( form );
+    },
+
 
     getpostkey: function( threadId ){
         let getpostkey = {
@@ -46,6 +107,8 @@ var NicoLiveHelper = {
      * @param text
      */
     sendComment: function( mail, text ){
+        if( !text ) return;
+
         this._getpostkeyfunc = () =>{
             this.sendComment( mail, text );
         };
@@ -125,7 +188,8 @@ var NicoLiveHelper = {
                 break;
 
             case 1:
-                console.log( `コメントの連投規制中です` );
+                // 送信テキストが空のときに発生する
+                console.log( `コメントの送信エラーです` );
                 break;
             case 8:
                 console.log( `コメントが長すぎます` );

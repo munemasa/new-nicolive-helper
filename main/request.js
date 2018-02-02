@@ -131,6 +131,18 @@ var NicoLiveRequest = {
         $( '#input-request-video' ).val( '' );
     },
 
+    saveRequests: async function(){
+        if( !NicoLiveHelper.isCaster() ) return;
+
+        try{
+            await browser.storage.local.set( {
+                'request': this.request
+            } );
+            console.log( 'request saved.' );
+        }catch( e ){
+        }
+    },
+
     initUI: function(){
         $( '#btn-add-request' ).on( 'click', ( ev ) =>{
             let str = $( '#input-request-video' ).val();
