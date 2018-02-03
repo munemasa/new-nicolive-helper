@@ -177,6 +177,28 @@ var NicoLiveRequest = {
         }
     },
 
+    /**
+     * リクエストをシャッフルする.
+     */
+    shuffleRequests: function(){
+        ShuffleArray( this.request );
+        this.redrawRequests();
+        this.saveRequests();
+    },
+
+    /**
+     * リクエスト一覧表示を再作成する.
+     */
+    redrawRequests: function(){
+        $( '#request-table-body' ).empty();
+        for( let vinfo of this.request ){
+            let elem = NicoLiveHelper.createVideoInfoElement( vinfo );
+            $( '#request-table-body' ).append( elem );
+        }
+        this.updateBadgeAndTime();
+    },
+
+
     moveUp: function( tr, index ){
         if( index <= 0 ) return;
         SwapArrayElements( this.request, index, index - 1 );
@@ -291,6 +313,9 @@ var NicoLiveRequest = {
             this.onButtonClicked( ev );
         } );
 
+        $( '#btn-shuffle-request' ).on( 'click', ( ev ) =>{
+            this.shuffleRequests();
+        } );
 
         $( '#btn-add-request' ).on( 'click', ( ev ) =>{
             let str = $( '#input-request-video' ).val();
