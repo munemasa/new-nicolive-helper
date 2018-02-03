@@ -39,4 +39,36 @@ window.addEventListener( 'resize', ( ev ) =>{
 
 window.addEventListener( 'load', ( ev ) =>{
     WindowManage.onResize();
+
+    let tmp = localStorage.getItem( 'window_position' );
+    if( tmp ){
+        // TODO ウィンドウ位置とサイズを復元
+        let window_position = JSON.parse( tmp );
+    }
+
+    let active_tab = localStorage.getItem( 'active_tab' ) || '#tab-request';
+    console.log( `Active tab: ${active_tab}` );
+    $( `header a[href="${active_tab}"]` ).tab( 'show' );
+
+    // アクティブタブを設定
+    $( `a[data-toggle="tab"][href="${active_tab}"]` ).addClass( 'active' );
+} );
+
+window.addEventListener( 'unload', ( ev ) =>{
+    // アクティブタブを保存
+    let target = $( 'a[data-toggle="tab"].active' ).attr( "href" );
+    localStorage.setItem( 'active_tab', target );
+
+    // ウィンドウ位置とサイズを保存
+    let x = window.screenX;
+    let y = window.screenY;
+    let w = window.outerWidth;
+    let h = window.outerHeight;
+    let window_position = {
+        x: x,
+        y: y,
+        w: w,
+        h: h
+    };
+    localStorage.setItem( 'window_position', JSON.stringify( window_position ) );
 } );
