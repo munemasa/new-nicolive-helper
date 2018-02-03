@@ -265,6 +265,13 @@ var NicoLiveRequest = {
         return removeditem[0];
     },
 
+    removeAllRequests: function(){
+        this.request = [];
+        $( '#request-table-body' ).empty();
+        this.updateBadgeAndTime();
+        this.saveRequests();
+    },
+
     playVideo: function( tr, index ){
         // TODO 動画再生を実装する
         let video = this.request[index];
@@ -315,6 +322,14 @@ var NicoLiveRequest = {
 
         $( '#btn-shuffle-request' ).on( 'click', ( ev ) =>{
             this.shuffleRequests();
+        } );
+
+        $( '#menu-remove-all-requests' ).on( 'click', ( ev ) =>{
+            this.removeAllRequests();
+        } );
+
+        $( '#menu-sort-by-comment-no' ).on( 'click', ( ev ) =>{
+            this.sortRequestByCommentNo();
         } );
 
         $( '#btn-add-request' ).on( 'click', ( ev ) =>{
