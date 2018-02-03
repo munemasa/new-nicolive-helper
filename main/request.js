@@ -27,6 +27,11 @@ var NicoLiveRequest = {
     _queue: [],
 
 
+    /**
+     * リクエスト登録のキューを処理する.
+     * @returns {Promise<void>}
+     * @private
+     */
     _runQueue: async function(){
         let q = this._queue[0];
 
@@ -40,7 +45,6 @@ var NicoLiveRequest = {
             vinfo.rights_code = q.code;
 
             this.request.push( vinfo );
-
             let elem = NicoLiveHelper.createVideoInfoElement( vinfo );
             $( '#request-table-body' ).append( elem );
 
@@ -53,6 +57,11 @@ var NicoLiveRequest = {
         if( this._queue.length > 0 ){
             this._runQueue();
         }
+
+        clearTimeout( this._timer );
+        this._timer = setTimeout( () =>{
+            this.saveRequests();
+        }, 1500 );
     },
 
     /**
@@ -81,8 +90,6 @@ var NicoLiveRequest = {
             }
             // 先頭から何分後にあるかの表示
             let timestr = GetTimeString( t );
-            console.log( t );
-            console.log( timestr );
             elem = row.querySelector( '.nico-timing' );
             $( elem ).text( `+${timestr}` );
             t += Config.play_interval + item.length_ms / 1000;
@@ -119,6 +126,11 @@ var NicoLiveRequest = {
     },
 
 
+    /**
+     * リクエストを追加する
+     * @param video_id
+     * @returns {Promise<void>}
+     */
     addRequests: async function( video_id ){
         console.log( video_id );
         if( video_id.length < 3 ) return;
@@ -131,6 +143,28 @@ var NicoLiveRequest = {
         $( '#input-request-video' ).val( '' );
     },
 
+    loadRequests: async function(){
+        try{
+            let result = await browser.storage.local.get( 'request' );
+            console.log( result );
+            if( !result.request ) return;
+
+            for( let vinfo of result.request ){
+                this.request.push( vinfo );
+                let elem = NicoLiveHelper.createVideoInfoElement( vinfo );
+                $( '#request-table-body' ).append( elem );
+            }
+            this.updateBadgeAndTime();
+        }catch( e ){
+            console.log( 'loading request have failed.' );
+            console.log( e );
+        }
+    },
+
+    /**
+     * リクエストを保存する.
+     * @returns {Promise<void>}
+     */
     saveRequests: async function(){
         if( !NicoLiveHelper.isCaster() ) return;
 
@@ -143,7 +177,121 @@ var NicoLiveRequest = {
         }
     },
 
+    moveUp: function( tr, index ){
+        if( index <= 0 ) return;
+        SwapArrayElements( this.request, index, index - 1 );
+
+        let parent = tr.parentNode;
+        let prev = tr.previousElementSibling;
+        parent.insertBefore( tr, prev );
+
+        this.updateBadgeAndTime();
+        this.saveRequests();
+    },
+
+    moveDown: function( tr, index ){
+        if( index >= this.request.length - 1 ) return;
+        SwapArrayElements( this.request, index, index + 1 );
+
+        let parent = tr.parentNode;
+        if( index === this.request.length - 2 ){
+            parent.appendChild( tr );
+        }else{
+            let next = tr.nextElementSibling.nextElementSibling;
+            parent.insertBefore( tr, next );
+        }
+
+        this.updateBadgeAndTime();
+        this.saveRequests();
+    },
+
+    moveTop: function( tr, index ){
+        let q = this.request;
+        let t;
+        t = q.splice( index, 1 );
+        if( t ){
+            q.unshift( t[0] );
+        }
+
+        let parent = tr.parentNode;
+        parent.insertBefore( tr, parent.firstChild );
+
+        this.updateBadgeAndTime();
+        this.saveRequests();
+    },
+
+    moveBottom: function( tr, index ){
+        let q = this.request;
+        let t;
+        t = q.splice( index, 1 );
+        if( t ){
+            q.push( t[0] );
+        }
+
+        let parent = tr.parentNode;
+        parent.appendChild( tr );
+
+        this.updateBadgeAndTime();
+        this.saveRequests();
+    },
+
+    removeRequest: function( tr, index ){
+        let removeditem = this.request.splice( index, 1 );
+        RemoveElement( tr );
+        this.updateBadgeAndTime();
+        this.saveRequests();
+        return removeditem[0];
+    },
+
+    playVideo: function( tr, index ){
+        // TODO 動画再生を実装する
+        let video = this.request[index];
+        console.log( `${video.video_id} ${video.title}` );
+    },
+
+    onButtonClicked: function( ev ){
+        let action = ev.target.getAttribute( 'function' );
+        let tr = FindParentElement( ev.target, 'tr' );
+        let index = tr.sectionRowIndex;
+
+        switch( action ){
+        case 'play':
+            this.playVideo( tr, index );
+            break;
+
+        case 'move_up':
+            this.moveUp( tr, index );
+            break;
+        case 'move_down':
+            this.moveDown( tr, index );
+            break;
+
+        case 'prepare':
+            // TODO 先読みコマンドを送る
+            break;
+
+        case 'move_top':
+            this.moveTop( tr, index );
+            break;
+        case 'move_bottom':
+            this.moveBottom( tr, index );
+            break;
+
+        case 'remove':
+            this.removeRequest( tr, index );
+            break;
+
+        default:
+            break;
+        }
+    },
+
     initUI: function(){
+        $( document ).on( 'click', '#request-table-body .nico-video-row button', ( ev ) =>{
+            this.onButtonClicked( ev );
+        } );
+
+
         $( '#btn-add-request' ).on( 'click', ( ev ) =>{
             let str = $( '#input-request-video' ).val();
             this.addRequests( str );
@@ -155,10 +303,10 @@ var NicoLiveRequest = {
                 this.addRequests( str );
             }
         } );
-
     },
 
     init: async function(){
         this.initUI();
+        this.loadRequests();
     }
 };

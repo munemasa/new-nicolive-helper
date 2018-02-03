@@ -173,7 +173,6 @@ function ShuffleArray( list ){
  * @param arr
  * @param n1
  * @param n2
- * @constructor
  */
 function SwapArrayElements( arr, n1, n2 ){
     let tmp = arr[n1];

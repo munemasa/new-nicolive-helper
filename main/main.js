@@ -52,6 +52,9 @@ var NicoLiveHelper = {
 
     /**
      * 新配信で運営コメント送信をする.
+     *
+     * isPermコメントを消すには clearApiUrl に DELETE リクエストを送る
+     *
      * @param text コメント
      * @param mail コマンド欄
      * @param name 名前
@@ -170,7 +173,7 @@ var NicoLiveHelper = {
      * @param data
      */
     onCommentReceived: function( data ){
-        console.log( data );    // TODO コメント受信したときのログ表示
+        // console.log( data );    // TODO コメント受信したときのログ表示
         if( data.thread ){
             // data.thread.ticket;
             // data.thread.last_res;
@@ -284,7 +287,7 @@ var NicoLiveHelper = {
     },
 
     onWatchCommandReceived: function( data ){
-        console.log( data ); // TODO 受信時のログ表示
+        // console.log( data ); // TODO 受信時のログ表示
         let body = data.body;
         switch( data.type ){
         case 'watch':
@@ -728,6 +731,10 @@ var NicoLiveHelper = {
         console.log( `NicoLive Helper X-2 ${extension_info.version}` );
         this.version = extension_info.version;
         console.log( 'initialize nicolivehelper.' );
+
+        let result = await browser.storage.local.get( 'config' );
+        console.log( 'Config loaded:' );
+        console.log( result );
 
         NicoLiveRequest.init();
         NicoLiveComment.init();
