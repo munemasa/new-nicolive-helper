@@ -55,6 +55,9 @@ window.addEventListener( 'load', ( ev ) =>{
 } );
 
 window.addEventListener( 'unload', ( ev ) =>{
+    // browser.storageは非同期処理のためこのタイミングでは書き込みできないので
+    // ウィンドウ閉じるタイミングで保存したいデータは window.localStorage に書き込みする
+
     // アクティブタブを保存
     let target = $( 'a[data-toggle="tab"].active' ).attr( "href" );
     localStorage.setItem( 'active_tab', target );
