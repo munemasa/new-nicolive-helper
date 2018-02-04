@@ -740,6 +740,12 @@ var NicoLiveHelper = {
     test: async function(){
     },
 
+    initUI: async function(){
+        $( '#mylist-manager' ).on( 'click', ( ev ) =>{
+            window.open( 'mylistmanager/mylistmanager.html', 'nicolivehelperx_mylistmanager',
+                'width=640,height=480,menubar=no,toolbar=no,location=no' );
+        } );
+    },
 
     init: async function(){
         let extension_info = await browser.management.getSelf();
@@ -751,6 +757,7 @@ var NicoLiveHelper = {
         console.log( 'Config loaded:' );
         console.log( result );
 
+        this.initUI();
         NicoLiveRequest.init();
         NicoLiveComment.init();
 
@@ -780,6 +787,7 @@ var NicoLiveHelper = {
         setInterval( ( ev ) =>{
             this.update();
         }, 1000 );
+
         this.test();
     }
 };

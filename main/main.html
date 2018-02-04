@@ -32,6 +32,18 @@
 <!------------ タブ名 ------------>
 <header>
   <div class="margin-lr-4">
+    <div class="btn-group">
+      <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+        <img id="icon-thumbnail" src="../icons/icon-16.png" style="width:16px; height:16px;">
+      </button>
+      <div class="dropdown-menu">
+        <a id="mylist-manager" class="dropdown-item" href="#">マイリストマネージャー</a>
+        <a class="dropdown-item" href="#">コメントをファイルに保存</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="#">閉じる</a>
+      </div>
+    </div>
     <span id="community-id">co000000</span>
     <span id="live-title">[オフライン]</span>
     <span>放送主：<span id="live-caster">---</span></span>
@@ -197,7 +209,7 @@
       </div>
       <div class="btn-toolbar" style="clear:left; margin-top:1px;" role="toolbar"
            aria-label="Toolbar with button groups">
-        <div class="btn-group mr-2" role="group" aria-label="First group">
+        <div class="btn-group btn-group-sm mr-2" role="group" aria-label="First group">
           <button type="button" class="btn btn-outline-primary btn-sm" function="play">
             <span class="glyphicon glyphicon-play"></span> 再生
           </button>
@@ -211,7 +223,7 @@
             <span class="glyphicon glyphicon-import"></span> 先読み
           </button>
         </div>
-        <div class="btn-group mr-2" role="group" aria-label="Second group">
+        <div class="btn-group btn-group-sm mr-2" role="group" aria-label="Second group">
           <button type="button" class="btn btn-outline-secondary btn-sm" function="move_top">
             <span class="glyphicon glyphicon-arrow-up"></span>
             <span class="glyphicon glyphicon-arrow-up"></span>
@@ -221,7 +233,7 @@
             <span class="glyphicon glyphicon-arrow-down"></span>
           </button>
         </div>
-        <div class="btn-group" role="group" aria-label="Fourth group">
+        <div class="btn-group btn-group-sm" role="group" aria-label="Fourth group">
           <button class="btn btn-outline-info btn-nico-details" type="button" data-toggle="collapse"
                   data-target="#collapseExample"
                   aria-expanded="false" aria-controls="collapseExample">
@@ -230,7 +242,7 @@
           </button>
         </div>
         <div style="flex:1;"></div>
-        <div class="btn-group mr-2" role="group" aria-label="Third group">
+        <div class="btn-group btn-group-sm mr-2" role="group" aria-label="Third group">
           <button type="button" class="btn btn-outline-danger btn-sm" function="remove">
             <span class="glyphicon glyphicon-remove"></span> 削除
           </button>
