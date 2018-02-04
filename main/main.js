@@ -745,6 +745,10 @@ var NicoLiveHelper = {
             window.open( 'mylistmanager/mylistmanager.html', 'nicolivehelperx_mylistmanager',
                 'width=640,height=480,menubar=no,toolbar=no,location=no' );
         } );
+
+        $( '#close-window' ).on( 'click', ( ev ) =>{
+            window.close();
+        } );
     },
 
     init: async function(){
