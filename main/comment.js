@@ -425,7 +425,7 @@ let NicoLiveComment = {
                     },
                     events: {
                         hide: function( opt ){
-                            let $this = this;
+                            let $this = $( this );
                             let data = $.contextMenu.getInputValues( opt, $this.data() );
                             NicoLiveComment.setKotehan( user_id, data.set_kotehan );
                         }
