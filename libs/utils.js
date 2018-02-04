@@ -131,24 +131,32 @@ function GetDateString( ms, full ){
 
 /**
  * 指定日時を H:M:S で返す.
- * @param format
- * @param ms
+ * @param ms EPOCHからの経過ミリ秒
+ * @param full
  * @returns {string}
- * @constructor
  */
-function GetDateTimeString( ms ){
+function GetDateTimeString( ms, full ){
     let d = new Date( ms );
     let tmp = d.toLocaleString( 'ja-JP' );
-    return tmp.substring( tmp.indexOf( ' ' ) + 1 );
+    if( !full ){
+        return tmp.substring( tmp.indexOf( ' ' ) + 1 );
+    }
+    return tmp;
 }
 
-// min:sec の文字列を返す.
+/**
+ * 秒を渡すと時:分:秒の文字列を返す
+ * @param sec
+ * @returns {string}
+ */
 function GetTimeString( sec ){
-    let str = "";
-    if( sec < 0 ) str = "-";
-    sec = Math.abs( sec );
-    str += parseInt( sec / 60 ) + ":";
-    str += (sec % 60) < 10 ? "0" + parseInt( sec % 60 ) : parseInt( sec % 60 );
+    let hour = parseInt( sec / 60 / 60 );
+    let min = parseInt( (sec % 3600) / 60 );
+    let second = sec % 60;
+
+    let str;
+    if( sec < 0 ) return '---';
+    str = `${hour}:${min < 10 ? '0' + min : min}:${second < 10 ? '0' + second : second}`;
     return str;
 }
 

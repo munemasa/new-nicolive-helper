@@ -24,8 +24,10 @@ var Config = {
     play_interval: 7,
 
     comment: {
-        display_lines: 500,
+        comment184: false,
 
+        display_lines: 500,
+        history_lines_on_connect: 50,
         autokotehan: false
     }
 

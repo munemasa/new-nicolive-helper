@@ -96,6 +96,10 @@ var NicoLiveHelper = {
     },
 
 
+    /**
+     * @param threadId
+     * @private
+     */
     getpostkey: function( threadId ){
         let getpostkey = {
             "type": "watch",
@@ -116,8 +120,7 @@ var NicoLiveHelper = {
             this.sendComment( mail, text );
         };
 
-        // TODO 184の処理を入れる
-        if( false && Config.comment.comment184 ){
+        if( Config.comment.comment184 ){
             mail += " 184";
         }
 
@@ -158,7 +161,7 @@ var NicoLiveHelper = {
             // TODO コメント読み上げ
             if( false && Config.speech.do_speech ){
                 if( chat.date > this.connecttime ){
-                    NicoLiveTalker.webspeech2( chat.text_notag, Config.speech.speech_character_index );
+                    // NicoLiveTalker.webspeech2( chat.text_notag, Config.speech.speech_character_index );
                 }
             }
             break;
@@ -257,8 +260,8 @@ var NicoLiveHelper = {
             this.connecttime = GetCurrentTime();
 
             // TODO 過去ログ取得行数指定
-            // let lines = Config.comment.history_lines_on_connect * -1;
-            let lines = -50;
+            let lines = Config.comment.history_lines_on_connect * -1;
+            // let lines = -50;
             let str = {
                 "thread": {
                     "thread": "" + room.threadId,
@@ -334,9 +337,9 @@ var NicoLiveHelper = {
                 // body.params[1]; // コメント数
                 // body.params[2]; // 不明
                 // body.params[3]; // 不明
-                // TODO リスナー数更新
+                // リスナー数更新
                 console.log( `Now ${body.params[0]} listeners. ${body.params[1]} comments.` );
-                // $( '#number-of-listeners' ).text( FormatCommas( body.params[0] ) );
+                $( '#number-of-listeners' ).text( FormatCommas( body.params[0] ) );
                 break;
             case 'watchinginterval':
                 // body.params[0]; // 何かの間隔秒数
@@ -346,6 +349,7 @@ var NicoLiveHelper = {
                 // body.update.begintime;
                 // body.update.endtime;
                 console.log( `begin time:${body.update.begintime}, end time:${body.update.endtime}` );
+                $( '#live-progress' ).attr( 'title', `終了日時: ${GetDateTimeString( body.update.endtime, 1 )}` );
                 break;
             case 'postkey':
                 this.postkey = body.params[0];
@@ -722,6 +726,17 @@ var NicoLiveHelper = {
         document.querySelector( '#iframe-thumbnail' ).style.opacity = 0;
     },
 
+
+    /**
+     * 毎秒更新処理.
+     */
+    update: function(){
+        let now = GetCurrentTime();
+        let liveprogress = now - this.liveProp.program.beginTime;
+
+        $( '#live-progress' ).text( GetTimeString( liveprogress ) );
+    },
+
     test: async function(){
     },
 
@@ -762,7 +777,9 @@ var NicoLiveHelper = {
             $( '#live-title' ).text( this.liveProp.program.title );
         }
 
-
+        setInterval( ( ev ) =>{
+            this.update();
+        }, 1000 );
         this.test();
     }
 };
