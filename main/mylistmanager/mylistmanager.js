@@ -364,7 +364,7 @@ let MyListManager = {
         let video_id = window.prompt( "マイリストに追加する動画IDを入力してください", "" );
         if( !video_id ) return;
 
-        this.registerMylistQueue = new Array();
+        this.registerMylistQueue = [];
         let d = video_id.match( /(sm|nm|so)\d+|\d{10}/g );
 
         for( let i = 0, item; item = d[i]; i++ ){
@@ -375,26 +375,26 @@ let MyListManager = {
     },
 
     copyToClipboard: function( type ){
-        let items = $( '.video-selected' );
+        let items = $( '.mylist_item_selected' );
         let str = "";
         let id = $( '#mylist' ).val();
         let key = "_" + id;
 
         let videos = this.mylistdata[key].mylistitem;
         for( let i = 0; i < items.length; i++ ){
-            if( !items[i].checked ) continue;
+            let ind = items[i].rowIndex;
             switch( type ){
             case 0:
                 // 動画ID
-                str += videos[i].item_data.video_id + "\n";
+                str += videos[ind].item_data.video_id + "\n";
                 break;
             case 1:
                 // タイトル
-                str += videos[i].item_data.title + "\n";
+                str += videos[ind].item_data.title + "\n";
                 break;
             case 2:
                 // 動画ID+タイトル
-                str += videos[i].item_data.video_id + "\t" + videos[i].item_data.title + "\n";
+                str += videos[ind].item_data.video_id + "\t" + videos[ind].item_data.title + "\n";
                 break;
             }
         }
@@ -412,19 +412,17 @@ let MyListManager = {
         dt.effectAllowed = 'move';
 
         // ドラッグ対象の動画IDを指定する
-        let checkbox = $( '.video-selected' );
+        let items = $( '.mylist_item_selected' );
 
         let key = $( '#mylist' ).val();
         let videos = this.mylistdata[`_${key}`].mylistitem;
         // console.log( checkbox );
         let str = "";
         let html = "";
-        let elems = $( '.nico-video-row' );
-        for( let i = 0, chkbox; chkbox = checkbox[i]; i++ ){
-            if( chkbox.checked ){
-                str += videos[i].item_id + " ";
-                html += elems[i].innerHTML;
-            }
+        for( let i = 0, item; item = items[i]; i++ ){
+            let ind = item.rowIndex;
+            str += videos[ind].item_id + " ";
+            html += item.innerHTML;
         }
         dt.setData( 'text/plain', str );
         // dt.setData( 'text/html', html );
@@ -631,7 +629,7 @@ let MyListManager = {
     delete: function(){
         if( !window.confirm( "選択した動画をマイリストから削除しますか?" ) ) return;
 
-        let items = $( '.video-selected' );
+        let items = $( '.mylist_item_selected' );
         let id = $( '#mylist' ).val();
         let key = "_" + id;
         let str = "";
@@ -639,8 +637,8 @@ let MyListManager = {
         // マイリストのアイテムIDをスペースで区切ったものをテキストとしてD&Dする
         let videos = this.mylistdata[key].mylistitem;
         for( let i = 0; i < items.length; i++ ){
-            if( !items[i].checked ) continue;
-            str += videos[i].item_id + " ";
+            let ind = items[i].rowIndex;
+            str += videos[ind].item_id + " ";
         }
         let ids = str.trim().split( /\s+/ );
         if( ids.length ){
@@ -735,16 +733,12 @@ let MyListManager = {
         if( this.registerMylistQueue.length == 0 ){
             this.finishAddingMyList();
             this.refreshCurrentMylist();
-            this._target_mylist_id = 0;
             return;
         }
         // TODO マイリス追加の経過表示プログレスバー
         // $( 'statusbar-progressmeter' ).value = $( 'statusbar-progressmeter' ).max - this.registerMylistQueue.length;
 
-        if( !this._target_mylist_id ){
-            this._target_mylist_id = $( '#mylist' ).val();
-        }
-        let mylist_id = this._target_mylist_id;
+        let mylist_id = $( '#mylist' ).val();
         let video_id = this.registerMylistQueue.shift();
         if( mylist_id == 'default' ){
             this.finishAddingMyList();
@@ -935,6 +929,29 @@ let MyListManager = {
         this.getMylistGroup();
         this.getMyListPageToken();
 
+        $( document ).on( 'click', '#folder-item-listbox tr', ( ev ) =>{
+            console.log( ev );
+            let tr = FindParentElement( ev.target, 'tr' );
+            console.log( tr );
+
+            if( ev.originalEvent.metaKey ){
+                if( $( tr ).hasClass( 'mylist_item_selected' ) ){
+                    $( tr ).removeClass( 'mylist_item_selected' );
+                }else{
+                    $( tr ).addClass( 'mylist_item_selected' );
+                }
+            }else if( ev.originalEvent.shiftKey ){
+                // TODO 範囲選択を載せる
+                console.log( 'range selection not supported.' );
+            }else{
+                $( '#folder-item-listbox tr' ).removeClass( 'mylist_item_selected' );
+                $( tr ).addClass( 'mylist_item_selected' );
+            }
+
+            SetStatusBarText( `選択: ${$( '.mylist_item_selected' ).length}` );
+        } );
+
+
         let mylist = $( '#mylist' );
         // 選択したマイリストを読み込む
         mylist.on( 'change', ( ev ) =>{
@@ -999,17 +1016,17 @@ let MyListManager = {
                     },
                     items: {
                         "copy": {
-                            name: "チェックした動画をコピー",
+                            name: "選択した動画をコピー",
                             items: {
                                 "copy_vid": {name: "動画ID"},
                                 "copy_title": {name: "タイトル"},
                                 "copy_vid_title": {name: "動画ID＋タイトル"},
                             }
                         },
-                        "stock": {name: "チェックした動画をストックに追加"},
+                        "stock": {name: "選択した動画をストックに追加"},
 
                         "sep1": "---------",
-                        "delete": {name: "チェックした動画を削除"},
+                        "delete": {name: "選択した動画を削除"},
                         "sep2": "---------",
                         "save": {name: 'マイリストをファイルに保存'}
                     }

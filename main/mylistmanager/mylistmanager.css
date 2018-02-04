@@ -7,6 +7,7 @@ div {
 
 .footer {
     background-color: #ededef;
+    padding: 0 0.5em;
 }
 
 .left-pane {
@@ -40,6 +41,10 @@ div {
 
 .video-deleted {
     background-color: #808080 ! important;
+}
+
+.mylist_item_selected {
+    background-color: #a8e4ff !important;
 }
 
 .video-title {
