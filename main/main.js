@@ -734,7 +734,7 @@ var NicoLiveHelper = {
         let now = GetCurrentTime();
         let liveprogress = now - this.liveProp.program.beginTime;
 
-        $( '#live-progress' ).text( GetTimeString( liveprogress ) );
+        $( '#live-progress' ).text( liveprogress < 0 ? `-${GetTimeString( -liveprogress )}` : GetTimeString( liveprogress ) );
     },
 
     test: async function(){
