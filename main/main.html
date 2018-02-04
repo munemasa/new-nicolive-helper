@@ -109,7 +109,8 @@
           <option value="2">BSP</option>
         </select>
         <div class="input-group" style="flex:1;">
-          <input id="comment-command" class="form-control" type="text" placeholder="コマンド">
+          <input id="comment-command" class="form-control" type="text"
+                 autocomplete="on" list="comment-command-autocomplete" placeholder="コマンド">
           <input id="txt-input-comment" class="form-control" name="comment" maxlength="1024"
                  autocomplete="on" list="comment-autocomplete"
                  placeholder="コメントを入力してください...">
@@ -117,6 +118,24 @@
             <button id="btn-send-comment" class="btn btn-outline-primary" type="button">送信</button>
           </div>
         </div>
+        <datalist id="comment-command-autocomplete">
+          <option value=""></option>
+          <option value="">--- 放送者 ---</option>
+          <option value="se1">se1</option>
+          <option value="se2">se2</option>
+          <option value="hidden">hidden</option>
+          <option value="">--- 通常 ---</option>
+          <option value="cyan big">cyan big</option>
+          <option value="shita">shita</option>
+          <option value="green shita small">green shita small</option>
+          <option value="orange">orange</option>
+          <option value="">--- プレミアム ---</option>
+          <option value="marineblue">marineblue</option>
+          <option value="passionorange">passionorange</option>
+          <option value="elementalgreen ue">elementalgreen ue</option>
+          <option value="truered shita small">truered shita small</option>
+          <option value="niconicowhite big">niconicowhite big</option>
+        </datalist>
         <datalist id="comment-autocomplete">
         </datalist>
       </div>
