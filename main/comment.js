@@ -20,7 +20,7 @@
  THE SOFTWARE.
  */
 
-let NicoLiveComment = {
+var NicoLiveComment = {
     table: null,
 
     commentlog: [],    // コメントのログ(受信したもの全て記録)
@@ -32,7 +32,7 @@ let NicoLiveComment = {
     saveFile: function(){
         let str = "";
         for( let item, i = 0; item = this.commentlog[i]; i++ ){
-            let datestr = GetDateString( item.date * 1000 );
+            let datestr = GetDateString( item.date * 1000, true );
             str += item.no + '\t' + item.user_id + '\t' + item.text + '\t' + datestr + "\r\n";
         }
         let name = `${NicoLiveHelper.liveProp.program.nicoliveProgramId}.txt`;
