@@ -767,6 +767,7 @@ var NicoLiveHelper = {
 
         this.initUI();
         NicoLiveRequest.init();
+        NicoLiveStock.init();
         NicoLiveComment.init();
 
         let lvid = GetParameterByName( 'lv' );
@@ -793,7 +794,10 @@ var NicoLiveHelper = {
         }
 
         setInterval( ( ev ) =>{
-            this.update();
+            try{
+                this.update();
+            }catch( e ){
+            }
         }, 1000 );
 
         this.test();
