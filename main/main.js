@@ -766,6 +766,8 @@ var NicoLiveHelper = {
         console.log( result );
 
         this.initUI();
+
+        NicoLiveMylist.init();
         NicoLiveRequest.init();
         NicoLiveStock.init();
         NicoLiveComment.init();

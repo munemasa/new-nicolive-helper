@@ -124,6 +124,17 @@ footer {
     height: 100%;
 }
 
+/*----- ストックタブ -----*/
+#tab-stock {
+    height: 100%;
+}
+
+#tab-stock-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
 /*----- コメントタブ -----*/
 #tab-comment {
     height: 100%;
