@@ -29,6 +29,8 @@ var WindowManage = {
         let y = rect.top + window.pageYOffset;
         let h = positionY - y;
         tab_content.outerHeight( h );
+
+        $( '#my-alert' )[0].style.bottom = `${$( 'footer' ).outerHeight()}px`;
     }
 };
 

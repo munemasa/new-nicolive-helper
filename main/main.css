@@ -63,7 +63,6 @@ footer {
     height: 100%;
 }
 
-
 .dropdown-submenu {
     position: relative;
 }
@@ -112,6 +111,18 @@ footer {
     border-radius: 4px;
 }
 
+/* jquery contextmenu */
+.context-menu-list .context-menu-list {
+    max-height: 240px;
+    overflow: scroll;
+}
+
+.my-alert {
+    margin-bottom: 0px;
+    padding: 0.4rem 0.4rem;
+
+    -moz-transition: height 0.25s, opacity 0.25s;
+}
 
 /*----- リクエストタブ -----*/
 #tab-request {

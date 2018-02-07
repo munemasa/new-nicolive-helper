@@ -726,6 +726,19 @@ var NicoLiveHelper = {
         document.querySelector( '#iframe-thumbnail' ).style.opacity = 0;
     },
 
+    /**
+     * ウィンドウ下部にアラートメッセージを表示する.
+     * @param text
+     */
+    showAlert: function( text ){
+        $( '#my-alert-message' ).text( text );
+        $( '#my-alert' ).show( 100 );
+
+        clearTimeout( this._alert_timer );
+        this._alert_timer = setTimeout( function(){
+            $( '#my-alert' ).hide( 100 );
+        }, 4000 );
+    },
 
     /**
      * 毎秒更新処理.
