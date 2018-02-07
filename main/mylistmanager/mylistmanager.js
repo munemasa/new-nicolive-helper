@@ -839,17 +839,17 @@ let MyListManager = {
      * ストックに追加する
      */
     addToStock: function(){
-        let items = $( '.video-selected' );
-        let str = "";
+        let items = $( '.mylist_item_selected' );
         let id = $( '#mylist' ).val();
         let key = "_" + id;
+        let str = "";
 
+        // マイリストのアイテムIDをスペースで区切ったものをテキストとしてD&Dする
         let videos = this.mylistdata[key].mylistitem;
         for( let i = 0; i < items.length; i++ ){
-            if( !items[i].checked ) continue;
-            str += videos[i].item_data.video_id + " ";
+            let ind = items[i].rowIndex;
+            str += videos[ind].item_data.video_id + " ";
         }
-
         window.opener.NicoLiveStock.addStocks( str );
     },
 
