@@ -101,6 +101,22 @@ var NicoLiveRequest = {
         }
     },
 
+
+    /**
+     * ストックに直接追加する.
+     * @param vinfo
+     */
+    addRequestDirect: function( vinfo ){
+        vinfo = JSON.parse( JSON.stringify( vinfo ) );
+
+        this.request.push( vinfo );
+
+        let elem = NicoLiveHelper.createVideoInfoElement( vinfo );
+        $( '#request-table-body' ).append( elem );
+
+        this.updateBadgeAndTime();
+    },
+
     /**
      * リクエストの追加要求する.
      * @param video_id 動画ID
@@ -318,7 +334,7 @@ var NicoLiveRequest = {
         this.saveRequests();
     },
 
-    playVideo: function( tr, index ){
+    playVideo: function( index ){
         // TODO 動画再生を実装する
         let video = this.request[index];
         console.log( `${video.video_id} ${video.title}` );
@@ -331,7 +347,7 @@ var NicoLiveRequest = {
 
         switch( action ){
         case 'play':
-            this.playVideo( tr, index );
+            this.playVideo( index );
             break;
 
         case 'move_up':
@@ -393,7 +409,7 @@ var NicoLiveRequest = {
             break;
 
         case 'profile':
-            OpenLink( 'http://www.nicovideo.jp/user/' + this.requests[n].user_id );
+            OpenLink( 'http://www.nicovideo.jp/user/' + this.request[n].user_id );
             break;
 
         default:

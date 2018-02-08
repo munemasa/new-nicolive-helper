@@ -94,6 +94,21 @@ var NicoLiveStock = {
     },
 
     /**
+     * ストックに直接追加する.
+     * @param vinfo
+     */
+    addStockDirect: function( vinfo ){
+        vinfo = JSON.parse( JSON.stringify( vinfo ) );
+
+        this.stock.push( vinfo );
+
+        let elem = NicoLiveHelper.createVideoInfoElement( vinfo );
+        $( '#stock-table-body' ).append( elem );
+
+        this.updateBadgeAndTime();
+    },
+
+    /**
      * リクエストの追加要求する.
      * @param video_id 動画ID
      */
@@ -366,7 +381,7 @@ var NicoLiveStock = {
         this.saveStocks();
     },
 
-    playVideo: function( tr, index ){
+    playVideo: function( index ){
         // TODO 動画再生を実装する
         let video = this.stock[index];
         console.log( `${video.video_id} ${video.title}` );
@@ -379,7 +394,7 @@ var NicoLiveStock = {
 
         switch( action ){
         case 'play':
-            this.playVideo( tr, index );
+            this.playVideo( index );
             break;
 
         case 'move_up':
@@ -407,6 +422,67 @@ var NicoLiveStock = {
         default:
             break;
         }
+    },
+
+    /**
+     * ストックをファイルに保存する.
+     */
+    saveToFile: function(){
+        let str = "";
+        for( let i = 0, item; item = this.stock[i]; i++ ){
+            str += item.video_id + "\t" + item.title + "\r\n";
+        }
+        SaveText( 'stock.txt', str );
+    },
+
+    /**
+     * ストックのコンテキストメニューの実行.
+     * @param key
+     * @param options
+     */
+    contextMenu: function( key, options ){
+        let elem = options.$trigger[0];
+        let n = elem.sectionRowIndex;
+
+        switch( key ){
+        case'prepare':
+            // TODO 先読みする
+            break;
+
+        case 'copy':
+            CopyToClipboard( this.stock[n].video_id );
+            break;
+
+        case 'copy_all':
+            let str = "";
+            for( let i = 0, item; item = this.stock[i]; i++ ){
+                str += item.video_id + " ";
+            }
+            CopyToClipboard( str );
+            break;
+
+        case 'to_request':
+            NicoLiveRequest.addRequestDirect( this.stock[n] );
+            break;
+
+        case 'save_all':
+            this.saveToFile();
+            break;
+        case 'profile':
+            OpenLink( 'http://www.nicovideo.jp/user/' + this.stock[n].user_id );
+            break;
+
+        default:
+            // マイリスト追加処
+            console.log( key );
+            console.log( options.$trigger );
+            console.log( options );
+            let mylist_id = key.match( /^\d+_(.*)/ )[1];
+            let video_id = this.stock[n].video_id;
+            NicoLiveMylist.addMylist( mylist_id, video_id, '' );
+            break;
+        }
+        // console.log( options.$trigger );
     },
 
     initUI: function(){
@@ -447,6 +523,41 @@ var NicoLiveStock = {
             }
         } );
 
+        $.contextMenu( {
+            selector: '#stock-table-body .nico-video-row',
+            build: function( $triggerElement, e ){
+                let menuobj = {
+                    zIndex: 10,
+                    callback: function( key, options ){
+                        NicoLiveStock.contextMenu( key, options );
+                    },
+                    items: {
+                        "copy": {name: "動画IDをコピー"},
+                        "prepare": {name: "動画を先読み"},
+                        "to_request": {name: "リクエストにコピー"},
+                        "add_mylist": {
+                            name: "マイリストに追加",
+                            items: {}
+                        },
+                        "sep1": "---------",
+                        "copy_all": {name: "すべての動画IDをコピー"},
+                        "save_all": {name: "ストックをファイルに保存"},
+                        "sep2": "---------",
+                        "profile": {name: "投稿者プロフィール"},
+                    }
+                };
+                try{
+                    menuobj.items.add_mylist.items['0_default'] = {name: 'とりあえずマイリスト'};
+                    for( let i = 0, item; item = NicoLiveMylist.mylists.mylistgroup[i]; i++ ){
+                        let k = `${i + 1}_${item.id}`;
+                        let v = item.name;
+                        menuobj.items.add_mylist.items[k] = {name: v};
+                    }
+                }catch( x ){
+                }
+                return menuobj;
+            },
+        } );
     },
 
     init: async function(){
