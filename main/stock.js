@@ -485,6 +485,41 @@ var NicoLiveStock = {
         // console.log( options.$trigger );
     },
 
+    dropToStock: function( ev ){
+        ev = ev.originalEvent;
+        if( ev.dataTransfer.types.includes( "text/uri-list" ) ){
+            // <a>アンカータグをドロップしたときURLの動画IDをストックに追加する.
+            let uri = ev.dataTransfer.mozGetDataAt( "text/uri-list", 0 );
+            this.addStocks( uri );
+            return;
+        }
+        if( ev.dataTransfer.types.includes( "text/plain" ) ){
+            // テキストをドロップしたときURLの動画IDをストックに追加する.
+            let uri = ev.dataTransfer.mozGetDataAt( "text/plain", 0 );
+            this.addStocks( uri );
+            return;
+        }
+        if( ev.dataTransfer.types.includes( "application/x-moz-file" ) ){
+            // ファイルをドロップしたとき中身の動画IDをストックに追加する.
+            let file = ev.dataTransfer.files[0];
+            if( file.name.match( /\.txt$/ ) ){
+                let fileReader = new FileReader();
+                fileReader.onload = ( ev ) =>{
+                    let txt = ev.target.result;
+                    this.addStocks( txt );
+                };
+                fileReader.readAsText( file );
+            }
+            return;
+        }
+        if( ev.dataTransfer.types.includes( "application/x-moz-tabbrowser-tab" ) ){
+            // WebExtensionsだとタブは取得できない.
+            // TODO text/x-moz-text-internal でタブのURLは分かるので HTMLファイルを直接処理すればいける.
+            let tab = ev.dataTransfer.mozGetDataAt( "application/x-moz-tabbrowser-tab", 0 );
+            console.log( `Tab dropped: ${tab}` );
+        }
+    },
+
     initUI: function(){
         $( document ).on( 'click', '#stock-table-body .nico-video-row button', ( ev ) =>{
             this.onButtonClicked( ev );
@@ -513,6 +548,20 @@ var NicoLiveStock = {
                 let str = $( '#input-stock-video' ).val();
                 this.addStocks( str );
             }
+        } );
+
+        // ストックへのデータドロップによる追加処理
+        $( '#stock-view' ).on( 'dragenter', ( ev ) =>{
+            ev.preventDefault();
+        } );
+        $( '#stock-view' ).on( 'dragover', ( ev ) =>{
+            ev.preventDefault();
+        } );
+        $( '#stock-view' ).on( 'drop', ( ev ) =>{
+            console.log( ev );
+            ev.preventDefault();
+
+            this.dropToStock( ev );
         } );
 
         //--- マイリスト読み込み

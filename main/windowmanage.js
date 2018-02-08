@@ -77,3 +77,20 @@ window.addEventListener( 'unload', ( ev ) =>{
     };
     localStorage.setItem( 'window_position', JSON.stringify( window_position ) );
 } );
+
+
+// ストックタブ以外ではドロップしてページ遷移とかしないように禁止する.
+let cancelEvent = ( ev ) =>{
+    ev.preventDefault();
+    ev.stopPropagation();
+    return false;
+};
+$( window ).on( 'dragenter', ( ev ) =>{
+    return cancelEvent( ev );
+} );
+$( window ).on( 'dragover', ( ev ) =>{
+    return cancelEvent( ev );
+} );
+$( window ).on( 'drop', ( ev ) =>{
+    return cancelEvent( ev );
+} );
