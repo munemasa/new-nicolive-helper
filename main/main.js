@@ -759,6 +759,11 @@ var NicoLiveHelper = {
                 'width=640,height=480,menubar=no,toolbar=no,location=no' );
         } );
 
+        $( '#open-video-db' ).on( 'click', ( ev ) =>{
+            window.open( 'db/videodb.html', 'nicolivehelperx_videodb',
+                'width=640,height=480,menubar=no,toolbar=no,location=no' );
+        } );
+
         $( '#save-comment' ).on( 'click', ( ev ) =>{
             NicoLiveComment.saveFile();
         } );
