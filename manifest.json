@@ -36,15 +36,6 @@
         "content_scripts/nicolivehelperx.js"
       ],
       "run_at": "document_end"
-    },
-    {
-      "matches": [
-        "*://www.nicovideo.jp/watch/*"
-      ],
-      "js": [
-        "content_scripts/nicolivehelperx_videoplayer.js"
-      ],
-      "run_at": "document_end"
     }
   ],
   "browser_action": {
