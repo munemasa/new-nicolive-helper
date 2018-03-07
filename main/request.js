@@ -154,7 +154,7 @@ var NicoLiveRequest = {
 
         for( let i = 0, id; id = l[i]; i++ ){
             // TODO テスト用にコメント番号を付けているので不要になったら削除
-            let cno = parseInt( Math.random() * 1000 );
+            let cno = 0;//parseInt( Math.random() * 1000 );
             this.addRequest( id, cno, "0", false );
         }
 
@@ -335,9 +335,10 @@ var NicoLiveRequest = {
     },
 
     playVideo: function( index ){
-        // TODO 動画再生を実装する
         let video = this.request[index];
         console.log( `${video.video_id} ${video.title}` );
+        // TODO ボリューム指定をする
+        NicoLiveHelper.playVideo( video.video_id, 1 );
     },
 
     onButtonClicked: function( ev ){
@@ -355,10 +356,6 @@ var NicoLiveRequest = {
             break;
         case 'move_down':
             this.moveDown( tr, index );
-            break;
-
-        case 'prepare':
-            // TODO 先読みコマンドを送る
             break;
 
         case 'move_top':
@@ -382,10 +379,6 @@ var NicoLiveRequest = {
         let n = elem.sectionRowIndex;
 
         switch( key ){
-        case 'prepare':
-            // TODO 先読みする
-            break;
-
         case 'copy':
             CopyToClipboard( this.request[n].video_id );
             break;
@@ -464,7 +457,6 @@ var NicoLiveRequest = {
                     },
                     items: {
                         "copy": {name: "動画IDをコピー"},
-                        "prepare": {name: "動画を先読み"},
                         "to_stock": {name: "ストックにコピー"},
                         "add_mylist": {
                             name: "マイリストに追加",

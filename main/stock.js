@@ -382,9 +382,10 @@ var NicoLiveStock = {
     },
 
     playVideo: function( index ){
-        // TODO 動画再生を実装する
         let video = this.stock[index];
         console.log( `${video.video_id} ${video.title}` );
+        // TODO ボリューム指定をする
+        NicoLiveHelper.playVideo( video.video_id, 1 );
     },
 
     onButtonClicked: function( ev ){
@@ -402,10 +403,6 @@ var NicoLiveStock = {
             break;
         case 'move_down':
             this.moveDown( tr, index );
-            break;
-
-        case 'prepare':
-            // TODO 先読みコマンドを送る
             break;
 
         case 'move_top':
@@ -582,7 +579,6 @@ var NicoLiveStock = {
                     },
                     items: {
                         "copy": {name: "動画IDをコピー"},
-                        "prepare": {name: "動画を先読み"},
                         "to_request": {name: "リクエストにコピー"},
                         "add_mylist": {
                             name: "マイリストに追加",

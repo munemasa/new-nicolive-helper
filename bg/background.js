@@ -44,7 +44,7 @@ function OpenWindow( url, lvid ){
 }
 
 function OpenNicoLiveHelperX2( request_id ){
-    console.log( "Open NicoLive Helper X-2" );
+    console.log( "Open New NicoLive Helper" );
     let lvid;
     if( request_id ){
         lvid = request_id[1];
@@ -63,7 +63,7 @@ function OpenNicoLiveHelperX2( request_id ){
             ( windowInfo ) =>{
                 for( tabInfo of windowInfo.tabs ){
                     // console.log( tabInfo.url );
-                    if( tabInfo.title.indexOf( 'NicoLive Helper X-2' ) >= 0 ){
+                    if( tabInfo.title.indexOf( 'New NicoLive Helper' ) >= 0 ){
                         console.log( `window ${win_id} is already exists.` );
                         browser.windows.update( win_id, {focused: true} );
                     }else{
@@ -118,7 +118,8 @@ browser.browserAction.onClicked.addListener( ( tab ) =>{
     let request_id = tab.url.match( /nicovideo.jp\/watch\/((lv|co|ch)\d+)/ );
     OpenNicoLiveHelperX2( request_id );
 } );
-browser.browserAction.setBadgeText( {text: 'NEW'} );
+
+//browser.browserAction.setBadgeText( {text: 'NEW'} );
 
 
 browser.contextMenus.onClicked.addListener( ( info, tab ) =>{
@@ -132,7 +133,7 @@ browser.contextMenus.onClicked.addListener( ( info, tab ) =>{
 browser.contextMenus.create( {
     id: "menu_open_nicolivehelper_x",
     type: "normal",
-    title: "Open NicoLive Helper X-2",
+    title: "Open New NicoLive Helper",
     contexts: ["all"]
 } );
 

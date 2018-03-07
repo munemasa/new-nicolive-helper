@@ -46,10 +46,37 @@ var VideoDB = {
         console.log( r );
     },
 
+    /**
+     * 検索条件を追加
+     */
+    addCondLine: function(){
+        let t = document.querySelector( '#template-db-cond' );
+        let clone2 = document.importNode( t.content, true );
+        let elem = clone2.firstElementChild;
+        $( '#db-condition' ).append( elem );
+    },
+
+    /**
+     * 検索条件を削除
+     * @param ev
+     */
+    removeCondLine: function( ev ){
+        if( $( '.cond-line' ).length <= 1 ) return;
+        RemoveElement( ev.target.parentNode );
+    },
+
     init: function(){
         console.log( 'Video database init.' );
 
         this.initDB();
+
+        this.addCondLine();
+        $( document ).on( 'click', '.btn-add-cond', ( ev ) =>{
+            this.addCondLine();
+        } );
+        $( document ).on( 'click', '.btn-remove-cond', ( ev ) =>{
+            this.removeCondLine( ev );
+        } );
 
         $( '#btn-test' ).on( 'click', ( ev ) =>{
             this.test();

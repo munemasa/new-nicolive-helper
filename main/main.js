@@ -50,6 +50,48 @@ var NicoLiveHelper = {
         }
     },
 
+    getLiveId: function(){
+        try{
+            return this.liveProp.program.nicoliveProgramId;
+        }catch( e ){
+            return null;
+        }
+    },
+
+    playVideo: function( video_id, volume ){
+        let url = `http://live2.nicovideo.jp/unama/api/v3/programs/${this.liveProp.program.nicoliveProgramId}/broadcast/mixing`;
+
+        let xhr = CreateXHR( 'PUT', url );
+        xhr.onreadystatechange = () =>{
+            if( xhr.readyState != 4 ) return;
+            if( xhr.status != 200 ){
+                console.log( `${xhr.status} ${xhr.responseText}` );
+
+                // 400 {"meta":{"status":400,"errorCode":"BAD_REQUEST","errorMessage":"引用再生できない動画です"}}
+                return;
+            }
+        };
+
+        xhr.setRequestHeader( 'Content-type', 'application/json;charset=utf-8' );
+        xhr.setRequestHeader( 'X-Public-Api-Token', this.liveProp.site.relive.csrfToken );
+
+        let data = {
+            'mixing': [
+                {
+                    'audio': 0,
+                    'content': this.liveProp.program.nicoliveProgramId,
+                    'display': 'none'
+                },
+                {
+                    'audio': volume,
+                    'content': video_id,
+                    'display': 'main'
+                }
+            ]
+        };
+        xhr.send( JSON.stringify( data ) );
+    },
+
     /**
      * 新配信で運営コメント送信をする.
      *
@@ -85,7 +127,7 @@ var NicoLiveHelper = {
             console.log( `Comment posted: ${xhr.responseText}` );
         };
 
-        xhr.setRequestHeader( 'x-public-api-token', this.liveProp.site.relive.csrfToken );
+        xhr.setRequestHeader( 'X-Public-Api-Token', this.liveProp.site.relive.csrfToken );
 
         let form = new FormData();
         form.append( 'text', text );
@@ -142,6 +184,31 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 視聴者コメントを処理する.
+     */
+    processListenersComment: function( chat ){
+        let text = chat.text_notag;
+
+        if( text.match( /((sm|nm)\d+)/ ) ){
+            let video_id = RegExp.$1;
+            let is_self_request = !!text.match( /[^他](貼|張)|自|関/ );
+            let code = "";
+            // TODO 作品コードの処理
+            // code = chat.text.match( /(...[-+=/]....[-+=/].)/ )[1];
+            // code = code.replace( /[-+=/]/g, "-" ); // JWID用作品コード.
+            // NicoLiveHelper.product_code["_" + video_id] = code;
+            NicoLiveRequest.addRequest( video_id, chat.comment_no, chat.user_id, is_self_request, code );
+        }
+        if( text.match( /(\d{10})/ ) ){
+            let video_id = RegExp.$1;
+            if( video_id == "8888888888" ) return;
+            let is_self_request = !!text.match( /[^他](貼|張)|自|関/ );
+            let code = "";
+            NicoLiveRequest.addRequest( video_id, chat.comment_no, chat.user_id, is_self_request, code );
+        }
+    },
+
+    /**
      * 受信したコメントを処理する.
      * @param chat{Comment}
      */
@@ -157,6 +224,8 @@ var NicoLiveHelper = {
         case 0: // 一般会員
             // リスナーコメント
             // TODO 接続時より前のコメントは反応しないようにする
+            if( this.isCaster() && chat.date < this.connecttime ) return;
+            this.processListenersComment( chat );
 
             // TODO コメント読み上げ
             if( false && Config.speech.do_speech ){
@@ -290,7 +359,7 @@ var NicoLiveHelper = {
     },
 
     onWatchCommandReceived: function( data ){
-        // console.log( data ); // TODO 受信時のログ表示
+        console.log( data ); // TODO 受信時のログ表示
         let body = data.body;
         switch( data.type ){
         case 'watch':
@@ -775,7 +844,7 @@ var NicoLiveHelper = {
 
     init: async function(){
         let extension_info = await browser.management.getSelf();
-        console.log( `NicoLive Helper X-2 ${extension_info.version}` );
+        console.log( `New NicoLive Helper ${extension_info.version}` );
         this.version = extension_info.version;
         console.log( 'initialize nicolivehelper.' );
 

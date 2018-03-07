@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "NicoLive Helper X-2",
+  "name": "New NicoLive Helper",
   "version": "0.1",
   "applications": {
     "gecko": {
@@ -8,7 +8,7 @@
       "strict_min_version": "57.0"
     }
   },
-  "description": "NicoLive Helper X-2",
+  "description": "New NicoLive Helper",
   "homepage_url": "http://com.nicovideo.jp/community/co105163",
   "icons": {
     "48": "icons/icon-48.png",
@@ -54,7 +54,7 @@
       "48": "icons/icon-48.png",
       "96": "icons/icon-96.png"
     },
-    "default_title": "NicoLive Helper X-2"
+    "default_title": "New NicoLive Helper"
   },
   "commands": {
     "execute_sidebar_action": {
