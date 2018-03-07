@@ -71,6 +71,8 @@ var NicoLiveHelper = {
                 console.log( `${xhr.status} ${xhr.responseText}` );
 
                 // 400 {"meta":{"status":400,"errorCode":"BAD_REQUEST","errorMessage":"引用再生できない動画です"}}
+                let err = JSON.parse( xhr.responseText );
+                this.showAlert( `${vinfo.video_id}: ${err.meta.errorMessage}` );
                 return;
             }
             NicoLiveHistory.addHistory( vinfo );
@@ -349,11 +351,11 @@ var NicoLiveHelper = {
                 }
             };
             this._comment_svr.send( JSON.stringify( str ) );
-            console.log( `コメントサーバーに接続しました` );
+            this.showAlert( `コメントサーバーに接続しました` );
 
             // 再生履歴に番組名と開始時刻を記録
             let hist;
-            hist = `${this.liveProp.program.nicoliveProgramId} ${this.liveProp.program.title} (${GetDateString( this.liveProp.program.beginTime*1000, true )}-)\n`;
+            hist = `${this.liveProp.program.nicoliveProgramId} ${this.liveProp.program.title} (${GetDateString( this.liveProp.program.beginTime * 1000, true )}-)\n`;
             NicoLiveHistory.addHistoryText( hist );
         } );
         this._comment_svr.onReceive( ( ev ) =>{
