@@ -58,7 +58,10 @@ var NicoLiveHelper = {
         }
     },
 
-    playVideo: function( video_id, volume ){
+    playVideo: function( vinfo, volume ){
+        if( !this.isConnected() ) return;
+
+        let video_id = vinfo.video_id;
         let url = `http://live2.nicovideo.jp/unama/api/v3/programs/${this.liveProp.program.nicoliveProgramId}/broadcast/mixing`;
 
         let xhr = CreateXHR( 'PUT', url );
@@ -70,6 +73,7 @@ var NicoLiveHelper = {
                 // 400 {"meta":{"status":400,"errorCode":"BAD_REQUEST","errorMessage":"引用再生できない動画です"}}
                 return;
             }
+            NicoLiveHistory.addHistory( vinfo );
         };
 
         xhr.setRequestHeader( 'Content-type', 'application/json;charset=utf-8' );
@@ -347,10 +351,10 @@ var NicoLiveHelper = {
             this._comment_svr.send( JSON.stringify( str ) );
             console.log( `コメントサーバーに接続しました` );
 
-            // TODO 再生履歴に番組名と開始時刻を記録
-            // let hist;
-            // hist = this.liveProp.program.title + " " + this.liveProp.program.nicoliveProgramId + " (" + GetDateString( this.liveProp.program.beginTime, true ) + "-)\n";
-            // NicoLiveHistory.addHistoryText( hist );
+            // 再生履歴に番組名と開始時刻を記録
+            let hist;
+            hist = `${this.liveProp.program.nicoliveProgramId} ${this.liveProp.program.title} (${GetDateString( this.liveProp.program.beginTime*1000, true )}-)\n`;
+            NicoLiveHistory.addHistoryText( hist );
         } );
         this._comment_svr.onReceive( ( ev ) =>{
             let data = JSON.parse( ev.data );
@@ -359,7 +363,7 @@ var NicoLiveHelper = {
     },
 
     onWatchCommandReceived: function( data ){
-        console.log( data ); // TODO 受信時のログ表示
+        // console.log( data ); // TODO 受信時のログ表示
         let body = data.body;
         switch( data.type ){
         case 'watch':

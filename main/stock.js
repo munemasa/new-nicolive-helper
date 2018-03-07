@@ -385,7 +385,7 @@ var NicoLiveStock = {
         let video = this.stock[index];
         console.log( `${video.video_id} ${video.title}` );
         // TODO ボリューム指定をする
-        NicoLiveHelper.playVideo( video.video_id, 1 );
+        NicoLiveHelper.playVideo( video, 1 );
     },
 
     onButtonClicked: function( ev ){

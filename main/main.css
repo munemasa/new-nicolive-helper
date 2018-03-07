@@ -173,6 +173,16 @@ footer {
     margin-right: 4px;
 }
 
+/*----- 再生履歴 -----*/
+
+#tab-history {
+    height: 100%;
+}
+
+#txt-play-history {
+    width: 100%;
+}
+
 /*----- -----*/
 
 .video-list {
