@@ -59,43 +59,51 @@ var NicoLiveHelper = {
     },
 
     playVideo: function( vinfo, volume ){
-        if( !this.isConnected() ) return;
-
-        let video_id = vinfo.video_id;
-        let url = `http://live2.nicovideo.jp/unama/api/v3/programs/${this.liveProp.program.nicoliveProgramId}/broadcast/mixing`;
-
-        let xhr = CreateXHR( 'PUT', url );
-        xhr.onreadystatechange = () =>{
-            if( xhr.readyState != 4 ) return;
-            if( xhr.status != 200 ){
-                console.log( `${xhr.status} ${xhr.responseText}` );
-
-                // 400 {"meta":{"status":400,"errorCode":"BAD_REQUEST","errorMessage":"引用再生できない動画です"}}
-                let err = JSON.parse( xhr.responseText );
-                this.showAlert( `${vinfo.video_id}: ${err.meta.errorMessage}` );
+        let p = new Promise( ( resolve, reject ) =>{
+            if( !this.isConnected() ){
+                reject( null );
                 return;
             }
-            NicoLiveHistory.addHistory( vinfo );
-        };
 
-        xhr.setRequestHeader( 'Content-type', 'application/json;charset=utf-8' );
-        xhr.setRequestHeader( 'X-Public-Api-Token', this.liveProp.site.relive.csrfToken );
+            let video_id = vinfo.video_id;
+            let url = `http://live2.nicovideo.jp/unama/api/v3/programs/${this.liveProp.program.nicoliveProgramId}/broadcast/mixing`;
 
-        let data = {
-            'mixing': [
-                {
-                    'audio': 0,
-                    'content': this.liveProp.program.nicoliveProgramId,
-                    'display': 'none'
-                },
-                {
-                    'audio': volume,
-                    'content': video_id,
-                    'display': 'main'
+            let xhr = CreateXHR( 'PUT', url );
+            xhr.onreadystatechange = () =>{
+                if( xhr.readyState != 4 ) return;
+                if( xhr.status != 200 ){
+                    console.log( `${xhr.status} ${xhr.responseText}` );
+
+                    // 400 {"meta":{"status":400,"errorCode":"BAD_REQUEST","errorMessage":"引用再生できない動画です"}}
+                    let err = JSON.parse( xhr.responseText );
+                    this.showAlert( `${vinfo.video_id}: ${err.meta.errorMessage}` );
+                    reject( err );
+                    return;
                 }
-            ]
-        };
-        xhr.send( JSON.stringify( data ) );
+                NicoLiveHistory.addHistory( vinfo );
+                resolve( true );
+            };
+
+            xhr.setRequestHeader( 'Content-type', 'application/json;charset=utf-8' );
+            xhr.setRequestHeader( 'X-Public-Api-Token', this.liveProp.site.relive.csrfToken );
+
+            let data = {
+                'mixing': [
+                    {
+                        'audio': 0,
+                        'content': this.liveProp.program.nicoliveProgramId,
+                        'display': 'none'
+                    },
+                    {
+                        'audio': volume,
+                        'content': video_id,
+                        'display': 'main'
+                    }
+                ]
+            };
+            xhr.send( JSON.stringify( data ) );
+        } );
+        return p;
     },
 
     /**

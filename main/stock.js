@@ -381,11 +381,11 @@ var NicoLiveStock = {
         this.saveStocks();
     },
 
-    playVideo: function( index ){
+    playVideo: async function( index ){
         let video = this.stock[index];
         console.log( `${video.video_id} ${video.title}` );
         // TODO ボリューム指定をする
-        NicoLiveHelper.playVideo( video, 1 );
+        let ret = await NicoLiveHelper.playVideo( video, 1 );
     },
 
     onButtonClicked: function( ev ){
