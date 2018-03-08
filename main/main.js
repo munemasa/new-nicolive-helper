@@ -58,7 +58,31 @@ var NicoLiveHelper = {
         }
     },
 
-    playVideo: function( vinfo, volume ){
+    /**
+     * 動画再生時の音量設定を返す.
+     * @returns {number}
+     */
+    getVolume: function(){
+        return $( '#volume-slider' ).slider( 'value' ) / 10;
+    },
+
+    /**
+     * ボリューム変更をする.
+     * スライダーを動かすたびにリクエストするとエラーになるので
+     * 2秒の猶予を持って実行する。
+     */
+    changeVolume: function(){
+        if( this.currentVideo ){
+            clearTimeout( this._change_volume_timer );
+            this._change_volume_timer = setTimeout( () =>{
+                this.playVideo( this.currentVideo );
+            }, 2000 );
+        }
+    },
+
+    playVideo: function( vinfo ){
+        // 次動画の再生したあとに音量変更が走ると困るのでタイマーを取り消す
+        clearTimeout( this._change_volume_timer );
         let p = new Promise( ( resolve, reject ) =>{
             if( !this.isConnected() ){
                 reject( null );
@@ -72,6 +96,8 @@ var NicoLiveHelper = {
             xhr.onreadystatechange = () =>{
                 if( xhr.readyState != 4 ) return;
                 if( xhr.status != 200 ){
+                    this.currentVideo = null;
+
                     console.log( `${xhr.status} ${xhr.responseText}` );
 
                     // 400 {"meta":{"status":400,"errorCode":"BAD_REQUEST","errorMessage":"引用再生できない動画です"}}
@@ -81,12 +107,14 @@ var NicoLiveHelper = {
                     return;
                 }
                 NicoLiveHistory.addHistory( vinfo );
+                this.currentVideo = vinfo;
                 resolve( true );
             };
 
             xhr.setRequestHeader( 'Content-type', 'application/json;charset=utf-8' );
             xhr.setRequestHeader( 'X-Public-Api-Token', this.liveProp.site.relive.csrfToken );
 
+            let volume = this.getVolume();
             let data = {
                 'mixing': [
                     {
@@ -853,6 +881,21 @@ var NicoLiveHelper = {
 
         $( '#close-window' ).on( 'click', ( ev ) =>{
             window.close();
+        } );
+
+        /* 音量スライダー */
+        let handle = $( "#custom-handle" );
+        $( "#volume-slider" ).slider( {
+            value: 5,  // TODO デフォルト値を記録・復元する
+            max: 10,
+            min: 0,
+            create: function(){
+                handle.text( $( this ).slider( "value" ) * 10 );
+            },
+            slide: function( event, ui ){
+                handle.text( ui.value * 10 );
+                NicoLiveHelper.changeVolume();
+            }
         } );
     },
 
