@@ -397,7 +397,7 @@ var NicoLiveHelper = {
             mail += " 184";
         }
 
-        let vpos = Math.floor( (GetCurrentTime() - this.liveProp.program.openTime / 1000) * 100 );
+        let vpos = Math.floor( (GetCurrentTime() - this.liveProp.program.beginTime) * 100 );
         let chat = {
             "chat": {
                 "thread": this.threadId,
@@ -1098,10 +1098,18 @@ var NicoLiveHelper = {
         this.version = extension_info.version;
         console.log( 'initialize nicolivehelper.' );
 
+        /* 設定のロード */
         let result = await browser.storage.local.get( 'config' );
         console.log( 'Config loaded:' );
         MergeSimpleObject( Config, result.config );
         console.log( Config );
+
+        browser.storage.onChanged.addListener( ( changes, area ) =>{
+            if( changes.config ){
+                MergeSimpleObject( Config, changes.config.newValue );
+                console.log( Config );
+            }
+        } );
 
         this.initUI();
 
