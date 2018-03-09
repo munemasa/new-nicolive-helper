@@ -59,5 +59,8 @@
       "libs/utils.js",
       "bg/background.js"
     ]
+  },
+  "options_ui": {
+    "page": "options/options.html"
   }
 }

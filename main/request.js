@@ -92,7 +92,7 @@ var NicoLiveRequest = {
             let timestr = GetTimeString( t );
             elem = row.querySelector( '.nico-timing' );
             $( elem ).text( `+${timestr}` );
-            t += Config.play_interval + item.length_ms / 1000;
+            t += Config['videoinfo-interval'] + item.length_ms / 1000;
 
             let details = row.querySelector( '.nico-details' );
             details.setAttribute( 'id', `nico-details-${i}` );

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>New NicoLive Helper Settings</title>
+
+  <script src="../libs/external/jquery-3.2.1.js"></script>
+  <script src="options.js"></script>
+</head>
+<body>
+
+
+<fieldset>
+  <legend>動画情報</legend>
+  <div class="mb-2">
+    <label for="videoinfo-interval" class="mr-2">送信間隔</label>
+    <input id="videoinfo-interval" value="7" size="2">秒
+  </div>
+  <div style="display:flex; width:100%;">
+    <input id="vinfo-command-1" type="text" placeholder="コマンド">
+    <input id="vinfo-comment-1" type="text" style="flex:1;" placeholder="動画情報１行目">
+  </div>
+  <div style="display:flex; width:100%;">
+    <input id="vinfo-command-2" type="text" placeholder="コマンド">
+    <input id="vinfo-comment-2" type="text" style="flex:1;" placeholder="動画情報２行目">
+  </div>
+  <div style="display:flex; width:100%;">
+    <input id="vinfo-command-3" type="text" placeholder="コマンド">
+    <input id="vinfo-comment-3" type="text" style="flex:1;" placeholder="動画情報３行目">
+  </div>
+  <div style="display:flex; width:100%;">
+    <input id="vinfo-command-4" type="text" placeholder="コマンド">
+    <input id="vinfo-comment-4" type="text" style="flex:1;" placeholder="動画情報４行目">
+  </div>
+</fieldset>
+
+<div>
+  <button id="btn-save-config">設定を保存</button>
+</div>
+
+</body>
+</html>

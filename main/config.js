@@ -21,7 +21,7 @@
  */
 
 var Config = {
-    play_interval: 7,
+    'videoinfo-interval': 5,
 
     comment: {
         comment184: false,
@@ -30,5 +30,4 @@ var Config = {
         history_lines_on_connect: 50,
         autokotehan: false
     }
-
 };

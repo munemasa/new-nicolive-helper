@@ -80,6 +80,34 @@ var NicoLiveHelper = {
         }
     },
 
+    /**
+     * 動画情報をコメント
+     * @param vinfo
+     * @returns {Promise<void>}
+     */
+    sendVideoInfo: async function( vinfo ){
+        let vinfo_command = [
+            "vinfo-command-1",
+            "vinfo-command-2",
+            "vinfo-command-3",
+            "vinfo-command-4"
+        ];
+        let vinfo_comment = [
+            "vinfo-comment-1",
+            "vinfo-comment-2",
+            "vinfo-comment-3",
+            "vinfo-comment-4"
+        ];
+
+        for( let i = 0; i < vinfo_comment.length; i++ ){
+            let cmd = Config[vinfo_command[i]];
+            let txt = Config[vinfo_comment[i]];
+            if( !txt ) break;
+            this.postCasterComment( txt, cmd, '', false );
+            await Wait( Config['videoinfo-interval'] * 1000 );
+        }
+    },
+
     playVideo: function( vinfo ){
         // 次動画の再生したあとに音量変更が走ると困るのでタイマーを取り消す
         clearTimeout( this._change_volume_timer );
@@ -108,6 +136,7 @@ var NicoLiveHelper = {
                 }
                 NicoLiveHistory.addHistory( vinfo );
                 this.currentVideo = vinfo;
+                this.sendVideoInfo( vinfo );
                 resolve( true );
             };
 
@@ -135,6 +164,166 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 文字列のマクロ展開を行う.
+     * @param str 置換元も文字列
+     * @param info 動画情報
+     */
+    replaceMacros: function( str, info ){
+        let replacefunc = function( s, p ){
+            let tmp = s;
+            let expression;
+            if( expression = p.match( /^=(.*)/ ) ){
+                try{
+                    tmp = eval( expression[1] );
+                    if( tmp == undefined || tmp == null ) tmp = "";
+                }catch( x ){
+                    tmp = "";
+                }
+                return tmp;
+            }
+            switch( p ){
+            case 'id':
+                if( !info.video_id ) break;
+                tmp = info.video_id;
+                break;
+            case 'title':
+                if( !info.title ) break;
+                tmp = info.title;
+                break;
+            case 'date':
+                if( !info.first_retrieve ) break;
+                tmp = GetDateString( info.first_retrieve * 1000, true );
+                break;
+            case 'length':
+                if( !info.length ) break;
+                tmp = info.length;
+                break;
+            case 'view':
+                if( !info.view_counter && 'number' != typeof info.view_counter ) break;
+                tmp = FormatCommas( info.view_counter );
+                break;
+            case 'comment':
+                if( !info.comment_num && 'number' != typeof info.comment_num ) break;
+                tmp = FormatCommas( info.comment_num );
+                break;
+            case 'mylist':
+                if( !info.mylist_counter && 'number' != typeof info.mylist_counter ) break;
+                tmp = FormatCommas( info.mylist_counter );
+                break;
+            case 'mylistrate':
+                if( !info.mylist_counter && 'number' != typeof info.mylist_counter ) break;
+                if( !info.view_counter && 'number' != typeof info.view_counter ) break;
+                if( info.view_counter == 0 ){
+                    tmp = "0.0%";
+                }else{
+                    tmp = (100 * info.mylist_counter / info.view_counter).toFixed( 1 ) + "%";
+                }
+                break;
+            case 'tags':
+                // 1行40文字程度までかなぁ
+                if( !info.tags['jp'] ) break;
+                tmp = info.tags['jp'].join( '　' );
+                // TODO 新配信ではタグが使えないので改行しない
+                // tmp = tmp.replace( /(.{35,}?)　/g, "$1<br>" );
+                break;
+            case 'username':
+                // 動画の投稿者名
+                tmp = info.user_nickname || "";
+                break;
+            case 'pname':
+                // TODO P名
+                break;
+            case 'additional':
+                // TODO 動画DBに登録してある追加情報
+                break;
+            case 'description':
+                // 詳細を40文字まで(世界の新着と同じ)
+                tmp = info.description.match( /.{1,40}/ );
+                break;
+
+            case 'comment_no':
+                // リク主のコメント番号
+                tmp = info.comment_no || 0;
+                break;
+
+            case 'requestnum': // リク残数.
+                tmp = NicoLiveRequest.request.length;
+                break;
+            case 'requesttime': // TODO リク残時間(mm:ss).
+                let reqtime = NicoLiveRequest.getRequestTime();
+                tmp = GetTimeString( reqtime.min * 60 + reqtime.sec );
+                break;
+            case 'stocknum':  // TODO ストック残数.
+                let remainstock = 0;
+                NicoLiveStock.stock.forEach( function( item ){
+                    if( !item.is_played ) remainstock++;
+                } );
+                tmp = remainstock;
+                break;
+            case 'stocktime': // TODO ストック残時間(mm:ss).
+                let stocktime = NicoLiveStock.getStockTime();
+                tmp = GetTimeString( stocktime.min * 60 + stocktime.sec );
+                break;
+
+            case 'mylistcomment':
+                // マイリストコメント
+                tmp = info.mylistcomment;
+                if( !tmp ) tmp = "";
+                break;
+
+            case 'pref:min-ago':
+                // 枠終了 n 分前通知の設定値.
+                tmp = Config.notice.time;
+                break;
+
+            case 'end-time':
+                // 放送の終了時刻.
+                tmp = GetDateString( NicoLiveHelper.liveProp.program.endTime * 1000, true );
+                break;
+
+            case 'live-id':
+                tmp = NicoLiveHelper.liveProp.program.nicoliveProgramId;
+                break;
+            case 'live-title':
+                tmp = NicoLiveHelper.liveProp.program.title;
+                break;
+            }
+            return tmp;
+        };
+        // String.replace()だとネストが処理できないので自前で置換
+        let r = "";
+        let token = "";
+        let nest = 0;
+        for( let i = 0, ch; ch = str.charAt( i ); i++ ){
+            switch( nest ){
+            case 0:
+                if( ch == '{' ){
+                    nest++;
+                    token += ch;
+                    break;
+                }
+                r += ch;
+                break;
+            default:
+                token += ch;
+                if( ch == '{' ) nest++;
+                if( ch == '}' ){
+                    nest--;
+                    if( nest <= 0 ){
+                        try{
+                            r += replacefunc( token, token.substring( 1, token.length - 1 ) );
+                        }catch( x ){
+                        }
+                        token = "";
+                    }
+                }
+                break;
+            }
+        }
+        return r;
+    },
+
+    /**
      * 新配信で運営コメント送信をする.
      *
      * isPermコメントを消すには clearApiUrl に DELETE リクエストを送る
@@ -154,7 +343,7 @@ var NicoLiveHelper = {
         let url = this.liveProp.program.broadcasterComment.postApiUrl;
 
         // TODO 現状主コメは80文字までなのでマクロ展開する余地があるかどうか
-        // text = this.replaceMacros( text, info );
+        text = this.replaceMacros( text, this.currentVideo );
 
         let xhr = CreateXHR( 'PUT', url );
         xhr.onreadystatechange = () =>{
@@ -879,6 +1068,10 @@ var NicoLiveHelper = {
             NicoLiveComment.saveFile();
         } );
 
+        $( '#open-settings' ).on( 'click', ( ev ) =>{
+            browser.runtime.openOptionsPage();
+        } );
+
         $( '#close-window' ).on( 'click', ( ev ) =>{
             window.close();
         } );
@@ -907,7 +1100,8 @@ var NicoLiveHelper = {
 
         let result = await browser.storage.local.get( 'config' );
         console.log( 'Config loaded:' );
-        console.log( result );
+        MergeSimpleObject( Config, result.config );
+        console.log( Config );
 
         this.initUI();
 
