@@ -27,6 +27,9 @@ var NicoLiveHelper = {
     nico_user_id: '',   ///< ニコニコ動画のユーザーID
     is_premium: 0,      ///< プレミアム会員かどうか
 
+    currentVideo: null, ///< 現在再生中の動画
+
+    // コメント送信に必要な要素
     ticket: '',
     threadId: '',
     postkey: '',
@@ -67,6 +70,14 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 経過時間表示のバー長を設定する.
+     * @param p
+     */
+    setProgressMain: function( p ){
+        $( '#progressbar-main' ).width( p + "%" );
+    },
+
+    /**
      * ボリューム変更をする.
      * スライダーを動かすたびにリクエストするとエラーになるので
      * 2秒の猶予を持って実行する。
@@ -75,7 +86,7 @@ var NicoLiveHelper = {
         if( this.currentVideo ){
             clearTimeout( this._change_volume_timer );
             this._change_volume_timer = setTimeout( () =>{
-                this.playVideo( this.currentVideo );
+                this.playVideo( this.currentVideo, true );
             }, 2000 );
         }
     },
@@ -108,7 +119,13 @@ var NicoLiveHelper = {
         }
     },
 
-    playVideo: function( vinfo ){
+    /**
+     * 動画を再生する
+     * @param vinfo 再生したい動画情報
+     * @param is_change_volume ボリューム変更のみ
+     * @returns {Promise<any>}
+     */
+    playVideo: function( vinfo, is_change_volume ){
         // 次動画の再生したあとに音量変更が走ると困るのでタイマーを取り消す
         clearTimeout( this._change_volume_timer );
         let p = new Promise( ( resolve, reject ) =>{
@@ -118,25 +135,30 @@ var NicoLiveHelper = {
             }
 
             let video_id = vinfo.video_id;
-            let url = `http://live2.nicovideo.jp/unama/api/v3/programs/${this.liveProp.program.nicoliveProgramId}/broadcast/mixing`;
+            let url = `http://live2.nicovideo.jp/unama/api/v3/programs/${this.getLiveId()}/broadcast/mixing`;
 
             let xhr = CreateXHR( 'PUT', url );
             xhr.onreadystatechange = () =>{
                 if( xhr.readyState != 4 ) return;
                 if( xhr.status != 200 ){
-                    this.currentVideo = null;
-
                     console.log( `${xhr.status} ${xhr.responseText}` );
 
                     // 400 {"meta":{"status":400,"errorCode":"BAD_REQUEST","errorMessage":"引用再生できない動画です"}}
                     let err = JSON.parse( xhr.responseText );
                     this.showAlert( `${vinfo.video_id}: ${err.meta.errorMessage}` );
+                    //this.currentVideo = null;
                     reject( err );
                     return;
                 }
                 NicoLiveHistory.addHistory( vinfo );
-                this.currentVideo = vinfo;
-                this.sendVideoInfo( vinfo );
+                this.currentVideo = CopyObject( vinfo );
+                if( !is_change_volume ){
+                    this.sendVideoInfo( vinfo );
+
+                    let now = GetCurrentTime();
+                    this.currentVideo.play_begin = now;
+                    this.currentVideo.play_end = now + parseInt( this.currentVideo.length_ms / 1000 );
+                }
                 resolve( true );
             };
 
@@ -1040,13 +1062,35 @@ var NicoLiveHelper = {
         }, 4000 );
     },
 
+
+    updateVideoProgress: function( now ){
+        // 動画の経過時間
+        try{
+            let current = this.currentVideo;
+            let remain = current.play_end - now;
+            if( remain < 0 ) remain = 0;
+            $( '#remaining-time-main' ).text( `${current.title}(-${GetTimeString( remain )})` );
+
+            let len = parseInt( current.length_ms / 1000 );
+            let t = now - current.play_begin;
+
+            let percent = parseInt( (t / len) * 100 );
+            if( percent > 100 ) percent = 100;
+            this.setProgressMain( percent );
+        }catch( e ){
+        }
+    },
+
     /**
      * 毎秒更新処理.
      */
     update: function(){
         let now = GetCurrentTime();
-        let liveprogress = now - this.liveProp.program.beginTime;
 
+        this.updateVideoProgress( now );
+
+        // 生放送の経過時間
+        let liveprogress = now - this.liveProp.program.beginTime;
         $( '#live-progress' ).text( liveprogress < 0 ? `-${GetTimeString( -liveprogress )}` : GetTimeString( liveprogress ) );
     },
 

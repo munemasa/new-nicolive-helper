@@ -36,6 +36,15 @@ function Wait( ms ){
 }
 
 /**
+ * オブジェクトを複製する.
+ * @param obj
+ * @returns {any}
+ */
+function CopyObject( obj ){
+    return JSON.parse( JSON.stringify( obj ) );
+}
+
+/**
  *
  * @param ch
  * @returns {string|XML|*}

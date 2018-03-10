@@ -298,6 +298,7 @@ textarea {
   resize: vertical;
 }
 
+/*
 fieldset {
   min-width: 0;
   padding: 0;
@@ -316,6 +317,7 @@ legend {
   color: inherit;
   white-space: normal;
 }
+*/
 
 progress {
   vertical-align: baseline;

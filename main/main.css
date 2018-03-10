@@ -27,6 +27,20 @@ html, body {
     margin: 0 4px;
 }
 
+fieldset {
+    padding: 0 4px 4px 4px;
+    border-radius: 2px;
+}
+
+/* 再生中動画の進行表示 */
+.progress {
+    border: 1px #999999 inset;
+}
+
+#progressbar-main {
+    background-color: #6bd0ee !important;
+}
+
 header {
     background-color: #ededef;
 
