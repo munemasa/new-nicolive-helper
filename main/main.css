@@ -213,6 +213,20 @@ footer {
 /*
  動画情報のスタイル
  */
+.no_live_play:after {
+    font-family: 'Glyphicons Halflings';
+    content: "\e090[生放送不可]";
+    color: red;
+    font-weight: bold;
+}
+
+.nico-title.self_request:before {
+    font-family: 'Glyphicons Halflings';
+    content: "\e125[自貼り]";
+    color: green;
+    font-weight: bold;
+}
+
 .nico-description {
     display: block;
 }
