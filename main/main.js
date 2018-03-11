@@ -27,6 +27,8 @@ var NicoLiveHelper = {
     nico_user_id: '',   ///< ニコニコ動画のユーザーID
     is_premium: 0,      ///< プレミアム会員かどうか
 
+    live_begintime: 0,  ///< 放送開始時刻(UNIX時間)
+    live_endtime: 0,    ///< 放送終了時刻(UNIX時間)
     currentVideo: null, ///< 現在再生中の動画
 
     // コメント送信に必要な要素
@@ -77,6 +79,7 @@ var NicoLiveHelper = {
         $( '#progressbar-main' ).width( p + "%" );
     },
 
+
     /**
      * ボリューム変更をする.
      * スライダーを動かすたびにリクエストするとエラーになるので
@@ -93,7 +96,7 @@ var NicoLiveHelper = {
 
     /**
      * 動画情報をコメント
-     * @param vinfo
+     * @param vinfo{VideoInformation}
      * @returns {Promise<void>}
      */
     sendVideoInfo: async function( vinfo ){
@@ -111,12 +114,59 @@ var NicoLiveHelper = {
         ];
 
         for( let i = 0; i < vinfo_comment.length; i++ ){
-            let cmd = Config[vinfo_command[i]];
-            let txt = Config[vinfo_comment[i]];
+            let cmd = Config[vinfo_command[i]] || '';
+            let txt = Config[vinfo_comment[i]] || '';
             if( !txt ) break;
             this.postCasterComment( txt, cmd, '', false );
             await Wait( Config['videoinfo-interval'] * 1000 );
         }
+    },
+
+    /**
+     * 動画再生を停止する.
+     * @returns {Promise<any>}
+     */
+    stopVideo: function(){
+        let p = new Promise( ( resolve, reject ) =>{
+            if( !this.isConnected() ){
+                reject( null );
+                return;
+            }
+
+            let url = `http://live2.nicovideo.jp/unama/api/v3/programs/${this.getLiveId()}/broadcast/mixing`;
+            let xhr = CreateXHR( 'PUT', url );
+            xhr.onreadystatechange = () =>{
+                if( xhr.readyState != 4 ) return;
+                if( xhr.status != 200 ){
+                    console.log( `${xhr.status} ${xhr.responseText}` );
+
+                    // 400 {"meta":{"status":400,"errorCode":"BAD_REQUEST","errorMessage":"引用再生できない動画です"}}
+                    let err = JSON.parse( xhr.responseText );
+                    this.showAlert( `${err.meta.errorMessage}` );
+                    //this.currentVideo = null;
+                    reject( err );
+                    return;
+                }
+                this.currentVideo = null;
+                resolve( true );
+            };
+
+            xhr.setRequestHeader( 'Content-type', 'application/json;charset=utf-8' );
+            xhr.setRequestHeader( 'X-Public-Api-Token', this.liveProp.site.relive.csrfToken );
+
+            let volume = this.getVolume();
+            let data = {
+                'mixing': [
+                    {
+                        'audio': 0,
+                        'content': this.liveProp.program.nicoliveProgramId,
+                        'display': 'main'
+                    }
+                ]
+            };
+            xhr.send( JSON.stringify( data ) );
+        } );
+        return p;
     },
 
     /**
@@ -133,7 +183,12 @@ var NicoLiveHelper = {
                 reject( null );
                 return;
             }
-            
+            if( GetCurrentTime() >= this.live_endtime ){
+                this.showAlert( `放送終了時刻を過ぎたため再生できません` );
+                reject( null );
+                return null;
+            }
+
             let video_id = vinfo.video_id;
             let url = `http://live2.nicovideo.jp/unama/api/v3/programs/${this.getLiveId()}/broadcast/mixing`;
 
@@ -182,6 +237,47 @@ var NicoLiveHelper = {
                 ]
             };
             xhr.send( JSON.stringify( data ) );
+        } );
+        return p;
+    },
+
+    /**
+     * 現在再生している動画IDを返す.
+     * mixingを叩くので生主専用。
+     * @returns {Promise<any>}
+     */
+    getCurrentVideo: function(){
+        let p = new Promise( ( resolve, reject ) =>{
+            if( !this.isConnected() ){
+                resolve( '' );
+                return;
+            }
+
+            let url = `http://live2.nicovideo.jp/unama/api/v3/programs/${this.getLiveId()}/broadcast/mixing`;
+
+            let xhr = CreateXHR( 'GET', url );
+            xhr.onreadystatechange = () =>{
+                if( xhr.readyState != 4 ) return;
+                if( xhr.status != 200 ){
+                    console.log( `${xhr.status} ${xhr.responseText}` );
+                    let err = JSON.parse( xhr.responseText );
+                    reject( err );
+                    return;
+                }
+
+                let cur = JSON.parse( xhr.responseText );
+                for( let video of cur.data.mixing ){
+                    if( video.content.match( /((sm|nm)\d+)/ ) ){
+                        resolve( video.content );
+                    }
+                }
+                resolve( '' );
+            };
+
+            xhr.setRequestHeader( 'Content-type', 'application/json;charset=utf-8' );
+            xhr.setRequestHeader( 'X-Public-Api-Token', this.liveProp.site.relive.csrfToken );
+
+            xhr.send();
         } );
         return p;
     },
@@ -649,6 +745,8 @@ var NicoLiveHelper = {
                 break;
             case 'currentstream':
                 // ライブ動画配信のアドレス
+                console.log( 'currentstream' );
+                console.log( data );
                 break;
             case 'currentroom':
                 // コメントサーバー
@@ -673,6 +771,8 @@ var NicoLiveHelper = {
                 // body.update.endtime;
                 console.log( `begin time:${body.update.begintime}, end time:${body.update.endtime}` );
                 $( '#live-progress' ).attr( 'title', `終了日時: ${GetDateTimeString( body.update.endtime, 1 )}` );
+                this.live_begintime = body.update.begintime;
+                this.live_endtime = body.update.endtime;
                 break;
             case 'postkey':
                 this.postkey = body.params[0];
@@ -895,7 +995,7 @@ var NicoLiveHelper = {
 
     /**
      * 動画情報の表示用のエレメントを作成して返す.
-     * @param vinfo
+     * @param vinfo{VideoInformation}
      * @returns {Node}
      */
     createVideoInfoElement: function( vinfo ){
@@ -903,6 +1003,9 @@ var NicoLiveHelper = {
         let clone2 = document.importNode( t.content, true );
         let elem = clone2.firstElementChild;
         elem.setAttribute( 'nico_video_id', vinfo.video_id );
+        if( vinfo.is_played ){
+            $( elem ).addClass( 'video_played' );
+        }
 
         let thumbnail_image = elem.querySelector( '.nico-thumbnail' );
         let bitrate = elem.querySelector( '.nico-bitrate' );
@@ -1099,6 +1202,9 @@ var NicoLiveHelper = {
     },
 
     initUI: async function(){
+        $( '#btn-stop-play' ).on( 'click', ( ev ) =>{
+            this.stopVideo();
+        } );
         $( '#mylist-manager' ).on( 'click', ( ev ) =>{
             window.open( 'mylistmanager/mylistmanager.html', 'nicolivehelperx_mylistmanager',
                 'width=640,height=480,menubar=no,toolbar=no,location=no' );

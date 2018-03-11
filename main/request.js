@@ -337,9 +337,11 @@ var NicoLiveRequest = {
     playVideo: async function( index ){
         let video = this.request[index];
         console.log( `${video.video_id} ${video.title}` );
-        // TODO ボリューム指定をする
         try{
             let ret = await NicoLiveHelper.playVideo( video );
+            let removeditem = this.request.splice( index, 1 );
+            this.redrawRequests();
+            this.saveRequests();
         }catch( e ){
             if( e ){
                 // 再生できない動画には生放送不可のマークを追加する
@@ -348,6 +350,7 @@ var NicoLiveRequest = {
                 let mail = '';
                 let text = `${video.video_id}: ${e.meta.errorMessage}`;
                 NicoLiveHelper.postCasterComment( text, mail, name, isPerm );
+                // TODO 引用できないのか、放送終了しているのか判断できない
                 video.no_live_play = 1;
                 this.redrawRequests();
             }

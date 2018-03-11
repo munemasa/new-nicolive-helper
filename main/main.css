@@ -29,7 +29,7 @@ html, body {
 
 fieldset {
     padding: 0 4px 4px 4px;
-    border-radius: 2px;
+    border-radius: 0;
 }
 
 /* 再生中動画の進行表示 */
@@ -224,6 +224,16 @@ footer {
     font-family: 'Glyphicons Halflings';
     content: "\e125[自貼り]";
     color: green;
+    font-weight: bold;
+}
+
+.video_played {
+    background-color: #e6e6e6;
+}
+
+.video_played .nico-title:after {
+    font-family: 'Glyphicons Halflings';
+    content: ' \e013[再生済み]';
     font-weight: bold;
 }
 

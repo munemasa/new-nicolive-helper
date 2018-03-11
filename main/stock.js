@@ -384,8 +384,14 @@ var NicoLiveStock = {
     playVideo: async function( index ){
         let video = this.stock[index];
         console.log( `${video.video_id} ${video.title}` );
-        // TODO ボリューム指定をする
-        let ret = await NicoLiveHelper.playVideo( video );
+        try{
+            let ret = await NicoLiveHelper.playVideo( video );
+            video.is_played = true;
+            this.redrawStocks();
+            this.saveStocks();
+        }catch( e ){
+
+        }
     },
 
     onButtonClicked: function( ev ){

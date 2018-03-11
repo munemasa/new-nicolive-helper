@@ -57,10 +57,15 @@
 
   <fieldset>
     <legend>メイン画面</legend>
-    <div class="progress" style="font-size:10px; height:1.5em;">
-      <span id="remaining-time-main" style="position:fixed;padding-left: 0.5em;">---(-0:00)</span>
-      <div id="progressbar-main" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-           style="width: 0%" aria-valuemin="0" aria-valuemax="100"></div>
+    <div style="display:flex;">
+      <div class="progress flex1" style="font-size:10.5px; height:1.5em;">
+        <span id="remaining-time-main" style="position:fixed;padding-left: 0.5em;">---(-0:00)</span>
+        <div id="progressbar-main" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+             style="width: 0%" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+      <div>
+        <button id="btn-stop-play" type="button" class="btn btn-sm btn-danger p-0 pr-2 pl-2">再生終了</button>
+      </div>
     </div>
   </fieldset>
 
