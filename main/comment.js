@@ -151,7 +151,7 @@ var NicoLiveComment = {
      * 自動コテハン登録
      */
     autoKotehan: async function( chat ){
-        if( !Config.comment.autokotehan ) return;
+        if( !Config['auto-kotehan'] ) return;
         if( chat.premium == 2 || chat.premium == 3 ) return;
         if( chat.date < NicoLiveHelper.connecttime ) return; // 過去ログ無視.
 
@@ -195,7 +195,7 @@ var NicoLiveComment = {
         this.commentlog.push( comment );
 
         // 表示行数に切り詰め
-        if( table.rows.length >= Config.comment.display_lines ){
+        if( table.rows.length >= Config['comment-dispay-lines'] ){
             table.deleteRow( table.rows.length - 1 );
         }
 

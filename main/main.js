@@ -398,11 +398,11 @@ var NicoLiveHelper = {
 
             case 'end-time':
                 // 放送の終了時刻.
-                tmp = GetDateString( NicoLiveHelper.liveProp.program.endTime * 1000, true );
+                tmp = GetDateString( NicoLiveHelper.live_endtime * 1000, true );
                 break;
 
             case 'live-id':
-                tmp = NicoLiveHelper.liveProp.program.nicoliveProgramId;
+                tmp = NicoLiveHelper.getLiveId();
                 break;
             case 'live-title':
                 tmp = NicoLiveHelper.liveProp.program.title;
@@ -683,8 +683,8 @@ var NicoLiveHelper = {
             console.log( 'comment server connected.' );
             this.connecttime = GetCurrentTime();
 
-            // TODO 過去ログ取得行数指定
-            let lines = Config.comment.history_lines_on_connect * -1;
+            // 過去ログ取得行数指定
+            let lines = Config['comment-backlog-num'] * -1;
             // let lines = -50;
             let str = {
                 "thread": {
