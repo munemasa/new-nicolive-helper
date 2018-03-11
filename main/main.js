@@ -513,7 +513,7 @@ var NicoLiveHelper = {
             this.sendComment( mail, text );
         };
 
-        if( Config.comment.comment184 ){
+        if( Config['comment-184'] ){
             mail += " 184";
         }
 
