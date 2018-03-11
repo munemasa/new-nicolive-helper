@@ -73,7 +73,7 @@ var NicoLiveHelper = {
 
     /**
      * 経過時間表示のバー長を設定する.
-     * @param p
+     * @param p パーセンテージ数
      */
     setProgressMain: function( p ){
         $( '#progressbar-main' ).width( p + "%" );
@@ -148,6 +148,7 @@ var NicoLiveHelper = {
                     return;
                 }
                 this.currentVideo = null;
+                this.setProgressMain( 0 );
                 resolve( true );
             };
 
@@ -1246,6 +1247,7 @@ var NicoLiveHelper = {
             if( percent > 100 ) percent = 100;
             this.setProgressMain( percent );
         }catch( e ){
+            $( '#remaining-time-main' ).text( `---(-0:00)` );
         }
     },
 
