@@ -121,7 +121,7 @@ var NicoLiveHelper = {
 
     /**
      * 動画を再生する
-     * @param vinfo 再生したい動画情報
+     * @param vinfo{VideoInformation} 再生したい動画情報
      * @param is_change_volume ボリューム変更のみ
      * @returns {Promise<any>}
      */
@@ -133,7 +133,7 @@ var NicoLiveHelper = {
                 reject( null );
                 return;
             }
-
+            
             let video_id = vinfo.video_id;
             let url = `http://live2.nicovideo.jp/unama/api/v3/programs/${this.getLiveId()}/broadcast/mixing`;
 
@@ -150,9 +150,10 @@ var NicoLiveHelper = {
                     reject( err );
                     return;
                 }
-                NicoLiveHistory.addHistory( vinfo );
                 this.currentVideo = CopyObject( vinfo );
                 if( !is_change_volume ){
+                    // 再生成功したら、再生履歴に記録する
+                    NicoLiveHistory.addHistory( vinfo );
                     this.sendVideoInfo( vinfo );
 
                     let now = GetCurrentTime();
