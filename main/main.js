@@ -517,7 +517,7 @@ var NicoLiveHelper = {
             mail += " 184";
         }
 
-        let vpos = Math.floor( (GetCurrentTime() - this.liveProp.program.beginTime) * 100 );
+        let vpos = Math.floor( (GetCurrentTime() - this.live_begintime / 1000) * 100 );
         let chat = {
             "chat": {
                 "thread": this.threadId,
@@ -664,6 +664,21 @@ var NicoLiveHelper = {
     },
 
     /**
+     * プログレスバーの表示を初期状態にする.
+     * @returns {Promise<void>}
+     */
+    initProgressBar: async function(){
+        let video_id = await this.getCurrentVideo();
+        if( !video_id ) return;
+
+        let vinfo = await this.getVideoInfo( video_id );
+        this.currentVideo = vinfo;
+        this.currentVideo.play_begin = GetCurrentTime();
+        this.currentVideo.play_end = GetCurrentTime();
+        $( '#remaining-time-main' ).text( vinfo.title );
+    },
+
+    /**
      * WebSocketでコメントサーバーに接続する.
      * @param room
      */
@@ -706,6 +721,8 @@ var NicoLiveHelper = {
             let hist;
             hist = `${this.liveProp.program.nicoliveProgramId} ${this.liveProp.program.title} (${GetDateString( this.liveProp.program.beginTime * 1000, true )}-)\n`;
             NicoLiveHistory.addHistoryText( hist );
+
+            this.initProgressBar();
         } );
         this._comment_svr.onReceive( ( ev ) =>{
             let data = JSON.parse( ev.data );
