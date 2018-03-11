@@ -568,6 +568,10 @@ var NicoLiveHelper = {
         switch( chat.premium ){
         case 2: // チャンネル生放送の場合、こちらの場合もあり。/infoコマンドなどもココ
         case 3: // 運営コメント
+            if( chat.text.match( /^\/disconnect/ ) ){
+                this.showAlert( `放送が終了しました` );
+                this.live_endtime = 0;
+            }
             break;
 
         case 1: // プレミアム会員
