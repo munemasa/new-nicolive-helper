@@ -39,11 +39,15 @@ var NicoLiveStock = {
             let vinfo = await NicoLiveHelper.getVideoInfo( q.video_id );
             vinfo.video_id = q.video_id;
 
-            this.stock.push( vinfo );
-            let elem = NicoLiveHelper.createVideoInfoElement( vinfo );
-            $( '#stock-table-body' ).append( elem );
-
-            this.updateBadgeAndTime();
+            if( !this.stock.find( ( s ) =>{
+                    return s.video_id == q.video_id;
+                } ) ){
+                // 重複していないものだけ追加
+                this.stock.push( vinfo );
+                let elem = NicoLiveHelper.createVideoInfoElement( vinfo );
+                $( '#stock-table-body' ).append( elem );
+                this.updateBadgeAndTime();
+            }
         }catch( e ){
             // TODO 削除済み動画
         }
@@ -126,7 +130,7 @@ var NicoLiveStock = {
 
 
     /**
-     * リクエストを追加する
+     * リクエストを複数追加する
      * @param video_id
      * @returns {Promise<void>}
      */
