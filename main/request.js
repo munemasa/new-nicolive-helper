@@ -351,8 +351,8 @@ var NicoLiveRequest = {
                 let text = `${video.video_id}: ${e.meta.errorMessage}`;
                 NicoLiveHelper.postCasterComment( text, mail, name, isPerm );
                 // TODO 引用できないのか、放送終了しているのか判断できない
-                video.no_live_play = 1;
-                this.redrawRequests();
+                // video.no_live_play = 1;
+                // this.redrawRequests();
             }
         }
     },
