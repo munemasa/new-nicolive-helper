@@ -994,6 +994,66 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 配列をソートする.
+     * @param queue ソートする配列
+     * @param type ソート方法
+     * @param order 昇順(1) or 降順(-1)
+     */
+    sortVideoList: function( queue, type, order ){
+        // order:1だと昇順、order:-1だと降順.
+        queue.sort( function( a, b ){
+            let tmpa, tmpb;
+            switch( type ){
+            case 0:// 再生数.
+                tmpa = a.view_counter;
+                tmpb = b.view_counter;
+                break;
+            case 1:// コメ.
+                tmpa = a.comment_num;
+                tmpb = b.comment_num;
+                break;
+            case 2:// マイリス.
+                tmpa = a.mylist_counter;
+                tmpb = b.mylist_counter;
+                break;
+            case 3:// 時間.
+                tmpa = a.length_ms;
+                tmpb = b.length_ms;
+                break;
+            case 4:// 投稿日.
+            default:
+                tmpa = a.first_retrieve;
+                tmpb = b.first_retrieve;
+                break;
+            case 5:// マイリス率.
+                tmpa = a.mylist_counter / a.view_counter;
+                tmpb = b.mylist_counter / b.view_counter;
+                break;
+            case 6:// タイトル.
+                if( a.title < b.title ){
+                    return -order;
+                }else{
+                    return order;
+                }
+                break;
+            case 7:// マイリス登録日.
+                tmpa = a.registerDate;
+                tmpb = b.registerDate;
+                break;
+            case 8:// 宣伝ポイント.
+                tmpa = a.uadp;
+                tmpb = b.uadp;
+                break;
+            case 9:// ビットレート
+                tmpa = a.highbitrate;
+                tmpb = b.highbitrate;
+                break;
+            }
+            return (tmpa - tmpb) * order;
+        } );
+    },
+
+    /**
      * 動画情報の表示用のエレメントを作成して返す.
      * @param vinfo{VideoInformation}
      * @returns {Node}

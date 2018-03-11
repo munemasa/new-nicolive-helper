@@ -311,6 +311,41 @@ var NicoLiveStock = {
         this.updateBadgeAndTime();
     },
 
+    sortStock: function( target, order ){
+        let type = 0;
+        switch( target ){
+        case '#play':
+            type = 0;
+            break;
+        case '#comment':
+            type = 1;
+            break;
+        case '#mylist':
+            type = 2;
+            break;
+        case '#length':
+            type = 3;
+            break;
+        case '#date':
+            type = 4;
+            break;
+        case '#mylistrate':
+            type = 5;
+            break;
+        case '#title':
+            type = 6;
+            break;
+        case '#bitrate':
+            type = 9;
+            break;
+
+        default:
+            return;
+        }
+        NicoLiveHelper.sortVideoList( this.stock, type, order );
+        this.redrawStocks();
+        this.saveStocks();
+    },
 
     moveUp: function( tr, index ){
         if( index <= 0 ) return;
@@ -556,6 +591,15 @@ var NicoLiveStock = {
             this.removePlayedStock();
         } );
 
+        //--- 並べ替えメニュー
+        $( '#stock-sort-ascending-order a' ).on( 'click', ( ev ) =>{
+            let target = $( ev.target ).attr( "href" );
+            this.sortStock( target, 1 );
+        } );
+        $( '#stock-sort-descending-order a' ).on( 'click', ( ev ) =>{
+            let target = $( ev.target ).attr( "href" );
+            this.sortStock( target, -1 );
+        } );
 
         $( '#btn-add-stock' ).on( 'click', ( ev ) =>{
             let str = $( '#input-stock-video' ).val();
