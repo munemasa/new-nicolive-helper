@@ -74,31 +74,15 @@ async function LoadOptions(){
     console.log( result );
 
     let config = result.config;
-    // LoadBool( 'auto-open-window', config, false );
-    // LoadBool( 'ss-format-jpeg', config, false );
-    // LoadBool( 'notify-popup', config, false );
-    // LoadBool( 'popup-mission-finished', config, false );
-    // LoadBool( 'popup-mission-1min-before', config, false );
-    // LoadBool( 'popup-repair-finished', config, false );
-    // LoadBool( 'popup-repair-1min-before', config, false );
-    // LoadBool( 'popup-build-finished', config, false );
-    // LoadBool( 'popup-build-1min-before', config, false );
-    //
-    // LoadValue( 'snd-mission-finished', config, '' );
-    // LoadValue( 'snd-mission-finish-soon', config, '' );
-    // LoadValue( 'snd-repair-finished', config, '' );
-    // LoadValue( 'snd-repair-finish-soon', config, '' );
-    // LoadValue( 'snd-build-finished', config, '' );
-    // LoadValue( 'snd-build-finish-soon', config, '' );
-    // LoadValue( 'webhook', config, '' );
-    //
-    // LoadValue( 'webhook-drop-create-ship', config, '' );
-    //
-    // LoadValue( 'font-size', config, 9 );
 
-    LoadValue( 'videoinfo-interval', config, 7 );
+    /* コメント */
+    LoadBool( 'comment-184', config, false );
+    LoadBool( 'auto-kotehan', config, false );
+    LoadValue( 'comment-dispay-lines', config, 500 );
+    LoadValue( 'comment-backlog-num', config, 50 );
 
     /* 動画情報 */
+    LoadValue( 'videoinfo-interval', config, 7 );
     let i = 0;
     for( let k of g_vinfokey ){
         LoadValue( k, config, g_vinfo_defvalue[i] );
@@ -112,27 +96,12 @@ function SaveOptions( ev ){
     console.log( 'save settings' );
 
     let config = {};
-    // SaveBool( 'auto-open-window', config );
-    // SaveBool( 'ss-format-jpeg', config );
-    // SaveBool( 'notify-popup', config );
-    // SaveBool( 'popup-mission-finished', config );
-    // SaveBool( 'popup-mission-1min-before', config );
-    // SaveBool( 'popup-repair-finished', config );
-    // SaveBool( 'popup-repair-1min-before', config );
-    // SaveBool( 'popup-build-finished', config );
-    // SaveBool( 'popup-build-1min-before', config );
-    //
-    // SaveValue( 'snd-mission-finished', config );
-    // SaveValue( 'snd-mission-finish-soon', config );
-    // SaveValue( 'snd-repair-finished', config );
-    // SaveValue( 'snd-repair-finish-soon', config );
-    // SaveValue( 'snd-build-finished', config );
-    // SaveValue( 'snd-build-finish-soon', config );
-    // SaveValue( 'webhook', config );
-    // SaveValue( 'webhook-drop-create-ship', config );
-    //
-    // SaveValue( 'font-size', config );
 
+    /* コメント */
+    SaveBool( 'comment-184', config );
+    SaveBool( 'auto-kotehan', config );
+    SaveInt( 'comment-dispay-lines', config );
+    SaveInt( 'comment-backlog-num', config );
 
     /* 動画情報 */
     SaveInt( 'videoinfo-interval', config );
