@@ -27,8 +27,8 @@ var NicoLiveHelper = {
     nico_user_id: '',   ///< ニコニコ動画のユーザーID
     is_premium: 0,      ///< プレミアム会員かどうか
 
-    live_begintime: 0,  ///< 放送開始時刻(UNIX時間)
-    live_endtime: 0,    ///< 放送終了時刻(UNIX時間)
+    live_begintime: 0,  ///< 放送開始時刻(UNIX時間ms)
+    live_endtime: 0,    ///< 放送終了時刻(UNIX時間ms)
     currentVideo: null, ///< 現在再生中の動画
 
     // コメント送信に必要な要素
@@ -184,7 +184,7 @@ var NicoLiveHelper = {
                 reject( null );
                 return;
             }
-            if( GetCurrentTime() >= this.live_endtime ){
+            if( GetCurrentTime() >= this.live_endtime / 1000 ){
                 this.showAlert( `放送終了時刻を過ぎたため再生できません` );
                 reject( null );
                 return null;
@@ -398,7 +398,7 @@ var NicoLiveHelper = {
 
             case 'end-time':
                 // 放送の終了時刻.
-                tmp = GetDateString( NicoLiveHelper.live_endtime * 1000, true );
+                tmp = GetDateString( NicoLiveHelper.live_endtime, true );
                 break;
 
             case 'live-id':
