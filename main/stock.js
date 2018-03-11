@@ -381,6 +381,18 @@ var NicoLiveStock = {
         this.saveStocks();
     },
 
+    /**
+     * 再生済み動画を削除
+     */
+    removePlayedStock: function(){
+        let newstock = this.stock.filter( ( s ) =>{
+            return !s.is_played
+        } );
+        this.stock = newstock;
+        this.redrawStocks();
+        this.saveStocks();
+    },
+
     playVideo: async function( index ){
         let video = this.stock[index];
         console.log( `${video.video_id} ${video.title}` );
@@ -537,7 +549,7 @@ var NicoLiveStock = {
         } );
 
         $( '#menu-remove-played' ).on( 'click', ( ev ) =>{
-            // TODO 再生済みのストック削除
+            this.removePlayedStock();
         } );
 
 
