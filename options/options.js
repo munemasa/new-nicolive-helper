@@ -73,7 +73,7 @@ async function LoadOptions(){
     let result = await browser.storage.local.get( 'config' );
     console.log( result );
 
-    let config = result.config;
+    let config = result.config || {};
 
     /* コメント */
     LoadBool( 'comment-184', config, false );
