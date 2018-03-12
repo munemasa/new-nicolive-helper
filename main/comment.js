@@ -288,7 +288,7 @@ var NicoLiveComment = {
             }
         }
         try{
-            td.innerHTML = str;
+            $( td ).html( str );
 
             // 動画IDのサムネイル表示
             let links = td.querySelectorAll( 'a' );
