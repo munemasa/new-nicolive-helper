@@ -422,7 +422,7 @@ let MyListManager = {
         for( let i = 0, item; item = items[i]; i++ ){
             let ind = item.rowIndex;
             str += videos[ind].item_id + " ";
-            html += item.innerHTML;
+            //html += item.innerHTML;
         }
         dt.setData( 'text/plain', str );
         // dt.setData( 'text/html', html );
