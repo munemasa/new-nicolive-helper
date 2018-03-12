@@ -32,6 +32,22 @@ fieldset {
     border-radius: 0;
 }
 
+#status-autoplay {
+    opacity: 0.25;
+}
+
+#status-autoplay.autoplaying {
+    opacity: 1;
+}
+
+#status-allow-request {
+    opacity: 0.25;
+}
+
+#status-allow-request.allowrequest {
+    opacity: 1;
+}
+
 /* 再生中動画の進行表示 */
 .progress {
     border: 1px #999999 inset;

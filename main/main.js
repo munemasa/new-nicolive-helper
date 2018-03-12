@@ -55,6 +55,21 @@ var NicoLiveHelper = {
         }
     },
 
+    /**
+     * プレイスタイルを返す.
+     * 0: 手動
+     * 1: 自動順次
+     * 2: 自動ランダム
+     * @returns {number}
+     */
+    getPlayStyle: function(){
+        return parseInt( $( '#sel-playstyle' ).val() );
+    },
+
+    getRequestAllowedStatus: function(){
+        return parseInt( $( '#sel-allow-request' ).val() );
+    },
+
     getLiveId: function(){
         try{
             return this.liveProp.program.nicoliveProgramId;
@@ -472,7 +487,7 @@ var NicoLiveHelper = {
                 console.log( `${xhr.status} ${xhr.responseText}` );
                 let error = JSON.parse( xhr.responseText );
                 console.log( `コメント送信: ${error.meta.errorMessage || error.meta.errorCode}` );
-                // this.showAlert( `コメント送信: ${error.meta.errorMessage || error.meta.errorCode}` );
+                this.showAlert( `コメント送信: ${error.meta.errorMessage || error.meta.errorCode}` );
                 return;
             }
             console.log( `Comment posted: ${xhr.responseText}` );
@@ -548,14 +563,18 @@ var NicoLiveHelper = {
             // code = chat.text.match( /(...[-+=/]....[-+=/].)/ )[1];
             // code = code.replace( /[-+=/]/g, "-" ); // JWID用作品コード.
             // NicoLiveHelper.product_code["_" + video_id] = code;
-            NicoLiveRequest.addRequest( video_id, chat.comment_no, chat.user_id, is_self_request, code );
+
+            if( this.getRequestAllowedStatus() == 0 ){
+                NicoLiveRequest.addRequest( video_id, chat.comment_no, chat.user_id, is_self_request, code );
+            }
         }
         if( text.match( /(\d{10})/ ) ){
+            // TODO 現状、新配信ではチャンネル動画は再生できない
             let video_id = RegExp.$1;
             if( video_id == "8888888888" ) return;
             let is_self_request = !!text.match( /[^他](貼|張)|自|関/ );
             let code = "";
-            NicoLiveRequest.addRequest( video_id, chat.comment_no, chat.user_id, is_self_request, code );
+            // NicoLiveRequest.addRequest( video_id, chat.comment_no, chat.user_id, is_self_request, code );
         }
     },
 
@@ -1310,10 +1329,43 @@ var NicoLiveHelper = {
             window.close();
         } );
 
+
+        /* リクエスト受付中 */
+        let frequest = () =>{
+            switch( this.getRequestAllowedStatus() ){
+            case 0:
+                $( '#status-allow-request' ).addClass( 'allowrequest' );
+                break;
+            default:
+                $( '#status-allow-request' ).removeClass( 'allowrequest' );
+                break;
+            }
+        };
+        $( '#sel-allow-request' ).on( 'change', ( ev ) =>{
+            frequest();
+        } );
+        frequest();
+
+        /* プレイスタイル変更 */
+        let fstyle = () =>{
+            switch( this.getPlayStyle() ){
+            case 0:
+                $( '#status-autoplay' ).removeClass( 'autoplaying' );
+                break;
+            default:
+                $( '#status-autoplay' ).addClass( 'autoplaying' );
+                break;
+            }
+        };
+        $( '#sel-playstyle' ).on( 'change', ( ev ) =>{
+            fstyle();
+        } );
+        fstyle();
+
         /* 音量スライダー */
         let handle = $( "#custom-handle" );
         $( "#volume-slider" ).slider( {
-            value: 5,  // TODO デフォルト値を記録・復元する
+            value: 5,  // TODO デフォルト値を記録・復元したい
             max: 10,
             min: 0,
             create: function(){
