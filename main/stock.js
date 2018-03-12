@@ -432,6 +432,11 @@ var NicoLiveStock = {
         this.saveStocks();
     },
 
+    /**
+     * ストックを再生する.
+     * @param index
+     * @returns {Promise<boolean>}
+     */
     playVideo: async function( index ){
         let video = this.stock[index];
         console.log( `${video.video_id} ${video.title}` );
@@ -440,8 +445,15 @@ var NicoLiveStock = {
             video.is_played = true;
             this.redrawStocks();
             this.saveStocks();
+            return true;
         }catch( e ){
-
+            // TODO エラーコードで区別できないので仕方なくテキスト内容で判断する
+            if( e.meta.errorMessage.match( /引用再生できない動画/ ) ){
+                video.no_live_play = 1;
+                this.redrawStocks();
+                this.saveStocks();
+            }
+            return false;
         }
     },
 
