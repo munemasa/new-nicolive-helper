@@ -166,13 +166,13 @@ let MyListManager = {
         let sec = parseInt( item.length_seconds % 60 );
 
         $( elem.querySelector( '.video-title' ) ).text( `${item.video_id} ${item.title}` );
-
         $( elem.querySelector( '.open-page' ) ).attr( 'href', `http://www.nicovideo.jp/watch/${item.video_id}` );
 
-        details.innerHTML = "投稿:" + posteddate + " (登録:" + GetDateString( mylist_data.create_time * 1000, true ) + ") 時間:" + (min + ":" + (sec < 10 ? ("0" + sec) : sec)) + "<br/>"
-            + "再生:" + FormatCommas( item.view_counter )
+        details.appendChild( document.createTextNode( "投稿:" + posteddate + " (登録:" + GetDateString( mylist_data.create_time * 1000, true ) + ") 時間:" + (min + ":" + (sec < 10 ? ("0" + sec) : sec)) ) );
+        details.appendChild( document.createElement( 'br' ) );
+        details.appendChild( document.createTextNode( "再生:" + FormatCommas( item.view_counter )
             + " コメント:" + FormatCommas( item.num_res )
-            + " マイリスト:" + FormatCommas( item.mylist_counter );
+            + " マイリスト:" + FormatCommas( item.mylist_counter ) ) );
 
         return elem;
     },
