@@ -33,6 +33,7 @@
         "*://live2.nicovideo.jp/watch/*"
       ],
       "js": [
+        "libs/browser-polyfill.js",
         "content_scripts/nicolivehelperx.js"
       ],
       "run_at": "document_end"
@@ -47,15 +48,9 @@
     },
     "default_title": "New NicoLive Helper"
   },
-  "commands": {
-    "execute_sidebar_action": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+X"
-      }
-    }
-  },
   "background": {
     "scripts": [
+      "libs/browser-polyfill.js",
       "libs/utils.js",
       "bg/background.js"
     ]
