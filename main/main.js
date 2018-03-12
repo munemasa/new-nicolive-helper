@@ -258,6 +258,30 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 次の動画を再生する.
+     */
+    playNext: async function(){
+        let request = NicoLiveRequest.request;
+        let stock = NicoLiveStock.stock;
+
+        for( let i = 0, vinfo; vinfo = request[i]; i++ ){
+            if( vinfo.no_live_play == 0 ){
+                let result = await NicoLiveRequest.playVideo( i );
+                if( result ) return;
+                await Wait( 5000 );
+            }
+        }
+        for( let i = 0, vinfo; vinfo = stock[i]; i++ ){
+            if( vinfo.no_live_play == 0 && !vinfo.is_played ){
+                let result = await NicoLiveStock.playVideo( i );
+                if( result ) return;
+                await Wait( 5000 );
+            }
+        }
+        this.showAlert( `再生できる動画がありませんでした` );
+    },
+
+    /**
      * 現在再生している動画IDを返す.
      * mixingを叩くので生主専用。
      * @returns {Promise<any>}
@@ -265,6 +289,10 @@ var NicoLiveHelper = {
     getCurrentVideo: function(){
         let p = new Promise( ( resolve, reject ) =>{
             if( !this.isConnected() ){
+                resolve( '' );
+                return;
+            }
+            if( !this.isCaster() ){
                 resolve( '' );
                 return;
             }
@@ -1304,9 +1332,14 @@ var NicoLiveHelper = {
     },
 
     initUI: async function(){
+        $( '#btn-play-next' ).on( 'click', ( ev ) =>{
+            this.playNext();
+        } );
+
         $( '#btn-stop-play' ).on( 'click', ( ev ) =>{
             this.stopVideo();
         } );
+
         $( '#mylist-manager' ).on( 'click', ( ev ) =>{
             window.open( 'mylistmanager/mylistmanager.html', 'nicolivehelperx_mylistmanager',
                 'width=640,height=480,menubar=no,toolbar=no,location=no' );
