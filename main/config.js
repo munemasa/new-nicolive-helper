@@ -21,13 +21,20 @@
  */
 
 var Config = {
-    'videoinfo-interval': 5,
+    'videoinfo-interval': 7,
 
-    comment: {
-        comment184: false,
+    'vinfo-command-1': '',
+    'vinfo-comment-1': '♪時間:{length} 再生数:{view} コメント:{comment} マイリスト:{mylist}',
+    'vinfo-command-2': '',
+    'vinfo-comment-2': '♪{id} {title} 投稿日:{date}',
+    'vinfo-command-3': '',
+    'vinfo-comment-3': '',
+    'vinfo-command-4': '',
+    'vinfo-comment-4': '',
 
-        display_lines: 500,
-        history_lines_on_connect: 50,
-        autokotehan: false
-    }
+    'comment-184': false,
+    'auto-kotehan': false,
+    'comment-dispay-lines': 500,
+    'comment-backlog-num': 50,
+
 };
