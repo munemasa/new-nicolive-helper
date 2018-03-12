@@ -48,6 +48,10 @@ fieldset {
     opacity: 1;
 }
 
+#remaining-time-main {
+    text-shadow: 1px 1px 2px white, -1px -1px 2px white, -1px 1px 2px white, 1px -1px 2px white;
+}
+
 /* 再生中動画の進行表示 */
 .progress {
     border: 1px #999999 inset;
