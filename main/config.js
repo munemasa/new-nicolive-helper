@@ -21,8 +21,9 @@
  */
 
 var Config = {
-    'videoinfo-interval': 7,
+    'autoplay-interval': 10,
 
+    'videoinfo-interval': 7,
     'vinfo-command-1': '',
     'vinfo-comment-1': '♪時間:{length} 再生数:{view} コメント:{comment} マイリスト:{mylist}',
     'vinfo-command-2': '',

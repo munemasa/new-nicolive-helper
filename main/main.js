@@ -36,6 +36,8 @@ var NicoLiveHelper = {
     threadId: '',
     postkey: '',
 
+    _autoplay_timer: null,  ///< 自動再生用タイマー
+
     /**
      * 放送に接続しているかを返す.
      * @return {boolean}
@@ -94,6 +96,17 @@ var NicoLiveHelper = {
         $( '#progressbar-main' ).width( p + "%" );
     },
 
+    /**
+     * 自動再生のインジケータ表示を設定する.
+     * @param flg
+     */
+    setAutoplayIndicator: function( flg ){
+        if( flg ){
+            $( '#status-autoplay' ).addClass( 'autoplaying' );
+        }else{
+            $( '#status-autoplay' ).removeClass( 'autoplaying' );
+        }
+    },
 
     /**
      * ボリューム変更をする.
@@ -164,6 +177,8 @@ var NicoLiveHelper = {
                 }
                 this.currentVideo = null;
                 this.setProgressMain( 0 );
+                this.setAutoplayIndicator( false );
+                clearTimeout( this._autoplay_timer );
                 resolve( true );
             };
 
@@ -186,9 +201,34 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 次の動画を再生するタイマーを設定する.
+     * @param next 秒数
+     */
+    setNextPlayTimer: function( next ){
+        clearTimeout( this._autoplay_timer );
+
+        if( this.getPlayStyle() != 0 ){
+            // 手動再生でなければ次動画再生タイマーをセットする.
+            this._autoplay_timer = setTimeout( () =>{
+                if( this.getPlayStyle() != 0 ){
+                    // タイマーが発火したときに自動再生であれば次を再生する.
+                    this.playNext();
+                }else{
+                    // 手動再生設定なので自動再生はなし
+                    this.setAutoplayIndicator( false );
+                }
+            }, next * 1000 );
+            this.setAutoplayIndicator( true );
+            console.log( `次動画再生: ${parseInt( next )}秒後` );
+        }else{
+            this.setAutoplayIndicator( false );
+        }
+    },
+
+    /**
      * 動画を再生する
      * @param vinfo{VideoInformation} 再生したい動画情報
-     * @param is_change_volume ボリューム変更のみ
+     * @param is_change_volume trueだとボリューム変更
      * @returns {Promise<any>}
      */
     playVideo: function( vinfo, is_change_volume ){
@@ -230,6 +270,9 @@ var NicoLiveHelper = {
                     let now = GetCurrentTime();
                     this.currentVideo.play_begin = now;
                     this.currentVideo.play_end = now + parseInt( this.currentVideo.length_ms / 1000 );
+
+                    let next = parseInt( this.currentVideo.length_ms / 1000 + Config['autoplay-interval'] );
+                    this.setNextPlayTimer( next );
                 }
                 resolve( true );
             };
@@ -279,6 +322,7 @@ var NicoLiveHelper = {
             }
         }
         this.showAlert( `再生できる動画がありませんでした` );
+        this.setAutoplayIndicator( false );
     },
 
     /**
@@ -1390,10 +1434,6 @@ var NicoLiveHelper = {
                 break;
             }
         };
-        $( '#sel-playstyle' ).on( 'change', ( ev ) =>{
-            fstyle();
-        } );
-        fstyle();
 
         /* 音量スライダー */
         let handle = $( "#custom-handle" );

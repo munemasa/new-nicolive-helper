@@ -75,6 +75,9 @@ async function LoadOptions(){
 
     let config = result.config || {};
 
+    /* 進行 */
+    LoadValue( 'autoplay-interval', config, 10 );
+
     /* コメント */
     LoadBool( 'comment-184', config, false );
     LoadBool( 'auto-kotehan', config, false );
@@ -96,6 +99,9 @@ function SaveOptions( ev ){
     console.log( 'save settings' );
 
     let config = {};
+
+    /* 進行 */
+    SaveInt( 'autoplay-interval', config );
 
     /* コメント */
     SaveBool( 'comment-184', config );
