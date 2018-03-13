@@ -454,20 +454,24 @@ var NicoLiveHelper = {
                 break;
 
             case 'requestnum': // リク残数.
-                tmp = NicoLiveRequest.request.length;
+                let remainrequest = 0;
+                NicoLiveRequest.request.forEach( function( item ){
+                    if( !item.is_played && !item.no_live_play ) remainrequest++;
+                } );
+                tmp = remainrequest;
                 break;
-            case 'requesttime': // TODO リク残時間(mm:ss).
+            case 'requesttime': // リク残時間(hh:mm:ss).
                 let reqtime = NicoLiveRequest.getRequestTime();
                 tmp = GetTimeString( reqtime.min * 60 + reqtime.sec );
                 break;
-            case 'stocknum':  // TODO ストック残数.
+            case 'stocknum':  // ストック残数.
                 let remainstock = 0;
                 NicoLiveStock.stock.forEach( function( item ){
-                    if( !item.is_played ) remainstock++;
+                    if( !item.is_played && !item.no_live_play ) remainstock++;
                 } );
                 tmp = remainstock;
                 break;
-            case 'stocktime': // TODO ストック残時間(mm:ss).
+            case 'stocktime': // ストック残時間(hh:mm:ss).
                 let stocktime = NicoLiveStock.getStockTime();
                 tmp = GetTimeString( stocktime.min * 60 + stocktime.sec );
                 break;
@@ -479,7 +483,7 @@ var NicoLiveHelper = {
                 break;
 
             case 'pref:min-ago':
-                // 枠終了 n 分前通知の設定値.
+                // TODO 枠終了 n 分前通知の設定値.
                 tmp = Config.notice.time;
                 break;
 

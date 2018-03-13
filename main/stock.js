@@ -457,6 +457,17 @@ var NicoLiveStock = {
         }
     },
 
+    getStockTime: function(){
+        let length = 0;
+        this.stock.forEach( ( item ) =>{
+            if( !item.no_live_play && !item.is_played ){
+                length += item.length_ms;
+            }
+        } );
+        length = parseInt( length / 1000 );
+        return {min: parseInt( length / 60 ), sec: length % 60};
+    },
+
     onButtonClicked: function( ev ){
         let action = ev.target.getAttribute( 'function' );
         let tr = FindParentElement( ev.target, 'tr' );
