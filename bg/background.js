@@ -97,8 +97,12 @@ function getLiveInfo( request, sender, sendResponse ){
     console.log( request );
     let lvid = request.request_id;
     let info = liveProp["" + lvid];
-    sendResponse( info );
+    // sendResponse( info );
+    return new Promise( ( resolve ) =>{
+        resolve( info );
+    } );
 }
+
 
 function handleMessage( request, sender, sendResponse ){
     switch( request.cmd ){
@@ -107,7 +111,7 @@ function handleMessage( request, sender, sendResponse ){
         break;
 
     case 'get-liveinfo':
-        getLiveInfo( request, sender, sendResponse );
+        return getLiveInfo( request, sender, sendResponse );
         break;
     }
 }
