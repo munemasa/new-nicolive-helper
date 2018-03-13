@@ -667,13 +667,15 @@ var NicoLiveHelper = {
             if( chat.text.match( /^\/disconnect/ ) ){
                 this.showAlert( `放送が終了しました` );
                 this.live_endtime = 0;
+                clearTimeout( this._autoplay_timer );
+                this.setAutoplayIndicator( false );
             }
             break;
 
         case 1: // プレミアム会員
         case 0: // 一般会員
             // リスナーコメント
-            // TODO 接続時より前のコメントは反応しないようにする
+            // 接続時より前のコメントは反応しないようにする
             if( this.isCaster() && chat.date < this.connecttime ) return;
             this.processListenersComment( chat );
 
