@@ -103,11 +103,12 @@ var NicoLiveRequest = {
 
 
     /**
-     * ストックに直接追加する.
+     * リクエストに直接追加する.
      * @param vinfo
      */
     addRequestDirect: function( vinfo ){
         vinfo = JSON.parse( JSON.stringify( vinfo ) );
+        vinfo.is_played = false;
 
         this.request.push( vinfo );
 
