@@ -381,7 +381,8 @@ var NicoLiveHelper = {
             let expression;
             if( expression = p.match( /^=(.*)/ ) ){
                 try{
-                    tmp = eval( expression[1] );
+                    // TODO 式マクロを実装するかどうか
+                    tmp = null; //eval( expression[1] );
                     if( tmp == undefined || tmp == null ) tmp = "";
                 }catch( x ){
                     tmp = "";
