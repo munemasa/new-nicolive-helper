@@ -80,7 +80,7 @@ var NicoLiveRequest = {
             let item = this.request[i];
 
             let elem = row.querySelector( '.nico-index' );
-            // $( elem ).text( `#${(i + 1)}` );
+            $( row ).attr( 'title', `#${(i + 1)}` );
 
             elem = row.querySelector( '.nico-comment_no' );
             if( item.comment_no ){
