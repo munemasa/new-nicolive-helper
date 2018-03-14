@@ -44,7 +44,6 @@ var NicoLiveHistory = {
         this.save();
     },
 
-
     save: function(){
         let str = $( '#txt-play-history' ).val();
         browser.storage.local.set( {
