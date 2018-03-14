@@ -27,6 +27,8 @@ var NicoLiveHistory = {
         let text = hist.val();
         let str = vinfo.video_id + "\t" + vinfo.title + "\n";
         hist.val( text + str );
+
+        this.save();
     },
 
     /**
@@ -38,6 +40,24 @@ var NicoLiveHistory = {
         let history = hist.val();
         history += text;
         hist.val( history );
+
+        this.save();
     },
 
+
+    save: function(){
+        let str = $( '#txt-play-history' ).val();
+        browser.storage.local.set( {
+            'history': str
+        } );
+    },
+    load: async function(){
+        let obj = await browser.storage.local.get( 'history' );
+        $( '#txt-play-history' ).val( obj.history );
+    }
 };
+
+
+window.addEventListener( 'load', ( ev ) =>{
+    NicoLiveHistory.load();
+} );
