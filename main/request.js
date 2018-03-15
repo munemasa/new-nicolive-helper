@@ -28,6 +28,31 @@ var NicoLiveRequest = {
 
 
     /**
+     * リクエストの応答をする.
+     * @param msg
+     * @param vinfo{VideoInformation}
+     */
+    sendReply: function( msg, vinfo ){
+        if( vinfo.comment_no > 0 && Config['request-send-reply'] ){
+            let str = NicoLiveHelper.replaceMacros( Config[msg], vinfo );
+            NicoLiveHelper.postCasterComment( str );
+        }
+    },
+
+    /**
+     * リクエストをチェックする
+     * @param vinfo{VideoInformation}
+     */
+    checkRequest: function( vinfo ){
+        if( vinfo.no_live_play ){
+            this.sendReply( 'request-no-live-play', vinfo );
+            // 生放送引用できない動画もとりあえずリクエストに追加しとく（再生対象にはならない）
+            return false;
+        }
+        return true;
+    },
+
+    /**
      * リクエスト登録のキューを処理する.
      * @returns {Promise<void>}
      * @private
@@ -44,13 +69,19 @@ var NicoLiveRequest = {
             vinfo.is_self_request = q.is_self_request;
             vinfo.rights_code = q.code;
 
-            this.request.push( vinfo );
-            let elem = NicoLiveHelper.createVideoInfoElement( vinfo );
-            $( '#request-table-body' ).append( elem );
+            if( this.checkRequest( vinfo ) ){
+                this.request.push( vinfo );
+                let elem = NicoLiveHelper.createVideoInfoElement( vinfo );
+                $( '#request-table-body' ).append( elem );
+                this.updateBadgeAndTime();
 
-            this.updateBadgeAndTime();
+                this.sendReply( 'request-accept', vinfo );
+            }
         }catch( e ){
-            // TODO 削除済み動画
+            // 削除済み動画など
+            this.sendReply( 'request-deleted', {
+                video_id: q.video_id, comment_no: q.comment_no
+            } );
         }
 
         this._queue.shift();

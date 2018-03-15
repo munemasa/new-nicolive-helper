@@ -674,6 +674,9 @@ var NicoLiveHelper = {
 
             if( this.getRequestAllowedStatus() == 0 ){
                 NicoLiveRequest.addRequest( video_id, chat.comment_no, chat.user_id, is_self_request, code );
+            }else{
+                NicoLiveRequest.sendReply( 'request-not-allow',
+                    {video_id: video_id, comment_no: chat.comment_no} );
             }
         }
         if( text.match( /(\d{10})/ ) ){

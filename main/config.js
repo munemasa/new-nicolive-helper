@@ -38,4 +38,9 @@ var Config = {
     'comment-dispay-lines': 500,
     'comment-backlog-num': 50,
 
+    'request-send-reply': false,
+    'request-accept': '>>{comment_no} リクエストを受け付けました',
+    'request-not-allow': '>>{comment_no} 現在リクエストを受け付けていません',
+    'request-no-live-play': '>>{comment_no} 生放送で引用できない動画です',
+    'request-deleted': '>>{comment_no} その動画は削除されているか、見つかりません'
 };

@@ -78,6 +78,13 @@ async function LoadOptions(){
     /* 進行 */
     LoadValue( 'autoplay-interval', config, 10 );
 
+    /* リクエスト */
+    LoadBool( 'request-send-reply', config, Config['request-send-reply'] );
+    LoadValue( 'request-accept', config, Config['request-accept'] );
+    LoadValue( 'request-not-allow', config, Config['request-not-allow'] );
+    LoadValue( 'request-no-live-play', config, Config['request-no-live-play'] );
+    LoadValue( 'request-deleted', config, Config['request-deleted'] );
+
     /* コメント */
     LoadBool( 'comment-184', config, false );
     LoadBool( 'auto-kotehan', config, false );
@@ -102,6 +109,13 @@ function SaveOptions( ev ){
 
     /* 進行 */
     SaveInt( 'autoplay-interval', config );
+
+    /* リクエスト */
+    SaveBool( 'request-send-reply', config );
+    SaveValue( 'request-accept', config );
+    SaveValue( 'request-not-allow', config );
+    SaveValue( 'request-no-live-play', config );
+    SaveValue( 'request-deleted', config );
 
     /* コメント */
     SaveBool( 'comment-184', config );

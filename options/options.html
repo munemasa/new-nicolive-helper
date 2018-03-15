@@ -4,8 +4,11 @@
   <meta charset="UTF-8">
   <title>New NicoLive Helper Settings</title>
 
+  <link rel="stylesheet" href="options.css">
+
   <script src="../libs/browser-polyfill.js"></script>
   <script src="../libs/external/jquery-3.2.1.js"></script>
+  <script src="../main/config.js"></script>
   <script src="options.js"></script>
 </head>
 <body>
@@ -38,6 +41,30 @@
   <div style="display:flex; width:100%;">
     <input id="vinfo-command-4" type="text" placeholder="コマンド">
     <input id="vinfo-comment-4" type="text" style="flex:1;" placeholder="動画情報４行目">
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>リクエスト</legend>
+  <div>
+    <label><input type="checkbox" id="request-send-reply">リクエストへ応答コメントする</label>
+  </div>
+  <br>
+  <div style="display:flex; width:100%;">
+    <div class="label">リクエスト受付時</div>
+    <input id="request-accept" type="text" style="flex:1;" placeholder="リクエストを受け付けたとき">
+  </div>
+  <div style="display:flex; width:100%;">
+    <div class="label">リクエストを受け付けていない時</div>
+    <input id="request-not-allow" type="text" style="flex:1;" placeholder="リクエストを受け付けていないとき">
+  </div>
+  <div style="display:flex; width:100%;">
+    <div class="label">生放送で引用再生できない動画の時</div>
+    <input id="request-no-live-play" type="text" style="flex:1;" placeholder="生放送で引用できない動画のとき">
+  </div>
+  <div style="display:flex; width:100%;">
+    <div class="label">削除または見つからない時</div>
+    <input id="request-deleted" type="text" style="flex:1;" placeholder="削除または見つからない動画のとき">
   </div>
 </fieldset>
 
