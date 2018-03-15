@@ -21,6 +21,15 @@
  */
 console.log( 'load background script.' );
 
+
+browser.runtime.onInstalled.addListener( function(){
+    browser.tabs.create( {
+        url: "bg/verup.html",
+        active: false
+    } );
+} );
+
+
 let windowList = {};
 let liveProp = {};
 
