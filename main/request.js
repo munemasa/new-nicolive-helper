@@ -26,6 +26,7 @@ var NicoLiveRequest = {
 
     _queue: [],
 
+    counter: {},    // リクエストカウンタ
 
     /**
      * リクエストの応答をする.
@@ -70,6 +71,10 @@ var NicoLiveRequest = {
             vinfo.rights_code = q.code;
 
             if( this.checkRequest( vinfo ) ){
+                this.counter[vinfo.request_user_id] = this.counter[vinfo.request_user_id] || 0;
+                this.counter[vinfo.request_user_id]++;
+                vinfo.request_counter = this.counter[vinfo.request_user_id];
+
                 this.request.push( vinfo );
                 let elem = NicoLiveHelper.createVideoInfoElement( vinfo );
                 $( '#request-table-body' ).append( elem );
@@ -79,6 +84,7 @@ var NicoLiveRequest = {
             }
         }catch( e ){
             // 削除済み動画など
+            console.log( e );
             this.sendReply( 'request-deleted', {
                 video_id: q.video_id, comment_no: q.comment_no
             } );
@@ -119,6 +125,12 @@ var NicoLiveRequest = {
             }else{
                 $( elem ).text( '' );
             }
+
+            if( item.request_user_id !== '0' ){
+                row.querySelector( '.request-user' ).textContent = item.request_user_id;
+                row.querySelector( '.request-counter' ).textContent = ` [${item.request_counter}]`;
+            }
+
             // 先頭から何分後にあるかの表示
             let timestr = GetTimeString( t );
             elem = row.querySelector( '.nico-timing' );

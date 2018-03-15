@@ -299,6 +299,8 @@ footer {
 .request-user {
     margin-left: 0.5em;
     max-width: 5em;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 iframe {
