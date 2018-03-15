@@ -304,6 +304,18 @@ var NicoLiveHelper = {
      * 次の動画を再生する.
      */
     playNext: async function(){
+        if( this._lock ){
+            console.log( '次の動画の再生処理中です' );
+            this.showAlert( '次の動画の再生待機中です' );
+            return;
+        }
+        this._lock = true;
+        await this._playNext();
+        this._lock = false;
+    },
+
+    _playNext: async function(){
+
         let request = NicoLiveRequest.request;
         let stock = NicoLiveStock.stock;
 
