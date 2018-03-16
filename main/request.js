@@ -41,7 +41,8 @@ var NicoLiveRequest = {
     },
 
     /**
-     * リクエストをチェックする
+     * リクエストをチェックする.
+     * true を返すとリクエストに追加する。
      * @param vinfo{VideoInformation}
      */
     checkRequest: function( vinfo ){
@@ -128,6 +129,8 @@ var NicoLiveRequest = {
             if( item.request_user_id !== '0' ){
                 row.querySelector( '.request-user' ).textContent = item.request_user_id;
                 row.querySelector( '.request-counter' ).textContent = ` [${item.request_counter}]`;
+                row.querySelector( '.request-user' ).setAttribute( 'title', `ID:${item.request_user_id} の ${item.request_counter}回目のリクエストです` );
+
             }
 
             // 先頭から何分後にあるかの表示
