@@ -331,14 +331,14 @@ var NicoLiveHelper = {
                 if( vinfo.no_live_play == 0 ){
                     let result = await NicoLiveRequest.playVideo( i );
                     if( result ) return;
-                    await Wait( 5000 );
+                    await Wait( 2500 );
                 }
             }
             for( let i = 0, vinfo; vinfo = stock[i]; i++ ){
                 if( vinfo.no_live_play == 0 && !vinfo.is_played ){
                     let result = await NicoLiveStock.playVideo( i );
                     if( result ) return;
-                    await Wait( 5000 );
+                    await Wait( 2500 );
                 }
             }
         }else if( ps == 2 ){
