@@ -179,6 +179,7 @@ var NicoLiveHelper = {
                 this.setProgressMain( 0 );
                 this.setAutoplayIndicator( false );
                 clearTimeout( this._autoplay_timer );
+                this._autoplay_timer = null;
                 resolve( true );
             };
 
@@ -207,19 +208,21 @@ var NicoLiveHelper = {
     setNextPlayTimer: function( next ){
         clearTimeout( this._autoplay_timer );
 
+        // 次動画再生タイマーをセットする.
+        this._autoplay_timer = setTimeout( () =>{
+            if( this.getPlayStyle() != 0 ){
+                // タイマーが発火したときに自動再生であれば次を再生する.
+                this.playNext();
+            }else{
+                // 手動再生設定なので自動再生はなし
+                this.setAutoplayIndicator( false );
+            }
+        }, next * 1000 );
+
+        console.log( `次動画再生: ${parseInt( next )}秒後` );
+
         if( this.getPlayStyle() != 0 ){
-            // 手動再生でなければ次動画再生タイマーをセットする.
-            this._autoplay_timer = setTimeout( () =>{
-                if( this.getPlayStyle() != 0 ){
-                    // タイマーが発火したときに自動再生であれば次を再生する.
-                    this.playNext();
-                }else{
-                    // 手動再生設定なので自動再生はなし
-                    this.setAutoplayIndicator( false );
-                }
-            }, next * 1000 );
             this.setAutoplayIndicator( true );
-            console.log( `次動画再生: ${parseInt( next )}秒後` );
         }else{
             this.setAutoplayIndicator( false );
         }
@@ -715,6 +718,7 @@ var NicoLiveHelper = {
                 this.showAlert( `放送が終了しました` );
                 this.live_endtime = 0;
                 clearTimeout( this._autoplay_timer );
+                this._autoplay_timer = null;
                 this.setAutoplayIndicator( false );
             }
             break;
@@ -1421,7 +1425,7 @@ var NicoLiveHelper = {
         this.updateVideoProgress( now );
 
         // 生放送の経過時間
-        let liveprogress = now - this.liveProp.program.beginTime;
+        let liveprogress = now - parseInt( this.live_begintime / 1000 );
         $( '#live-progress' ).text( liveprogress < 0 ? `-${GetTimeString( -liveprogress )}` : GetTimeString( liveprogress ) );
     },
 
@@ -1435,6 +1439,19 @@ var NicoLiveHelper = {
 
         $( '#btn-stop-play' ).on( 'click', ( ev ) =>{
             this.stopVideo();
+        } );
+
+        /* プレイスタイルの変更 */
+        $( '#sel-playstyle' ).on( 'change', ( ev ) =>{
+            if( this.getPlayStyle() == 0 ){
+                this.setAutoplayIndicator( false );
+            }else{
+                if( this._autoplay_timer ){
+                    this.setAutoplayIndicator( true );
+                }else{
+                    this.setAutoplayIndicator( false );
+                }
+            }
         } );
 
         $( '#mylist-manager' ).on( 'click', ( ev ) =>{
@@ -1475,18 +1492,6 @@ var NicoLiveHelper = {
             frequest();
         } );
         frequest();
-
-        /* プレイスタイル変更 */
-        let fstyle = () =>{
-            switch( this.getPlayStyle() ){
-            case 0:
-                $( '#status-autoplay' ).removeClass( 'autoplaying' );
-                break;
-            default:
-                $( '#status-autoplay' ).addClass( 'autoplaying' );
-                break;
-            }
-        };
 
         /* 音量スライダー */
         let handle = $( "#custom-handle" );

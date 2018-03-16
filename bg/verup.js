@@ -29,4 +29,4 @@ async function Init(){
 
 window.addEventListener( 'load', ( ev ) =>{
     Init();
-} )
+} );

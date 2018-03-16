@@ -47,8 +47,7 @@ var NicoLiveRequest = {
     checkRequest: function( vinfo ){
         if( vinfo.no_live_play ){
             this.sendReply( 'request-no-live-play', vinfo );
-            // 生放送引用できない動画もとりあえずリクエストに追加しとく（再生対象にはならない）
-            return false;
+            return true;
         }
         return true;
     },

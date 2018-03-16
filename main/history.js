@@ -50,13 +50,17 @@ var NicoLiveHistory = {
             'history': str
         } );
     },
-    load: async function(){
+    init: async function(){
         let obj = await browser.storage.local.get( 'history' );
         $( '#txt-play-history' ).val( obj.history );
+
+        $( '#txt-play-history' ).on( 'change', ( ev ) =>{
+            this.save();
+        } );
     }
 };
 
 
 window.addEventListener( 'load', ( ev ) =>{
-    NicoLiveHistory.load();
+    NicoLiveHistory.init();
 } );
