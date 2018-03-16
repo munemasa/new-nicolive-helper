@@ -1427,8 +1427,10 @@ var NicoLiveHelper = {
         this.updateVideoProgress( now );
 
         // 生放送の経過時間
-        let liveprogress = now - parseInt( this.live_begintime / 1000 );
-        $( '#live-progress' ).text( liveprogress < 0 ? `-${GetTimeString( -liveprogress )}` : GetTimeString( liveprogress ) );
+        if( this.live_begintime ){
+            let liveprogress = now - parseInt( this.live_begintime / 1000 );
+            $( '#live-progress' ).text( liveprogress < 0 ? `-${GetTimeString( -liveprogress )}` : GetTimeString( liveprogress ) );
+        }
     },
 
     test: async function(){
