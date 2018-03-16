@@ -1504,7 +1504,10 @@ var NicoLiveHelper = {
                     this.setAutoplayIndicator( false );
                 }
             }
+            browser.storage.local.set( {'playstyle': this.getPlayStyle()} );
         } );
+        let ps = (await browser.storage.local.get( 'playstyle' )).playstyle || 0;
+        $( '#sel-playstyle' ).val( ps );
 
         $( '#mylist-manager' ).on( 'click', ( ev ) =>{
             window.open( 'mylistmanager/mylistmanager.html', 'nicolivehelperx_mylistmanager',
