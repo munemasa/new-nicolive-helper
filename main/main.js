@@ -675,6 +675,26 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 主コメを処理する.
+     * @param chat{Comment}
+     */
+    processCasterComment: function( chat ){
+        let text = chat.text_notag;
+
+        if( text.match( /((sm|nm)\d+)/ ) ){
+            // 視聴者のとき、主コメ内の動画IDを再生したものとみなして再生履歴に追加する.
+            let video_id = RegExp.$1;
+            let f = async () =>{
+                let flg = await this.isAvailableInNewLive( video_id );
+                if( flg ){
+                    NicoLiveHistory.addHistoryText( `${flg.id} ${flg.title}` );
+                }
+            };
+            f();
+        }
+    },
+
+    /**
      * 視聴者コメントを処理する.
      */
     processListenersComment: function( chat ){
@@ -723,6 +743,9 @@ var NicoLiveHelper = {
                 this._autoplay_timer = null;
                 this.setAutoplayIndicator( false );
             }
+            if( chat.date < this.connecttime ) return;
+            if( this.isCaster() ) return;
+            this.processCasterComment( chat );
             break;
 
         case 1: // プレミアム会員
@@ -1167,6 +1190,7 @@ var NicoLiveHelper = {
 
     /**
      * 新配信で再生できる動画かどうかを返す.
+     * 再生できなければ false, 再生できるなら動画IDとタイトルのオブジェクトを返す.
      * @param video_id
      * @returns {Promise<any>}
      */
@@ -1181,7 +1205,8 @@ var NicoLiveHelper = {
                     resolve( false );
                     return;
                 }
-                resolve( true );
+                let res = JSON.parse( xhr.responseText );
+                resolve( res.data );
             };
             xhr.send();
         } );
