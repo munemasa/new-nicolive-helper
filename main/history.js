@@ -57,6 +57,21 @@ var NicoLiveHistory = {
         $( '#txt-play-history' ).on( 'change', ( ev ) =>{
             this.save();
         } );
+
+        // 再生履歴から動画IDのみをコピーする
+        $( '#copy-history-text' ).on( 'click', ( ev ) =>{
+            let substring;
+            let notes = $( '#txt-play-history' )[0];
+            substring = notes.value.substr( notes.selectionStart, notes.selectionEnd - notes.selectionStart );
+
+            if( substring.length >= 3 ){
+                let video_ids = substring.match( /^(sm|nm|ze|so)\d+|\d{10}/mg );
+                if( video_ids ){
+                    CopyToClipboard( video_ids.join( ' ' ) );
+                }
+            }
+        } );
+
     }
 };
 

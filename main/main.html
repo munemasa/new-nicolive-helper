@@ -273,7 +273,11 @@
 
   <div class="tab-pane margin-lr-4" id="tab-history" role="tabpanel">
     <!-- 再生履歴 -->
-    <textarea id="txt-play-history" class="flex1"></textarea>
+    <textarea id="txt-play-history" class="flex1" contextmenu="history-copy-video-id"></textarea>
+
+    <menu type="context" id="history-copy-video-id">
+      <menuitem id="copy-history-text" label="選択範囲の動画IDをコピー"></menuitem>
+    </menu>
   </div>
 
   <div class="tab-pane margin-lr-4" id="tab-user-manage" role="tabpanel">
