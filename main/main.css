@@ -21,6 +21,13 @@ html, body {
     font-size: 8pt;
 }
 
+.nav-link {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+}
+
 /*----------------------------------------------------------------------*/
 
 .margin-lr-4 {
