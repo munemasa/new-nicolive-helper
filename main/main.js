@@ -216,6 +216,8 @@ var NicoLiveHelper = {
             }else{
                 // 手動再生設定なので自動再生はなし
                 this.setAutoplayIndicator( false );
+                clearTimeout( this._autoplay_timer );
+                this._autoplay_timer = null;
             }
         }, next * 1000 );
 
@@ -591,7 +593,7 @@ var NicoLiveHelper = {
      * @param name 名前
      * @param isPerm ずっと表示させる. true or false. 旧/permの役割
      */
-    postCasterComment: function( text, mail, name, isPerm ){
+    postCasterComment: async function( text, mail, name, isPerm ){
         if( text == '' ) return;
         if( !this.isCaster() ) return;
         mail = mail || '';
