@@ -70,6 +70,12 @@ var NicoLiveRequest = {
             vinfo.is_self_request = q.is_self_request;
             vinfo.rights_code = q.code;
 
+            if( !vinfo.no_live_play ){
+                // コンテンツが存在しないか、権限がないため引用できませんでした。
+                let flg = await NicoLiveHelper.isAvailableInNewLive( q.video_id );
+                vinfo.no_live_play = flg ? 0 : 1;
+            }
+
             if( this.checkRequest( vinfo ) ){
                 this.counter[vinfo.request_user_id] = this.counter[vinfo.request_user_id] || 0;
                 this.counter[vinfo.request_user_id]++;

@@ -1166,6 +1166,29 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 新配信で再生できる動画かどうかを返す.
+     * @param video_id
+     * @returns {Promise<any>}
+     */
+    isAvailableInNewLive: function( video_id ){
+        let url = `http://live2.nicovideo.jp/unama/api/v3/contents/${video_id}`;
+        let p = new Promise( ( resolve, reject ) =>{
+            let xhr = CreateXHR( 'GET', url );
+            xhr.onreadystatechange = () =>{
+                if( xhr.readyState != 4 ) return;
+                if( xhr.status != 200 ){
+                    //let err = JSON.parse( xhr.responseText );
+                    resolve( false );
+                    return;
+                }
+                resolve( true );
+            };
+            xhr.send();
+        } );
+        return p;
+    },
+
+    /**
      * 配列をソートする.
      * @param queue ソートする配列
      * @param type ソート方法
