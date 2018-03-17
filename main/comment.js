@@ -26,6 +26,7 @@ var NicoLiveComment = {
     commentlog: [],    // コメントのログ(受信したもの全て記録)
     colormap: {},      // 配色マップ
     namemap: {},       // コテハンマップ
+    reflectionmap: {},
 
     _namecache: {},
 
@@ -37,6 +38,21 @@ var NicoLiveComment = {
         }
         let name = `${NicoLiveHelper.liveProp.program.nicoliveProgramId}.txt`;
         SaveText( name, str );
+    },
+
+    addReflection: function( user_id, name, type ){
+        console.log( `${user_id}をリフレクション登録 type=${type}` );
+        this.reflectionmap[user_id] = {
+            'user_id': user_id,
+            'name': name,
+            'type': type
+        };
+        UserManage.createTable();
+    },
+    removeReflection: function( user_id ){
+        console.log( `${user_id}をリフレクション解除しました` );
+        delete this.reflectionmap[user_id];
+        UserManage.createTable();
     },
 
     /**
@@ -67,6 +83,8 @@ var NicoLiveComment = {
         console.log( `Kotehan(${user_id})=${name}` );
 
         $( `span[user_id="${user_id}"]` ).text( name );
+
+        UserManage.createTable();
     },
 
     /**
@@ -183,8 +201,36 @@ var NicoLiveComment = {
     },
 
     /**
+     * コメントリフレクションを実行する.
+     * @param comment{Comment}
+     */
+    reflection: function( comment ){
+        if( !NicoLiveHelper.isCaster() ) return;
+        if( comment.date < NicoLiveHelper.connecttime ) return;
+        if( !this.reflectionmap[comment.user_id] ) return;
+
+        let name = this.reflectionmap[comment.user_id].name;
+        let type = this.reflectionmap[comment.user_id].type;
+        let mail = '';
+        let str = comment.text_notag;
+        str = str.replace( /{=/g, '{-' );
+        switch( parseInt( type ) ){
+        case 0:
+            // なし
+            break;
+        case 1:
+            // 運営コメント
+            NicoLiveHelper.postCasterComment( `${name}:${str}`, mail, '', false );
+            break;
+        case 2:
+            // BSP（未サポート）
+            break;
+        }
+    },
+
+    /**
      * コメント表示欄にコメントを追加する.
-     * @param comment
+     * @param comment{Comment}
      */
     addComment: function( comment ){
         let table = this.table;
@@ -231,7 +277,7 @@ var NicoLiveComment = {
                 tr.style.backgroundColor = col;
             }
         }
-        if( comment.premium == 2 || comment.premium == 3 ){
+        if( comment.premium == 2 || comment.premium == 3 || comment.premium == 7 ){
             tr.className = "color_caster";
         }
 

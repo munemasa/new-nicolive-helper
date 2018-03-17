@@ -224,6 +224,23 @@ footer {
     width: 100%;
 }
 
+/*----- 視聴者管理 -----*/
+#tab-user-manage {
+    height: 100%;
+}
+
+#tab-user-manage-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#tab-user-manage table th,
+#tbl-user-management td {
+    border-right: 1px solid gray;
+    border-left: 1px solid gray;
+}
+
 /*----- -----*/
 
 .video-list {

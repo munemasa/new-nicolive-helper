@@ -741,6 +741,7 @@ var NicoLiveHelper = {
         switch( chat.premium ){
         case 2: // チャンネル生放送の場合、こちらの場合もあり。/infoコマンドなどもココ
         case 3: // 運営コメント
+        case 7: // name付けるとこれになる？
             if( chat.text.match( /^\/disconnect/ ) ){
                 this.showAlert( `放送が終了しました` );
                 this.live_endtime = 0;
@@ -759,6 +760,7 @@ var NicoLiveHelper = {
             // 接続時より前のコメントは反応しないようにする
             if( this.isCaster() && chat.date < this.connecttime ) return;
             this.processListenersComment( chat );
+            NicoLiveComment.reflection( chat );
 
             // TODO コメント読み上げ
             if( false && Config.speech.do_speech ){
@@ -1596,11 +1598,13 @@ var NicoLiveHelper = {
         NicoLiveRequest.init();
         NicoLiveStock.init();
         NicoLiveComment.init();
+        UserManage.init();
 
         let lvid = GetParameterByName( 'lv' );
         console.log( 'lvid=' + lvid );
 
         if( lvid ){
+            // 放送IDが渡されたら放送に接続する
             console.log( 'get liveinfo' );
             this.liveProp = await browser.runtime.sendMessage( {
                 cmd: 'get-liveinfo',

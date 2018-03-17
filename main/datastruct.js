@@ -64,8 +64,8 @@ class Comment {
         this.text = '';
         this.text_notag = '';
 
-        this.date = 0;
-        this.date_usec = 0;
+        this.date = 0;      ///< 秒
+        this.date_usec = 0; ///< マイクロ秒
         this.locale = '';
         this.mail = '';
         this.name = '';

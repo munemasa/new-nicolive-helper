@@ -47,10 +47,9 @@ var NicoLiveRequest = {
      */
     checkRequest: function( vinfo ){
         if( vinfo.no_live_play ){
-            this.sendReply( 'request-no-live-play', vinfo );
-            return true;
+            return 1;
         }
-        return true;
+        return 0;
     },
 
     /**
@@ -76,18 +75,31 @@ var NicoLiveRequest = {
                 vinfo.no_live_play = flg ? 0 : 1;
             }
 
-            if( this.checkRequest( vinfo ) ){
-                this.counter[vinfo.request_user_id] = this.counter[vinfo.request_user_id] || 0;
+            let code = this.checkRequest( vinfo );
+
+            this.counter[vinfo.request_user_id] = this.counter[vinfo.request_user_id] || 0;
+            if( !vinfo.no_live_play ){
                 this.counter[vinfo.request_user_id]++;
                 vinfo.request_counter = this.counter[vinfo.request_user_id];
-
-                this.request.push( vinfo );
-                let elem = NicoLiveHelper.createVideoInfoElement( vinfo );
-                $( '#request-table-body' ).append( elem );
-                this.updateBadgeAndTime();
-
-                this.sendReply( 'request-accept', vinfo );
+            }else{
+                vinfo.request_counter = 0;
             }
+
+            this.request.push( vinfo );
+            let elem = NicoLiveHelper.createVideoInfoElement( vinfo );
+            $( '#request-table-body' ).append( elem );
+            this.updateBadgeAndTime();
+
+            switch( code ){
+            case 0:
+                this.sendReply( 'request-accept', vinfo );
+                break;
+            case 1:
+                this.sendReply( 'request-no-live-play', vinfo );
+                break;
+            }
+            UserManage.createTable();
+
         }catch( e ){
             // 削除済み動画など
             console.log( e );
@@ -139,7 +151,6 @@ var NicoLiveRequest = {
                 row.querySelector( '.request-user' ).textContent = item.request_user_id;
                 row.querySelector( '.request-counter' ).textContent = ` [${item.request_counter}]`;
                 row.querySelector( '.request-user' ).setAttribute( 'title', `ID:${item.request_user_id} の ${item.request_counter}回目のリクエストです` );
-
             }
 
             // 先頭から何分後にあるかの表示
@@ -466,6 +477,26 @@ var NicoLiveRequest = {
         }
     },
 
+    /**
+     * リク主をコメントリフレクション登録する
+     * @param n
+     * @returns {Promise<void>}
+     */
+    addCommentReflection: async function( n ){
+        let vinfo = this.request[n];
+        let user_id = vinfo.request_user_id;
+        let name = '★';
+        if( user_id > 0 ){
+            name = NicoLiveComment.getProfileName( user_id, '★' );
+        }
+
+        let newname = window.prompt( '表示名を入力してください', name );
+        if( newname ){
+            NicoLiveComment.addReflection( user_id, newname, 1 );
+            UserManage.createTable();
+        }
+    },
+
     contextMenu: function( key, options ){
         let elem = options.$trigger[0];
         let n = elem.sectionRowIndex;
@@ -484,7 +515,6 @@ var NicoLiveRequest = {
             break;
 
         case 'to_stock':
-            // TODO ストックにコピーする
             NicoLiveStock.addStockDirect( this.request[n] );
             break;
 
@@ -495,6 +525,10 @@ var NicoLiveRequest = {
 
         case 'profile':
             OpenLink( 'http://www.nicovideo.jp/user/' + this.request[n].user_id );
+            break;
+
+        case 'reflection':
+            this.addCommentReflection( n );
             break;
 
         default:
@@ -559,6 +593,8 @@ var NicoLiveRequest = {
                         "compaction": {name: "コンパクション"},
                         "sep2": "---------",
                         "profile": {name: "投稿者プロフィール"},
+                        "sep3": "---------",
+                        "reflection": {name: 'リク主をリフレクション登録'}
                     }
                 };
                 try{

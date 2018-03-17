@@ -27,6 +27,7 @@
   <script src="config.js"></script>
   <script src="datastruct.js"></script>
   <script src="windowmanage.js"></script>
+  <script src="usermanage.js"></script>
   <script src="comm.js"></script>
   <script src="mylist.js"></script>
   <script src="history.js"></script>
@@ -112,9 +113,6 @@
     </li>
     <li class="nav-item">
       <a class="nav-link" data-toggle="tab" href="#tab-user-manage" role="tab">視聴者管理</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="tab" href="#tab-debug" role="tab">デバッグ</a>
     </li>
   </ul>
 </header>
@@ -286,19 +284,35 @@
 
   <div class="tab-pane margin-lr-4" id="tab-user-manage" role="tabpanel">
     <!-- 視聴者管理-->
-    視聴者管理 リクエスト回数やコメントリフレクションやコテハンの設定など
-  </div>
-
-  <div class="tab-pane" id="tab-debug" role="tabpanel">
-    デバッグ
-    <div style="display: flex; flex-direction:column;">
-      <div style="flex:1; border: #e83e8c 2px solid;">
-        uppper
-      </div>
-      <div>
-        lower
-      </div>
+    <div id="tab-user-manage-body" style="overflow:auto;">
+      <table class="_flex1" style="width:100%; border:1px solid gray;">
+        <tr>
+          <th>ユーザーID</th>
+          <th>コテハン</th>
+          <th>リクエスト回数</th>
+          <th>リフレクション</th>
+          <th>表示名</th>
+        </tr>
+        <tbody id="tbl-user-management">
+        </tbody>
+      </table>
     </div>
+
+    <template id="template-um-user">
+      <tr>
+        <td class="um-user_id" style="max-width: 8em; white-space: nowrap; overflow:hidden; padding-right:4px;"></td>
+        <td class="um-kotehan"></td>
+        <td class="um-request_num"></td>
+        <td>
+          <select class="um-reflection_type">
+            <option value="0">なし</option>
+            <option value="1">運営コメント</option>
+            <option value="2" disabled>BSP</option>
+          </select>
+        </td>
+        <td class="um-display_name"></td>
+      </tr>
+    </template>
   </div>
 </div>
 
