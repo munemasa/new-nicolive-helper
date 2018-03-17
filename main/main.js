@@ -57,6 +57,14 @@ var NicoLiveHelper = {
         }
     },
 
+    hasBSP: function(){
+        try{
+            return this.liveProp.user.permissions.indexOf( 'POST_BSP_COMMENT' ) !== -1;
+        }catch( e ){
+            return false;
+        }
+    },
+
     /**
      * プレイスタイルを返す.
      * 0: 手動
