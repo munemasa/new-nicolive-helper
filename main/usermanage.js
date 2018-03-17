@@ -68,9 +68,11 @@ var UserManage = {
                 if( user_id > 0 ){
                     defname = await NicoLiveComment.getProfileName( user_id, '★' );
                 }
-                let name = window.prompt( 'リフレクション時の名前を入れてください', defname );
+                let name = window.prompt( 'リフレクション時の表示名を入れてください', defname );
                 if( name ){
                     NicoLiveComment.addReflection( user_id, name, type );
+                }else{
+                    $this.val( 0 );
                 }
             }else{
                 // リフレクションなし

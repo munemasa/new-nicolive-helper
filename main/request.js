@@ -508,16 +508,7 @@ var NicoLiveRequest = {
     addCommentReflection: async function( n ){
         let vinfo = this.request[n];
         let user_id = vinfo.request_user_id;
-        let name = '★';
-        if( user_id > 0 ){
-            name = NicoLiveComment.getProfileName( user_id, '★' );
-        }
-
-        let newname = window.prompt( '表示名を入力してください', name );
-        if( newname ){
-            NicoLiveComment.addReflection( user_id, newname, 1 );
-            UserManage.createTable();
-        }
+        NicoLiveComment.addCommentReflection( user_id );
     },
 
     contextMenu: function( key, options ){

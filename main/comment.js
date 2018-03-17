@@ -56,6 +56,30 @@ var NicoLiveComment = {
     },
 
     /**
+     * 指定ユーザーのコメントリフレクション登録をする.
+     * @param user_id
+     * @returns {Promise<void>}
+     */
+    addCommentReflection: async function( user_id ){
+        if( !NicoLiveHelper.isCaster() ) return;
+
+        let name = '★';
+        if( user_id > 0 ){
+            try{
+                name = await this.getProfileName( user_id, '★' );
+            }catch( e ){
+                name = '★';
+            }
+        }
+
+        let newname = window.prompt( `ユーザー:${user_id}の表示名を入力してください`, name );
+        if( newname ){
+            this.addReflection( user_id, newname, 1 );
+            UserManage.createTable();
+        }
+    },
+
+    /**
      * 指定のユーザーIDのコテハンを返す.
      * コテハン設定がなければ空文字を返す.
      * @param user_id
@@ -423,6 +447,10 @@ var NicoLiveComment = {
             let user_id = $elem.attr( 'user_id' );
             OpenLink( `http://www.nicovideo.jp/user/${user_id}` );
             break;
+
+        case 'set_reflection':
+            this.addCommentReflection( $elem.attr( 'user_id' ) );
+            break;
         default:
             console.log( key );
             console.log( options.$trigger );
@@ -465,8 +493,7 @@ var NicoLiveComment = {
                         },
                         "profile": {name: "プロフィールを開く"},
                         "set_reflection": {
-                            name: "コメントリフレクション登録",
-                            disabled: true
+                            name: "コメントリフレクション登録"
                         }
                     },
                     events: {
