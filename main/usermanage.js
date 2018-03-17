@@ -37,6 +37,7 @@ var UserManage = {
             let request_num = elem.querySelector( '.um-request_num' );
             let reflection_type = elem.querySelector( '.um-reflection_type' );
             let display_name = elem.querySelector( '.um-display_name' );
+            elem.querySelector( '.um-btn-remove' ).setAttribute( 'user_id', user );
 
             $( user_id ).text( user );
             $( kotehan ).text( NicoLiveComment.namemap[user] && NicoLiveComment.namemap[user].name || '' );
@@ -57,7 +58,38 @@ var UserManage = {
         return user_id;
     },
 
+    addUser: function(){
+        let user_id = $( '#add-user-id' ).val();
+        if( !user_id ) return;
+
+        let kotehan = $( '#add-kotehan' ).val();
+        let name = $( '#add-display-name' ).val();
+        let type = $( '#add-reflection-type' ).val();
+
+        NicoLiveComment.reflectionmap[user_id] = {
+            'user_id': user_id,
+            'name': name,
+            'type': type
+        };
+        NicoLiveComment.namemap[user_id] = {
+            'name': kotehan
+        };
+
+        this.createTable();
+    },
+
     init: function(){
+        $( '#btn-add-user' ).on( 'click', ( ev ) =>{
+            this.addUser();
+        } );
+
+        $( document ).on( 'click', '.um-btn-remove', function( ev ){
+            let user_id = $( this ).attr( 'user_id' );
+            delete NicoLiveRequest.counter[user_id];
+            NicoLiveComment.removeReflection( user_id );
+            NicoLiveComment.setKotehan( user_id, '' );
+        } );
+
         $( document ).on( 'change', '.um-reflection_type', async function( ev ){
             // リフレクション設定の変更
             let $this = $( this );
