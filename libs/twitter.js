@@ -20,7 +20,7 @@
  THE SOFTWARE.
  */
 
-let Twitter = {
+var Twitter = {
     consumer: "s7oBmLr1QbvyMkwNojgMVw",
     consumerSecret: "jGgsV5nKfchguFWcfmVtil1Dz77vCykiTznhzdwcV0",
 
@@ -37,10 +37,12 @@ let Twitter = {
     oauth: {},
 
     getScreenName: function(){
+        // TODO 要修正
         return Config.twitter.screen_name;
     },
 
     getSavedToken: function(){
+        // TODO 要修正
         // ログインマネージャに保存したトークンとシークレットトークンを読み込む.
         this.oauth = {};
         this.oauth["oauth_token"] = Config.twitter.token;
