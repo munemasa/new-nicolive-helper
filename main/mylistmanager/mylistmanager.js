@@ -934,7 +934,7 @@ let MyListManager = {
             let tr = FindParentElement( ev.target, 'tr' );
             console.log( tr );
 
-            if( ev.originalEvent.metaKey ){
+            if( ev.originalEvent.metaKey || ev.originalEvent.ctrlKey ){
                 if( $( tr ).hasClass( 'mylist_item_selected' ) ){
                     $( tr ).removeClass( 'mylist_item_selected' );
                 }else{
