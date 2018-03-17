@@ -42,5 +42,9 @@ var Config = {
     'request-accept': '>>{comment_no} リクエストを受け付けました',
     'request-not-allow': '>>{comment_no} 現在リクエストを受け付けていません',
     'request-no-live-play': '>>{comment_no} 生放送で引用できない動画です',
-    'request-deleted': '>>{comment_no} その動画は削除されているか、見つかりません'
+    'request-deleted': '>>{comment_no} その動画は削除されているか、見つかりません',
+
+    'tweet-on-play': false,
+    'tweet-text': '再生中:{title} http://nico.ms/{id} #{id} http://nico.ms/{live-id}',
+    'twitter-screen-name': 'なし',
 };

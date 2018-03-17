@@ -8,6 +8,12 @@
 
   <script src="../libs/browser-polyfill.js"></script>
   <script src="../libs/external/jquery-3.2.1.js"></script>
+
+  <script src="../libs/sha1.js"></script>
+  <script src="../libs/oauth.js"></script>
+  <script src="../libs/twitter.js"></script>
+  <script src="../libs/utils.js"></script>
+
   <script src="../main/config.js"></script>
   <script src="options.js"></script>
 </head>
@@ -87,6 +93,29 @@
     <label>過去ログ取得行数
       <input id="comment-backlog-num" type="number" value="50" placeholder="過去ログ取得行数">
     </label>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>Twitter</legend>
+  <div>
+    <button id="btn-twitter-get-pin" type="button">PINを取得</button>
+    <span>PIN</span>
+    <input id="txt-twitter-pin" type="text" size="15" placeholder="PINを入力">
+    <button id="btn-twitter-auth" type="button">認証</button>
+    <div style="display:none;">
+      <input id="oauth-token">
+      <input id="oauth-secret-token">
+    </div>
+  </div>
+  <div style="margin-bottom:1em;">
+    <span>認証済みアカウント:</span><span id="twitter-screen-name">なし</span>
+  </div>
+  <div>
+    <label><input type="checkbox" id="tweet-on-play">動画再生時につぶやく</label>
+  </div>
+  <div>
+    <input id="tweet-text" type="text" placeholder="つぶやき内容" maxlength="140" style="width:100%;">
   </div>
 </fieldset>
 

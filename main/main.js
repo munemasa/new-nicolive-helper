@@ -231,7 +231,7 @@ var NicoLiveHelper = {
     },
 
     /**
-     * 動画を再生する
+     * 動画を再生する.
      * @param vinfo{VideoInformation} 再生したい動画情報
      * @param is_change_volume trueだとボリューム変更
      * @returns {Promise<any>}
@@ -278,6 +278,11 @@ var NicoLiveHelper = {
 
                     let next = parseInt( this.currentVideo.length_ms / 1000 + Config['autoplay-interval'] );
                     this.setNextPlayTimer( next );
+
+                    if( Config['tweet-on-play'] ){
+                        let str = this.replaceMacros( Config['tweet-text'], this.currentVideo );
+                        Twitter.updateStatus( str );
+                    }
                 }
                 resolve( true );
             };
@@ -1580,11 +1585,13 @@ var NicoLiveHelper = {
             if( changes.config ){
                 MergeSimpleObject( Config, changes.config.newValue );
                 console.log( Config );
+                Twitter.init(); // 認証トークンをConfigから読ませるために
             }
         } );
 
         this.initUI();
 
+        Twitter.init();
         NicoLiveMylist.init();
         NicoLiveRequest.init();
         NicoLiveStock.init();

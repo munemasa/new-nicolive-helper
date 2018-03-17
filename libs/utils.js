@@ -356,6 +356,7 @@ function SaveText( name, text ){
 
 
 function OpenLink( url ){
+    console.log( `Open: ${url}` );
     let link = document.createElement( 'a' );
     link.setAttribute( 'target', '_blank' );
     link.setAttribute( 'href', url );

@@ -69,6 +69,37 @@ let g_vinfo_defvalue = [
 ];
 
 
+function InitTwitterUI(){
+    // 認証済みのスクリーン名
+    if( Twitter.getScreenName() ){
+        $( '#twitter-screen-name' ).text( "@" + Twitter.getScreenName() );
+    }
+
+    $( '#twitter-live_started' ).val( Config.twitter.live_started );
+    $( '#twitter-play_started' ).val( Config.twitter.play_started );
+    $( '#twitter-tweet_live_started' ).prop( 'checked', Config.twitter.tweet_live_started );
+    $( '#twitter-tweet_play_started' ).prop( 'checked', Config.twitter.tweet_play_started );
+
+    // PINを取得
+    $( '#btn-twitter-get-pin' ).on( 'click', ( ev ) =>{
+        Twitter.getRequestToken();
+    } );
+
+    // 認証
+    $( '#btn-twitter-auth' ).on( 'click', ( ev ) =>{
+        let pin = $( '#txt-twitter-pin' ).val();
+        // console.log(pin);
+        Twitter.getAccessToken( pin );
+    } );
+
+    // つぶやきテスト
+    $( '#btn-test-tweet' ).on( 'click', ( ev ) =>{
+        let text = $( '#txt-tweet-test' ).val();
+        this.updateStatus( text );
+    } );
+}
+
+
 async function LoadOptions(){
     let result = await browser.storage.local.get( 'config' );
     console.log( result );
@@ -99,6 +130,24 @@ async function LoadOptions(){
         i++;
     }
 
+    /* Twitter */
+    LoadBool( 'tweet-on-play', config, Config['tweet-on-play'] );
+    LoadValue( 'tweet-text', config, Config['tweet-text'] );
+    LoadValue( 'oauth-token', config, '' );
+    LoadValue( 'oauth-secret-token', config, '' );
+
+    $( '#twitter-screen-name' ).text( config['twitter-screen-name'] );
+    /* Twitter認証 */
+    $( '#btn-twitter-get-pin' ).on( 'click', ( ev ) =>{
+        Twitter.getRequestToken();
+    } );
+    $( '#btn-twitter-auth' ).on( 'click', async ( ev ) =>{
+        let pin = $( '#txt-twitter-pin' ).val();
+        let result = await Twitter.getAccessToken( pin );
+        $( '#twitter-screen-name' ).text( `@${result['screen_name']}` );
+        $( '#oauth-token' ).val( result['oauth_token'] );
+        $( '#oauth-secret-token' ).val( result['oauth_token_secret'] );
+    } );
 }
 
 function SaveOptions( ev ){
@@ -128,6 +177,13 @@ function SaveOptions( ev ){
     for( let k of g_vinfokey ){
         SaveValue( k, config );
     }
+
+    /* Twitter */
+    SaveBool( 'tweet-on-play', config );
+    SaveValue( 'tweet-text', config );
+    SaveValue( 'oauth-token', config );
+    SaveValue( 'oauth-secret-token', config );
+    config['twitter-screen-name'] = $( '#twitter-screen-name' ).text();
 
     browser.storage.local.set( {
         'config': config

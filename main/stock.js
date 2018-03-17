@@ -64,13 +64,16 @@ var NicoLiveStock = {
     },
 
     /**
-     * リクエストの個数と総時間表示を更新する.
+     * ストックの個数と総時間表示を更新する.
      */
     updateBadgeAndTime: function(){
-        let n = this.stock.length;
+        let n = 0;
+        this.stock.forEach( function( item ){
+            if( !item.is_played && !item.no_live_play ) n++;
+        } );
         $( '#number-of-stocks' ).text( n );
 
-        let t = NicoLiveHelper.calcTotalVideoTime( this.stock );
+        let t = this.getStockTime();
         $( '#total-stock-time' ).text( t.min + '分' + t.sec + '秒' );
 
         let tr = document.querySelectorAll( '#stock-table tr' );

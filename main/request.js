@@ -111,10 +111,13 @@ var NicoLiveRequest = {
      * リクエストの個数と総時間表示を更新する.
      */
     updateBadgeAndTime: function(){
-        let n = this.request.length;
+        let n = 0;
+        this.request.forEach( function( item ){
+            if( !item.is_played && !item.no_live_play ) n++;
+        } );
         $( '#number-of-requests' ).text( n );
 
-        let t = NicoLiveHelper.calcTotalVideoTime( this.request );
+        let t = this.getRequestTime();
         $( '#total-request-time' ).text( t.min + '分' + t.sec + '秒' );
 
         let tr = document.querySelectorAll( '#request-table tr' );

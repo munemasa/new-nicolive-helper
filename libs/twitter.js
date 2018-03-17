@@ -37,16 +37,15 @@ var Twitter = {
     oauth: {},
 
     getScreenName: function(){
-        // TODO 要修正
+        // TODO 使うなら要修正
         return Config.twitter.screen_name;
     },
 
     getSavedToken: function(){
-        // TODO 要修正
         // ログインマネージャに保存したトークンとシークレットトークンを読み込む.
         this.oauth = {};
-        this.oauth["oauth_token"] = Config.twitter.token;
-        this.oauth["oauth_token_secret"] = Config.twitter.secret_token;
+        this.oauth["oauth_token"] = Config['oauth-token'];
+        this.oauth["oauth_token_secret"] = Config['oauth-secret-token'];
     },
 
     openAuthPage: function( url ){
@@ -112,67 +111,74 @@ var Twitter = {
         Config.twitter.token = oauthobj["oauth_token"];
         Config.twitter.secret_token = oauthobj["oauth_token_secret"];
         Config.twitter.screen_name = oauthobj["screen_name"];
-        SaveConfig();
     },
 
-    getAccessToken: function( pin ){
-        let consumer = this.consumer;
-        let consumerSecret = this.consumerSecret;
-        console.log( `PIN:${pin}` );
+    getAccessToken: async function( pin ){
+        let p = new Promise( ( resolve, reject ) =>{
+            let consumer = this.consumer;
+            let consumerSecret = this.consumerSecret;
+            console.log( `PIN:${pin}` );
 
-        // 7-digit PINを使ったアクセストークンの取得.
-        let accessor = {
-            consumerSecret: consumerSecret,
-            tokenSecret: ""
-        };
-        let message = {
-            action: this.accessTokenURL,
-            method: "POST",
-            parameters: []
-        };
-        message.parameters.push( ["oauth_consumer_key", consumer] );
-        message.parameters.push( ["oauth_nonce", ""] );
-        message.parameters.push( ["oauth_signature", ""] );
-        message.parameters.push( ["oauth_signature_method", "HMAC-SHA1"] );
-        message.parameters.push( ["oauth_timestamp", ""] );
-        message.parameters.push( ["oauth_token", this.oauth.oauth_token] );
-        message.parameters.push( ["oauth_verifier", pin] );
-        message.parameters.push( ["oauth_version", "1.0"] );
+            // 7-digit PINを使ったアクセストークンの取得.
+            let accessor = {
+                consumerSecret: consumerSecret,
+                tokenSecret: ""
+            };
+            let message = {
+                action: this.accessTokenURL,
+                method: "POST",
+                parameters: []
+            };
+            message.parameters.push( ["oauth_consumer_key", consumer] );
+            message.parameters.push( ["oauth_nonce", ""] );
+            message.parameters.push( ["oauth_signature", ""] );
+            message.parameters.push( ["oauth_signature_method", "HMAC-SHA1"] );
+            message.parameters.push( ["oauth_timestamp", ""] );
+            message.parameters.push( ["oauth_token", this.oauth.oauth_token] );
+            message.parameters.push( ["oauth_verifier", pin] );
+            message.parameters.push( ["oauth_version", "1.0"] );
 
-        OAuth.setTimestampAndNonce( message );
-        OAuth.SignatureMethod.sign( message, accessor );
+            OAuth.setTimestampAndNonce( message );
+            OAuth.SignatureMethod.sign( message, accessor );
 
-        let req = new XMLHttpRequest();
-        if( !req ) return;
-
-        req.onreadystatechange = function(){
-            if( req.readyState != 4 ) return;
-            if( req.status == 200 ){
-                let values = req.responseText.split( '&' );
-                Twitter.oauth = {};
-                for( let i = 0, item; item = values[i]; i++ ){
-                    let val = item.split( '=' );
-                    Twitter.oauth[val[0]] = val[1];
-                }
-                Twitter.saveTwitterToken( Twitter.oauth );
-                $( '#twitter-screen-name' ).text( "@" + Twitter.getScreenName() )
-            }else{
-                alert( "Twitter認証に失敗しました。\n再度、認証を行ってみてください。" );
+            let req = new XMLHttpRequest();
+            if( !req ){
+                reject( null );
+                return;
             }
-            console.log( 'status=' + req.status );
-            console.log( req.responseText );
-        };
-        let url = this.accessTokenURL;
-        req.open( 'POST', url );
-        req.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
 
-        let xauth = [];
-        let str = [];
-        xauth = message.parameters;
-        for( let i = 0, item; item = xauth[i]; i++ ){
-            str.push( item[0] + "=" + item[1] + "" );
-        }
-        req.send( str.join( '&' ) );
+            req.onreadystatechange = function(){
+                if( req.readyState != 4 ) return;
+                if( req.status == 200 ){
+                    let values = req.responseText.split( '&' );
+                    Twitter.oauth = {};
+                    for( let i = 0, item; item = values[i]; i++ ){
+                        let val = item.split( '=' );
+                        Twitter.oauth[val[0]] = val[1];
+                    }
+                    // Twitter.saveTwitterToken( Twitter.oauth );
+                    // $( '#twitter-screen-name' ).text( "@" + Twitter.oauth['screen_name'] );
+                    resolve( Twitter.oauth );
+                }else{
+                    console.log( "Twitter認証に失敗しました。\n再度、認証を行ってみてください。" );
+                    alert( "Twitter認証に失敗しました。\n再度、認証を行ってみてください。" );
+                }
+                console.log( 'status=' + req.status );
+                console.log( req.responseText );
+            };
+            let url = this.accessTokenURL;
+            req.open( 'POST', url );
+            req.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
+
+            let xauth = [];
+            let str = [];
+            xauth = message.parameters;
+            for( let i = 0, item; item = xauth[i]; i++ ){
+                str.push( item[0] + "=" + item[1] + "" );
+            }
+            req.send( str.join( '&' ) );
+        } );
+        return p;
     },
 
     /**
@@ -214,7 +220,7 @@ var Twitter = {
             if( req.status != 200 ){
                 console.log( "Status=" + req.status );
                 let result = JSON.parse( req.responseText );
-                NicoLiveHelper.showAlert( 'Twitter:' + result.error );
+                NicoLiveHelper.showAlert( 'Twitter:' + result.errors[0].message );
             }
             //console.log('update result:'+req.responseText);
         };
