@@ -241,6 +241,10 @@ footer {
     border-left: 1px solid gray;
 }
 
+#tbl-user-management tr:hover {
+    background-color: #e6faff;
+}
+
 /*----- -----*/
 
 .video-list {
