@@ -553,6 +553,12 @@ var NicoLiveStock = {
             OpenLink( 'http://www.nicovideo.jp/user/' + this.stock[n].user_id );
             break;
 
+        case 'reset_played':
+            this.stock[n].is_played = !this.stock[n].is_played;
+            this.redrawStocks();
+            this.saveStocks();
+            break;
+
         default:
             // マイリスト追加処
             console.log( key );
@@ -677,6 +683,7 @@ var NicoLiveStock = {
                             name: "マイリストに追加",
                             items: {}
                         },
+                        "reset_played": {name: '再生済みの状態を切り替え'},
                         "sep1": "---------",
                         "copy_all": {name: "すべての動画IDをコピー"},
                         "save_all": {name: "ストックをファイルに保存"},
