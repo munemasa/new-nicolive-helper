@@ -169,7 +169,7 @@ var NicoLiveRequest = {
                 $( elem ).text( '' );
             }
 
-            if( item.request_user_id !== '0' ){
+            if( item.request_user_id && item.request_user_id !== '0' ){
                 row.querySelector( '.request-user' ).textContent = item.request_user_id;
                 row.querySelector( '.request-counter' ).textContent = ` (${item.request_counter})`;
                 row.querySelector( '.request-user' ).setAttribute( 'title', `ID:${item.request_user_id} の ${item.request_counter}回目のリクエストです` );
@@ -203,6 +203,7 @@ var NicoLiveRequest = {
         $( '#request-table-body' ).append( elem );
 
         this.updateBadgeAndTime();
+        this.saveRequests();
     },
 
     /**

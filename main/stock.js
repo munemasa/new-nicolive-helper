@@ -113,6 +113,7 @@ var NicoLiveStock = {
         $( '#stock-table-body' ).append( elem );
 
         this.updateBadgeAndTime();
+        this.saveStocks();
     },
 
     /**
