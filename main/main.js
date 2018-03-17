@@ -156,7 +156,7 @@ var NicoLiveHelper = {
      */
     stopVideo: function(){
         let p = new Promise( ( resolve, reject ) =>{
-            if( !this.isConnected() ){
+            if( !this.isConnected() || !this.isCaster() ){
                 reject( null );
                 return;
             }
@@ -240,7 +240,7 @@ var NicoLiveHelper = {
         // 次動画の再生したあとに音量変更が走ると困るのでタイマーを取り消す
         clearTimeout( this._change_volume_timer );
         let p = new Promise( ( resolve, reject ) =>{
-            if( !this.isConnected() ){
+            if( !this.isConnected() || !this.isCaster() ){
                 reject( null );
                 return;
             }
