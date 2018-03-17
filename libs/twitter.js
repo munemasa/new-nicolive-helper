@@ -49,7 +49,10 @@ var Twitter = {
     },
 
     openAuthPage: function( url ){
-        OpenLink( url );
+        // OpenLink( url );
+        // window.open( url, '_blank' );
+        $( '#twitter-get-pin-link' ).attr( 'href', url );
+        $( '#twitter-get-pin-link' ).text( 'PIN取得ページを開く' );
     },
 
     getRequestToken: function(){
