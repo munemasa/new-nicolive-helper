@@ -641,6 +641,10 @@ var NicoLiveHelper = {
         xhr.send( form );
     },
 
+    postBSPComment: function(){
+        let url = this.liveProp.program.bsp.commentPostApiUrl;
+    },
+
 
     /**
      * @param threadId

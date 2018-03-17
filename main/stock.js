@@ -283,8 +283,6 @@ var NicoLiveStock = {
      * @returns {Promise<void>}
      */
     saveStocks: async function(){
-        if( !NicoLiveHelper.isCaster() ) return;
-
         try{
             await browser.storage.local.set( {
                 'stock': this.stock
