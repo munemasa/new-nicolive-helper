@@ -53,6 +53,9 @@
 <fieldset>
   <legend>リクエスト</legend>
   <div>
+    <label><input type="checkbox" id="request-no-duplicated">重複したリクエストを受け付けない</label>
+  </div>
+  <div>
     <label><input type="checkbox" id="request-send-reply">リクエストへ応答コメントする</label>
   </div>
   短期間に連続して運営コメントを送信できないため、リクエスト等が殺到した場合に送信されない場合があります。<br>
@@ -72,6 +75,10 @@
   <div style="display:flex; width:100%;">
     <div class="label">削除または見つからない時</div>
     <input id="request-deleted" type="text" style="flex:1;" placeholder="削除または見つからない動画のとき">
+  </div>
+  <div style="display:flex; width:100%;">
+    <div class="label">リクエスト済み動画の時</div>
+    <input id="request-duplicated" type="text" style="flex:1;" placeholder="リクエスト済み動画を受け取った時">
   </div>
 </fieldset>
 

@@ -41,11 +41,26 @@ var NicoLiveRequest = {
     },
 
     /**
+     * 動画IDを指定してリクエストを検索する.
+     * @param video_id
+     * @returns {*}
+     */
+    findById: function( video_id ){
+        for( let i = 0, v; v = this.request[i]; i++ ){
+            if( v.video_id == video_id ) return v;
+        }
+        return null;
+    },
+
+    /**
      * リクエストをチェックする.
      * true を返すとリクエストに追加する。
      * @param vinfo{VideoInformation}
      */
     checkRequest: function( vinfo ){
+        if( Config['request-no-duplicated'] && this.findById( vinfo.video_id ) ){
+            return 2;
+        }
         if( vinfo.no_live_play ){
             return 1;
         }
@@ -78,24 +93,31 @@ var NicoLiveRequest = {
             let code = this.checkRequest( vinfo );
 
             this.counter[vinfo.request_user_id] = this.counter[vinfo.request_user_id] || 0;
-            if( !vinfo.no_live_play ){
-                this.counter[vinfo.request_user_id]++;
-                vinfo.request_counter = this.counter[vinfo.request_user_id];
-            }else{
-                vinfo.request_counter = 0;
+            if( code == 0 || code == 1 ){
+                if( !vinfo.no_live_play ){
+                    this.counter[vinfo.request_user_id]++;
+                    vinfo.request_counter = this.counter[vinfo.request_user_id];
+                }else{
+                    vinfo.request_counter = 0;
+                }
+
+                this.request.push( vinfo );
+                let elem = NicoLiveHelper.createVideoInfoElement( vinfo );
+                $( '#request-table-body' ).append( elem );
+                this.updateBadgeAndTime();
             }
 
-            this.request.push( vinfo );
-            let elem = NicoLiveHelper.createVideoInfoElement( vinfo );
-            $( '#request-table-body' ).append( elem );
-            this.updateBadgeAndTime();
+            if( vinfo.no_live_play ) code = 1; // 常に引用不可にする
 
             switch( code ){
-            case 0:
+            case 0: // OK
                 this.sendReply( 'request-accept', vinfo );
                 break;
-            case 1:
+            case 1: // 引用不可
                 this.sendReply( 'request-no-live-play', vinfo );
+                break;
+            case 2: // 重複リクエスト
+                this.sendReply( 'request-duplicated', vinfo );
                 break;
             }
             UserManage.createTable();
