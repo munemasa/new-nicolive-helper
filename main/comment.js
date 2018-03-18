@@ -422,7 +422,8 @@ var NicoLiveComment = {
             NicoLiveHelper.sendComment( mail, comment );
             break;
 
-        case 2: // TODO BSPコメ
+        case 2: // BSPコメ
+            NicoLiveHelper.postBSPComment( mail, comment, '' );
             break;
         }
 

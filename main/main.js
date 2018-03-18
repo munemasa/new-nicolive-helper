@@ -641,8 +641,41 @@ var NicoLiveHelper = {
         xhr.send( form );
     },
 
-    postBSPComment: function(){
+    /**
+     * 使えるカラーは white,red,green,blue,cyan,yellow,purple,pink,orange,niconicowhite
+     * @param color
+     * @param text
+     * @param name
+     */
+    postBSPComment: function( color, text, name ){
+        if( !this.hasBSP() ){
+            this.showAlert( `バックステージパスがありません` );
+            return;
+        }
         let url = this.liveProp.program.bsp.commentPostApiUrl;
+        color = color || 'cyan';
+        name = name || this.liveProp.user.nickname;
+
+        let xhr = CreateXHR( 'POST', url );
+        xhr.onreadystatechange = () =>{
+            if( xhr.readyState != 4 ) return;
+            if( xhr.status != 200 ){
+                console.log( `${xhr.status} ${xhr.responseText}` );
+                let error = JSON.parse( xhr.responseText );
+                console.log( `コメント送信: ${error.meta.errorMessage || error.meta.errorCode}` );
+                this.showAlert( `コメント送信: ${error.meta.errorMessage || error.meta.errorCode}` );
+                return;
+            }
+            console.log( `Comment posted: ${xhr.responseText}` );
+        };
+
+        xhr.setRequestHeader( 'X-Public-Api-Token', this.liveProp.site.relive.csrfToken );
+
+        let form = new FormData();
+        form.append( 'text', text );
+        form.append( 'name', name );
+        form.append( 'color', color );
+        xhr.send( form );
     },
 
 
