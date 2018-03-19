@@ -648,11 +648,12 @@ var NicoLiveHelper = {
      * @param name
      */
     postBSPComment: function( color, text, name ){
-        if( !this.hasBSP() ){
+        if( !this.hasBSP() && !this.isCaster() ){
             this.showAlert( `バックステージパスがありません` );
             return;
         }
-        let url = this.liveProp.program.bsp.commentPostApiUrl;
+        let url = `http://live2.nicovideo.jp/unama/api/v3/programs/${this.getLiveId()}/bsp_comment`;
+        // let url = this.liveProp.program.bsp.commentPostApiUrl;
         color = color || 'cyan';
         name = name || this.liveProp.user.nickname;
 
@@ -721,7 +722,7 @@ var NicoLiveHelper = {
             }
         };
         this._comment_svr.send( JSON.stringify( chat ) );
-        console.log( chat );
+        // console.log( chat );
     },
 
     /**
@@ -786,7 +787,7 @@ var NicoLiveHelper = {
         switch( chat.premium ){
         case 2: // チャンネル生放送の場合、こちらの場合もあり。/infoコマンドなどもココ
         case 3: // 運営コメント
-        case 7: // name付けるとこれになる？
+        case 7: // 運営コメントにnameパラメータ付けるとこれになる？ BSPもこれになる
             if( chat.text.match( /^\/disconnect/ ) ){
                 this.showAlert( `放送が終了しました` );
                 this.live_endtime = 0;
@@ -1667,6 +1668,11 @@ var NicoLiveHelper = {
                 $( '#live-caster' ).text( this.liveProp.program.supplier.name );
             }
             $( '#live-title' ).text( this.liveProp.program.title );
+
+            if( !this.isCaster() ){
+
+                $( '#type-of-comment' ).val( 1 );
+            }
         }
 
         setInterval( ( ev ) =>{

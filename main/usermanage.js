@@ -98,7 +98,10 @@ var UserManage = {
             if( type != 0 ){
                 let defname = '★';
                 if( user_id > 0 ){
-                    defname = await NicoLiveComment.getProfileName( user_id, '★' );
+                    defname = NicoLiveComment.reflectionmap[user_id] && NicoLiveComment.reflectionmap[user_id].name;
+                    if( !defname ){
+                        defname = await NicoLiveComment.getProfileName( user_id, '★' );
+                    }
                 }
                 let name = window.prompt( 'リフレクション時の表示名を入れてください', defname );
                 if( name ){

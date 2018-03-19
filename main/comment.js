@@ -247,7 +247,8 @@ var NicoLiveComment = {
             NicoLiveHelper.postCasterComment( `${name}:${str}`, mail, '', false );
             break;
         case 2:
-            // BSP（未サポート）
+            // TODO 色指定できるようにしたい
+            NicoLiveHelper.postBSPComment( 'blue', str, name );
             break;
         }
     },
