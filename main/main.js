@@ -699,7 +699,9 @@ var NicoLiveHelper = {
      */
     sendComment: function( mail, text ){
         if( !text ) return;
-
+        // JASRACコードの-を=に変換
+        text = text.replace( /((...)[-](....)[-](.))/g, "$2=$3=$4" );
+        
         this._getpostkeyfunc = () =>{
             this.sendComment( mail, text );
         };
