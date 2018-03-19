@@ -74,6 +74,11 @@ var UserManage = {
         let name = $( '#add-display-name' ).val();
         let type = $( '#add-reflection-type' ).val();
 
+        if( type != 0 && !name ){
+            NicoLiveHelper.showAlert( '表示名を入力してください' );
+            return;
+        }
+
         NicoLiveComment.reflectionmap[user_id] = {
             'user_id': user_id,
             'name': name,
