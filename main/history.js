@@ -21,12 +21,15 @@
  */
 
 var NicoLiveHistory = {
+    history: [],
 
     addHistory: function( vinfo ){
         let hist = $( '#txt-play-history' );
         let text = hist.val();
         let str = vinfo.video_id + "\t" + vinfo.title + "\n";
         hist.val( text + str );
+
+        this.history.push( vinfo );
 
         this.save();
     },
