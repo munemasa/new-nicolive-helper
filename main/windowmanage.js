@@ -39,13 +39,24 @@ window.addEventListener( 'resize', ( ev ) =>{
 } );
 
 
-window.addEventListener( 'load', ( ev ) =>{
+window.addEventListener( 'load', async ( ev ) =>{
     WindowManage.onResize();
 
     let tmp = localStorage.getItem( 'window_position' );
     if( tmp ){
         // TODO ウィンドウ位置とサイズを復元
-        let window_position = JSON.parse( tmp );
+        let pos = JSON.parse( tmp );
+
+        // ウィンドウ位置サイズを復元
+        let win = await browser.windows.getCurrent();
+        if( pos ){
+            // browser.windows.update( win.id, {
+            //     left: pos.x,
+            //     top: pos.y,
+            //     width: pos.w,
+            //     height: pos.h
+            // } )
+        }
     }
 
     let active_tab = localStorage.getItem( 'active_tab' ) || '#tab-request';
