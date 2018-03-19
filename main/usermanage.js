@@ -36,14 +36,22 @@ var UserManage = {
             let kotehan = elem.querySelector( '.um-kotehan' );
             let request_num = elem.querySelector( '.um-request_num' );
             let reflection_type = elem.querySelector( '.um-reflection_type' );
+            let reflection_color = elem.querySelector( '.um-reflection_color' );
             let display_name = elem.querySelector( '.um-display_name' );
             elem.querySelector( '.um-btn-remove' ).setAttribute( 'user_id', user );
+
+            $( kotehan ).attr( 'id', `um-kotehan-${user}` );
+            $( reflection_type ).attr( 'id', `um-reflection_type-${user}` );
+            $( reflection_color ).attr( 'id', `um-reflection_color-${user}` );
+            $( display_name ).attr( 'id', `um-display_name-${user}` );
 
             $( user_id ).text( user );
             $( kotehan ).text( NicoLiveComment.namemap[user] && NicoLiveComment.namemap[user].name || '' );
             $( request_num ).text( `${NicoLiveRequest.counter[user] || 0}回` );
-            $( reflection_type ).val( NicoLiveComment.reflectionmap[user] && NicoLiveComment.reflectionmap[user].type || 0 );
             $( reflection_type ).attr( 'user_id', user );
+            $( reflection_color ).attr( 'user_id', user );
+            $( reflection_type ).val( NicoLiveComment.reflectionmap[user] && NicoLiveComment.reflectionmap[user].type || 0 );
+            $( reflection_color ).val( NicoLiveComment.reflectionmap[user] && NicoLiveComment.reflectionmap[user].color || 'cyan' );
             $( display_name ).text( NicoLiveComment.reflectionmap[user] && NicoLiveComment.reflectionmap[user].name || '' );
             table.append( elem );
         }
@@ -69,7 +77,8 @@ var UserManage = {
         NicoLiveComment.reflectionmap[user_id] = {
             'user_id': user_id,
             'name': name,
-            'type': type
+            'type': type,
+            'color': ''
         };
         NicoLiveComment.namemap[user_id] = {
             'name': kotehan
@@ -105,7 +114,8 @@ var UserManage = {
                 }
                 let name = window.prompt( 'リフレクション時の表示名を入れてください', defname );
                 if( name ){
-                    NicoLiveComment.addReflection( user_id, name, type );
+                    let color = $( `#um-reflection_color-${user_id}` ).val();
+                    NicoLiveComment.addReflection( user_id, name, type, color );
                 }else{
                     $this.val( 0 );
                 }
@@ -113,6 +123,16 @@ var UserManage = {
                 // リフレクションなし
                 NicoLiveComment.removeReflection( user_id );
             }
+        } );
+        $( document ).on( 'change', '.um-reflection_color', async function( ev ){
+            let $this = $( this );
+            let user_id = $this.attr( 'user_id' );
+            let color = $this.val();
+            let reflectionmap = NicoLiveComment.reflectionmap[user_id];
+            if( reflectionmap ){
+                reflectionmap.color = color;
+            }
+            $this.css( 'background-color', color == 'niconicowhite' ? '#cc9' : color );
         } );
     }
 };

@@ -40,12 +40,13 @@ var NicoLiveComment = {
         SaveText( name, str );
     },
 
-    addReflection: function( user_id, name, type ){
-        console.log( `${user_id}をリフレクション登録 type=${type}` );
+    addReflection: function( user_id, name, type, color ){
+        console.log( `${user_id}をリフレクション登録 type=${type} color=${color}` );
         this.reflectionmap[user_id] = {
             'user_id': user_id,
             'name': name,
-            'type': type
+            'type': type,
+            'color': color
         };
         UserManage.createTable();
     },
@@ -235,6 +236,7 @@ var NicoLiveComment = {
 
         let name = this.reflectionmap[comment.user_id].name;
         let type = this.reflectionmap[comment.user_id].type;
+        let color = this.reflectionmap[comment.user_id].color;
         let mail = '';
         let str = comment.text_notag;
         str = str.replace( /{=/g, '{-' );
@@ -244,11 +246,10 @@ var NicoLiveComment = {
             break;
         case 1:
             // 運営コメント
-            NicoLiveHelper.postCasterComment( `${name}:${str}`, mail, '', false );
+            NicoLiveHelper.postCasterComment( `${name}:${str}`, color, '', false );
             break;
         case 2:
-            // TODO 色指定できるようにしたい
-            NicoLiveHelper.postBSPComment( 'blue', str, name );
+            NicoLiveHelper.postBSPComment( color, str, name );
             break;
         }
     },
