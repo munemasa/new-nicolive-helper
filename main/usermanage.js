@@ -123,6 +123,7 @@ var UserManage = {
                     NicoLiveComment.addReflection( user_id, name, type, color );
                 }else{
                     $this.val( 0 );
+                    NicoLiveComment.removeReflection( user_id );
                 }
             }else{
                 // リフレクションなし
