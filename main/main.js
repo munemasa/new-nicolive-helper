@@ -88,6 +88,14 @@ var NicoLiveHelper = {
         }
     },
 
+    getCommunityId: function(){
+        try{
+            return this.liveProp.community.id;
+        }catch( e ){
+            return null;
+        }
+    },
+
     /**
      * 動画再生時の音量設定を返す.
      * @returns {number}
@@ -1639,6 +1647,17 @@ var NicoLiveHelper = {
             }
         } );
 
+        let lvid = GetParameterByName( 'lv' );
+        console.log( 'lvid=' + lvid );
+        if( lvid ){
+            console.log( 'get liveinfo' );
+            this.liveProp = await browser.runtime.sendMessage( {
+                cmd: 'get-liveinfo',
+                request_id: lvid
+            } );
+            console.log( this.liveProp );
+        }
+
         this.initUI();
 
         Twitter.init();
@@ -1646,19 +1665,11 @@ var NicoLiveHelper = {
         NicoLiveRequest.init();
         NicoLiveStock.init();
         NicoLiveComment.init();
+        NicoLiveHistory.init();
         UserManage.init();
-
-        let lvid = GetParameterByName( 'lv' );
-        console.log( 'lvid=' + lvid );
 
         if( lvid ){
             // 放送IDが渡されたら放送に接続する
-            console.log( 'get liveinfo' );
-            this.liveProp = await browser.runtime.sendMessage( {
-                cmd: 'get-liveinfo',
-                request_id: lvid
-            } );
-            console.log( this.liveProp );
             if( this.liveProp ){
                 this.connectServer();
             }

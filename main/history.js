@@ -48,14 +48,18 @@ var NicoLiveHistory = {
     },
 
     save: function(){
+        if( !NicoLiveHelper.isCaster() ) return;
+
         let str = $( '#txt-play-history' ).val();
         browser.storage.local.set( {
             'history': str
         } );
     },
     init: async function(){
-        let obj = await browser.storage.local.get( 'history' );
-        $( '#txt-play-history' ).val( obj.history );
+        if( NicoLiveHelper.isCaster() ){
+            let obj = await browser.storage.local.get( 'history' );
+            $( '#txt-play-history' ).val( obj.history );
+        }
 
         $( '#txt-play-history' ).on( 'change', ( ev ) =>{
             this.save();
@@ -78,7 +82,3 @@ var NicoLiveHistory = {
     }
 };
 
-
-window.addEventListener( 'load', ( ev ) =>{
-    NicoLiveHistory.init();
-} );
