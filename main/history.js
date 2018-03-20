@@ -21,8 +21,25 @@
  */
 
 var NicoLiveHistory = {
-    history: [],
+    history: [],    // 再生済み動画の リスト
 
+
+    /**
+     * 再生履歴に指定の動画があるかチェックする.
+     * @param video_id
+     * @returns {boolean}
+     */
+    isExists: function( video_id ){
+        for( let v of this.history ){
+            if( v.video_id == video_id ) return true;
+        }
+        return false;
+    },
+
+    /**
+     * 再生履歴に動画を追加する.
+     * @param vinfo{VideoInformation}
+     */
     addHistory: function( vinfo ){
         let hist = $( '#txt-play-history' );
         let text = hist.val();
