@@ -45,6 +45,8 @@ var NicoLiveHistory = {
         let str = vinfo.video_id + "\t" + vinfo.title + "\n";
         hist.val( text + str );
 
+        vinfo = CopyObject( vinfo );
+        vinfo.play_time = GetCurrentTime();
         this.history.push( vinfo );
 
         this.save();
