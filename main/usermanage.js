@@ -114,7 +114,7 @@ var UserManage = {
                 let defname = $( `#um-display_name-${user_id}` ).text() || '★';
                 // defname = NicoLiveComment.reflectionmap[user_id] && NicoLiveComment.reflectionmap[user_id].name;
                 if( user_id > 0 ){
-                    if( !defname ){
+                    if( !defname || defname == '★' ){
                         defname = await NicoLiveComment.getProfileName( user_id, '★' );
                     }
                 }
