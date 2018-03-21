@@ -138,6 +138,7 @@ var NicoLiveHistory = {
             this.history = [];
             $( '#tbl-play-history-body' ).empty();
             $( '#txt-play-history' ).val( '' );
+            this.save();
         } );
 
         $( '#txt-play-history' ).on( 'change', ( ev ) =>{
