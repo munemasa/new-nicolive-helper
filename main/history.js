@@ -79,6 +79,7 @@ var NicoLiveHistory = {
         let title = elem.querySelector( '.nico-title' );
         let video_prop = elem.querySelector( '.nico-video-prop' );
         let link = elem.querySelector( '.nico-link' );
+        let playtime = elem.querySelector( '.nico-playtime' );
 
         link.setAttribute( "href", "http://www.nicovideo.jp/watch/" + vinfo.video_id );
 
@@ -95,6 +96,8 @@ var NicoLiveHistory = {
         let tmp = GetDateString( vinfo.first_retrieve * 1000, true );
         video_prop.textContent = '投:' + tmp + ' 再:' + FormatCommas( vinfo.view_counter )
             + ' コ:' + FormatCommas( vinfo.comment_num ) + ' マ:' + FormatCommas( vinfo.mylist_counter ) + ' 時間:' + vinfo.length;
+
+        $( playtime ).text( `再生日時:${GetDateTimeString( vinfo.play_time * 1000, 1 )}` );
 
         return elem;
     },
