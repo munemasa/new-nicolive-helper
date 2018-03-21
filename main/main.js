@@ -605,6 +605,19 @@ var NicoLiveHelper = {
     },
 
     /**
+     * コメント送信待ち時間のミリ秒を返す.
+     * コメント送信が短すぎると言われたときに何ミリ秒待機して再送信するかの時間を返す。
+     * @param c エラー回数
+     * @returns {number}
+     */
+    calcBackoffTime: function( c ){
+        if( c > 5 ) c = 5;
+        if( c <= 1 ) c = 2;
+        let k = GetRandomInt( 1, Math.pow( 2, c ) - 1 );
+        return 250 + k * 0.25 * 1000;
+    },
+
+    /**
      * 新配信で運営コメント送信をする.
      *
      * isPermコメントを消すには clearApiUrl に DELETE リクエストを送る
@@ -613,13 +626,15 @@ var NicoLiveHelper = {
      * @param mail コマンド欄
      * @param name 名前
      * @param isPerm ずっと表示させる. true or false. 旧/permの役割
+     * @param cnt リトライカウンター
      */
-    postCasterComment: async function( text, mail, name, isPerm ){
+    postCasterComment: async function( text, mail, name, isPerm, cnt ){
         if( text == '' ) return;
         if( !this.isCaster() ) return;
         mail = mail || '';
         name = name || '';
         isPerm = !!isPerm;
+        cnt = cnt || 0;
 
         let url = this.liveProp.program.broadcasterComment.postApiUrl;
 
@@ -627,13 +642,20 @@ var NicoLiveHelper = {
         text = this.replaceMacros( text, this.currentVideo );
 
         let xhr = CreateXHR( 'PUT', url );
-        xhr.onreadystatechange = () =>{
+        xhr.onreadystatechange = async () =>{
             if( xhr.readyState != 4 ) return;
             if( xhr.status != 200 ){
                 console.log( `${xhr.status} ${xhr.responseText}` );
                 let error = JSON.parse( xhr.responseText );
                 console.log( `コメント送信: ${error.meta.errorMessage || error.meta.errorCode}` );
-                this.showAlert( `コメント送信: ${error.meta.errorMessage || error.meta.errorCode}` );
+                if( error.meta.errorMessage.match( /リクエスト間隔が短/ ) ){
+                    let ms = this.calcBackoffTime( cnt + 1 );
+                    console.log( `${ms}ミリ 秒待機します(${cnt + 1})` );
+                    await Wait( ms );
+                    this.postCasterComment( text, mail, name, isPerm, cnt + 1 );
+                }else{
+                    this.showAlert( `コメント送信: ${error.meta.errorMessage || error.meta.errorCode}` );
+                }
                 return;
             }
             console.log( `Comment posted: ${xhr.responseText}` );
@@ -655,7 +677,7 @@ var NicoLiveHelper = {
      * @param text
      * @param name
      */
-    postBSPComment: function( color, text, name ){
+    postBSPComment: function( color, text, name, cnt ){
         if( !this.hasBSP() && !this.isCaster() ){
             this.showAlert( `バックステージパスがありません` );
             return;
@@ -664,15 +686,23 @@ var NicoLiveHelper = {
         // let url = this.liveProp.program.bsp.commentPostApiUrl;
         color = color || 'cyan';
         name = name || this.liveProp.user.nickname;
+        cnt = cnt || 0;
 
         let xhr = CreateXHR( 'POST', url );
-        xhr.onreadystatechange = () =>{
+        xhr.onreadystatechange = async () =>{
             if( xhr.readyState != 4 ) return;
             if( xhr.status != 200 ){
                 console.log( `${xhr.status} ${xhr.responseText}` );
                 let error = JSON.parse( xhr.responseText );
                 console.log( `コメント送信: ${error.meta.errorMessage || error.meta.errorCode}` );
-                this.showAlert( `コメント送信: ${error.meta.errorMessage || error.meta.errorCode}` );
+                if( error.meta.errorMessage.match( /リクエスト間隔が短/ ) ){
+                    let ms = this.calcBackoffTime( cnt + 1 );
+                    console.log( `${ms}ミリ 秒待機します(${cnt + 1})` );
+                    await Wait( ms );
+                    this.postBSPComment( color, text, name, cnt + 1 );
+                }else{
+                    this.showAlert( `コメント送信: ${error.meta.errorMessage || error.meta.errorCode}` );
+                }
                 return;
             }
             console.log( `Comment posted: ${xhr.responseText}` );
@@ -855,10 +885,10 @@ var NicoLiveHelper = {
 
             case 1:
                 // 送信テキストが空のときに発生する
-                console.log( `コメントの送信エラーです` );
+                this.showAlert( `コメントの送信エラー(送信過多など)です` );
                 break;
             case 8:
-                console.log( `コメントが長すぎます` );
+                this.showAlert( `コメントが長すぎます` );
                 break;
 
             default:
