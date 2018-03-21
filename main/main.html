@@ -275,11 +275,26 @@
 
   <div class="tab-pane margin-lr-4" id="tab-history" role="tabpanel">
     <!-- 再生履歴 -->
-    <textarea id="txt-play-history" class="flex1" contextmenu="history-copy-video-id"></textarea>
-
-    <menu type="context" id="history-copy-video-id">
-      <menuitem id="copy-history-text" label="選択範囲の動画IDをコピー"></menuitem>
-    </menu>
+    <div id="tab-history-body">
+      <div style="display:flex;">
+        <select id="sel-history-display-type">
+          <option value="0">テキスト表示</option>
+          <option value="1">リスト表示</option>
+        </select>
+        <div class="flex1"></div>
+        <button id="btn-clear-history" class="btn btn-sm btn-outline-danger">履歴を全て削除</button>
+      </div>
+      <div class="flex1" style="padding: 4px;">
+        <textarea id="txt-play-history" contextmenu="history-copy-video-id"></textarea>
+        <table id="tbl-play-history" class="table table-hover video-list">
+          <tbody id="tbl-play-history-body">
+          </tbody>
+        </table>
+      </div>
+      <menu type="context" id="history-copy-video-id">
+        <menuitem id="copy-history-text" label="選択範囲の動画IDをコピー"></menuitem>
+      </menu>
+    </div>
   </div>
 
   <div class="tab-pane margin-lr-4" id="tab-user-manage" role="tabpanel">
@@ -372,6 +387,47 @@
 <iframe id="iframe-thumbnail" width="312" height="0" src="about:blank" scrolling="no"
         style="display:none; opacity:0; border:solid 1px #CCC;float:left;position:fixed;bottom:30px;left:25px;"
         frameborder="0"></iframe>
+
+
+<!-- 再生履歴表示のテンプレート -->
+<template id="template-history">
+  <tr class="nico-video-row" style="border-bottom: 1px solid gray;">
+    <td>
+      <a class="nico-link" href="#" target="_blank">
+        <div style="position:relative; float:left; margin-right:4px; margin-bottom: 2px;">
+          <img class="nico-thumbnail" src="">
+          <span class="nico-bitrate"></span>
+        </div>
+      </a>
+      <div class="nico-title"></div>
+      <div class="nico-video-prop"></div>
+      <!--
+      <div class="btn-toolbar" style="clear:left; margin-top:1px;" role="toolbar"
+           aria-label="Toolbar with button groups">
+        <div class="btn-group btn-group-sm mr-2" role="group" aria-label="First group">
+          <button type="button" class="btn btn-outline-primary btn-sm" function="play">
+            <span class="glyphicon glyphicon-play"></span> 再生
+          </button>
+        </div>
+        <div class="btn-group btn-group-sm" role="group" aria-label="Fourth group">
+          <button class="btn btn-outline-info btn-nico-details" type="button" data-toggle="collapse"
+                  data-target="#collapseExample"
+                  aria-expanded="false" aria-controls="collapseExample">
+            <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+            詳細
+          </button>
+        </div>
+        <div style="flex:1;"></div>
+        <div class="btn-group btn-group-sm mr-2" role="group" aria-label="Third group">
+          <button type="button" class="btn btn-outline-danger btn-sm" function="remove">
+            <span class="glyphicon glyphicon-remove"></span> 削除
+          </button>
+        </div>
+      </div>
+      -->
+    </td>
+  </tr>
+</template>
 
 
 <!-- 動画情報のテンプレート -->

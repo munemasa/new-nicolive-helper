@@ -23,7 +23,6 @@
 var NicoLiveHistory = {
     history: [],    // 再生済み動画の リスト
 
-
     /**
      * 再生履歴に指定の動画があるかチェックする.
      * @param video_id
@@ -49,6 +48,9 @@ var NicoLiveHistory = {
         this.history.push( vinfo );
 
         this.save();
+
+        let elem = this.createView( vinfo );
+        $( '#tbl-play-history-body' ).append( elem );
     },
 
     /**
@@ -64,19 +66,79 @@ var NicoLiveHistory = {
         this.save();
     },
 
+    createView: function( vinfo ){
+        let t = document.querySelector( '#template-history' );
+        let clone2 = document.importNode( t.content, true );
+        let elem = clone2.firstElementChild;
+        elem.setAttribute( 'nico_video_id', vinfo.video_id );
+
+        let thumbnail_image = elem.querySelector( '.nico-thumbnail' );
+        let bitrate = elem.querySelector( '.nico-bitrate' );
+        let title = elem.querySelector( '.nico-title' );
+        let video_prop = elem.querySelector( '.nico-video-prop' );
+        let link = elem.querySelector( '.nico-link' );
+
+        link.setAttribute( "href", "http://www.nicovideo.jp/watch/" + vinfo.video_id );
+
+        thumbnail_image.src = vinfo.thumbnail_url;
+        thumbnail_image.addEventListener( 'mouseover', ( ev ) =>{
+            NicoLiveHelper.showThumbnail( ev, vinfo.video_id );
+        } );
+        thumbnail_image.addEventListener( 'mouseout', ( ev ) =>{
+            NicoLiveHelper.hideThumbnail();
+        } );
+
+        bitrate.textContent = vinfo.highbitrate.substring( 0, vinfo.highbitrate.length - 3 ) + 'k/' + vinfo.movie_type;
+        title.textContent = vinfo.video_id + ' ' + vinfo.title;
+        let tmp = GetDateString( vinfo.first_retrieve * 1000, true );
+        video_prop.textContent = '投:' + tmp + ' 再:' + FormatCommas( vinfo.view_counter )
+            + ' コ:' + FormatCommas( vinfo.comment_num ) + ' マ:' + FormatCommas( vinfo.mylist_counter ) + ' 時間:' + vinfo.length;
+
+        return elem;
+    },
+
     save: function(){
         if( !NicoLiveHelper.isCaster() ) return;
 
         let str = $( '#txt-play-history' ).val();
         browser.storage.local.set( {
-            'history': str
+            'history': str,
+            'history_list': this.history
         } );
     },
+
     init: async function(){
         if( NicoLiveHelper.isCaster() ){
             let obj = await browser.storage.local.get( 'history' );
             $( '#txt-play-history' ).val( obj.history );
+
+            obj = await browser.storage.local.get( 'history_list' );
+            if( obj.history_list ){
+                this.history = obj.history_list;
+            }
+            for( let v of this.history ){
+                let elem = this.createView( v );
+                $( '#tbl-play-history-body' ).append( elem );
+            }
         }
+
+        let f = () =>{
+            let type = disptype.val();
+            let views = [$( '#txt-play-history' ), $( '#tbl-play-history' )];
+            views[type].show();
+            views[1 - type].hide();
+        };
+        let disptype = $( '#sel-history-display-type' );
+        disptype.on( 'change', ( ev ) =>{
+            f();
+        } );
+        f();
+
+        $( '#btn-clear-history' ).on( 'click', ( ev ) =>{
+            this.history = [];
+            $( '#tbl-play-history-body' ).empty();
+            $( '#txt-play-history' ).val( '' );
+        } );
 
         $( '#txt-play-history' ).on( 'change', ( ev ) =>{
             this.save();
