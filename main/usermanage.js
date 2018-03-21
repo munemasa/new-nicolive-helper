@@ -111,10 +111,9 @@ var UserManage = {
             let type = $this.val();
             let color = $( `#um-reflection_color-${user_id}` ).val();
             if( type != 0 ){
-                let defname = '★';
+                let defname = $( `#um-display_name-${user_id}` ).text() || '★';
+                // defname = NicoLiveComment.reflectionmap[user_id] && NicoLiveComment.reflectionmap[user_id].name;
                 if( user_id > 0 ){
-                    // defname = NicoLiveComment.reflectionmap[user_id] && NicoLiveComment.reflectionmap[user_id].name;
-                    defname = $( `#um-display_name-${user_id}` ).text();
                     if( !defname ){
                         defname = await NicoLiveComment.getProfileName( user_id, '★' );
                     }
