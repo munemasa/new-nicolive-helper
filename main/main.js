@@ -276,10 +276,15 @@ var NicoLiveHelper = {
                     console.log( `${xhr.status} ${xhr.responseText}` );
 
                     // 400 {"meta":{"status":400,"errorCode":"BAD_REQUEST","errorMessage":"引用再生できない動画です"}}
-                    let err = JSON.parse( xhr.responseText );
-                    this.showAlert( `${vinfo.video_id}: ${err.meta.errorMessage}` );
-                    //this.currentVideo = null;
-                    reject( err );
+                    try{
+                        let err = JSON.parse( xhr.responseText );
+                        this.showAlert( `${vinfo.video_id}: ${err.meta.errorMessage}` );
+                        //this.currentVideo = null;
+                        reject( err );
+                    }catch( e ){
+                        this.showAlert( `${vinfo.video_id}の再生に失敗しました` );
+                        reject( null );
+                    }
                     return;
                 }
                 this.currentVideo = CopyObject( vinfo );
@@ -336,7 +341,10 @@ var NicoLiveHelper = {
             return;
         }
         this._lock = true;
-        await this._playNext();
+        try{
+            await this._playNext();
+        }catch( e ){
+        }
         this._lock = false;
     },
 
