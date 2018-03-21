@@ -59,9 +59,16 @@ var NicoLiveRequest = {
      */
     checkRequest: function( vinfo ){
         if( Config['request-no-duplicated'] && this.findById( vinfo.video_id ) ){
+            // 重複したリクエストを受け付けない
             return 2;
         }
+        if( Config['request-no-played'] && NicoLiveHistory.isExists( vinfo.video_id ) ){
+            // 再生済みリクエストを受け付けない
+            vinfo.is_played = true;
+            return 3;
+        }
         if( vinfo.no_live_play ){
+            // 生拒否
             return 1;
         }
         return 0;
@@ -118,6 +125,12 @@ var NicoLiveRequest = {
                 break;
             case 2: // 重複リクエスト
                 this.sendReply( 'request-duplicated', vinfo );
+                break;
+            case 3: // 再生済みリクエスト
+                this.sendReply( 'request-played', vinfo );
+                break;
+            default:
+                NicoLiveHelper.showAlert( `不明なリクエストエラー:${code}` );
                 break;
             }
             UserManage.createTable();

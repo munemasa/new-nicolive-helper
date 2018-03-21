@@ -110,13 +110,16 @@ async function LoadOptions(){
     LoadValue( 'autoplay-interval', config, 10 );
 
     /* リクエスト */
-    LoadBool( 'request-send-reply', config, Config['request-send-reply'] );
     LoadBool( 'request-no-duplicated', config, Config['request-no-duplicated'] );
+    LoadBool( 'request-no-played', config, Config['request-no-played'] );
+
+    LoadBool( 'request-send-reply', config, Config['request-send-reply'] );
     LoadValue( 'request-accept', config, Config['request-accept'] );
     LoadValue( 'request-not-allow', config, Config['request-not-allow'] );
     LoadValue( 'request-no-live-play', config, Config['request-no-live-play'] );
     LoadValue( 'request-deleted', config, Config['request-deleted'] );
     LoadValue( 'request-duplicated', config, Config['request-duplicated'] );
+    LoadValue( 'request-played', config, Config['request-played'] );
 
     /* コメント */
     LoadBool( 'comment-184', config, false );
@@ -162,13 +165,16 @@ function SaveOptions( ev ){
     SaveInt( 'autoplay-interval', config );
 
     /* リクエスト */
-    SaveBool( 'request-send-reply', config );
     SaveBool( 'request-no-duplicated', config );
+    SaveBool( 'request-no-played', config );
+
+    SaveBool( 'request-send-reply', config );
     SaveValue( 'request-accept', config );
     SaveValue( 'request-not-allow', config );
     SaveValue( 'request-no-live-play', config );
     SaveValue( 'request-deleted', config );
     SaveValue( 'request-duplicated', config );
+    SaveValue( 'request-played', config );
 
     /* コメント */
     SaveBool( 'comment-184', config );
