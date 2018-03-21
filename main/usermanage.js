@@ -109,25 +109,23 @@ var UserManage = {
             let $this = $( this );
             let user_id = $this.attr( 'user_id' );
             let type = $this.val();
+            let color = $( `#um-reflection_color-${user_id}` ).val();
             if( type != 0 ){
                 let defname = '★';
                 if( user_id > 0 ){
-                    defname = NicoLiveComment.reflectionmap[user_id] && NicoLiveComment.reflectionmap[user_id].name;
+                    // defname = NicoLiveComment.reflectionmap[user_id] && NicoLiveComment.reflectionmap[user_id].name;
+                    defname = $( `#um-display_name-${user_id}` ).text();
                     if( !defname ){
                         defname = await NicoLiveComment.getProfileName( user_id, '★' );
                     }
                 }
                 let name = window.prompt( 'リフレクション時の表示名を入れてください', defname );
-                if( name ){
-                    let color = $( `#um-reflection_color-${user_id}` ).val();
-                    NicoLiveComment.addReflection( user_id, name, type, color );
-                }else{
-                    $this.val( 0 );
-                    NicoLiveComment.removeReflection( user_id );
-                }
+                NicoLiveComment.addReflection( user_id, name || defname, type, color );
             }else{
                 // リフレクションなし
-                NicoLiveComment.removeReflection( user_id );
+                //NicoLiveComment.removeReflection( user_id );
+                let name = $( `#um-display_name-${user_id}` ).text();
+                NicoLiveComment.addReflection( user_id, name, 0, color );
             }
         } );
         $( document ).on( 'change', '.um-reflection_color', async function( ev ){
