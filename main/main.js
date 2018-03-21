@@ -778,7 +778,8 @@ var NicoLiveHelper = {
             let f = async () =>{
                 let flg = await this.isAvailableInNewLive( video_id );
                 if( flg ){
-                    NicoLiveHistory.addHistoryText( `${flg.id} ${flg.title}\n` );
+                    let vinfo = await this.getVideoInfo( video_id );
+                    NicoLiveHistory.addHistory( vinfo );
                 }
             };
             f();
