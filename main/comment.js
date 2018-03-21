@@ -398,6 +398,15 @@ var NicoLiveComment = {
         }
     },
 
+    playVideoDirect: async function( video_id ){
+        try{
+            let vinfo = await NicoLiveHelper.getVideoInfo( video_id );
+            NicoLiveHelper.playVideo( vinfo );
+        }catch( e ){
+            NicoLiveHelper.showAlert( `${video_id} を再生できませんでした` );
+        }
+    },
+
     sendComment: function(){
         let txt = $( '#txt-input-comment' )
         let comment = txt.val();
@@ -417,7 +426,11 @@ var NicoLiveComment = {
                 comment = comment.substring( 6 );
                 isPerm = true;
             }
-            NicoLiveHelper.postCasterComment( comment, mail, '', isPerm );
+            if( comment.match( /^sm\d+$/ ) ){
+                this.playVideoDirect( comment );
+            }else{
+                NicoLiveHelper.postCasterComment( comment, mail, '', isPerm );
+            }
             break;
 
         case 1: // リスナーコメ
