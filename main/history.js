@@ -112,6 +112,43 @@ var NicoLiveHistory = {
         } );
     },
 
+    contextMenu: function( key, options ){
+        let elem = options.$trigger[0];
+        let n = elem.sectionRowIndex;
+
+        switch( key ){
+        case 'play':
+            NicoLiveHelper.playVideo( this.history[n] );
+            break;
+
+        case 'copy':
+            CopyToClipboard( this.history[n].video_id );
+            break;
+
+        case 'copy_all':
+            let str = "";
+            for( let i = 0, item; item = this.history[i]; i++ ){
+                str += item.video_id + " ";
+            }
+            CopyToClipboard( str );
+            break;
+
+        case 'profile':
+            OpenLink( 'http://www.nicovideo.jp/user/' + this.history[n].user_id );
+            break;
+
+        default:
+            // マイリスト追加処理
+            console.log( key );
+            console.log( options.$trigger );
+            let mylist_id = key.match( /^\d+_(.*)/ )[1];
+            let video_id = this.history[n].video_id;
+            NicoLiveMylist.addMylist( mylist_id, video_id, '' );
+            break;
+        }
+        // console.log( options.$trigger );
+    },
+
     init: async function(){
         if( NicoLiveHelper.isCaster() ){
             let obj = await browser.storage.local.get( 'history' );
@@ -164,6 +201,39 @@ var NicoLiveHistory = {
             }
         } );
 
+        $.contextMenu( {
+            selector: '#tbl-play-history-body .nico-video-row',
+            build: function( $triggerElement, e ){
+                let menuobj = {
+                    zIndex: 10,
+                    callback: function( key, options ){
+                        NicoLiveHistory.contextMenu( key, options );
+                    },
+                    items: {
+                        "play": {name: '再生する'},
+                        "sep1": "---------",
+                        "copy": {name: "動画IDをコピー"},
+                        "copy_all": {name: "すべての動画IDをコピー"},
+                        "add_mylist": {
+                            name: "マイリストに追加",
+                            items: {}
+                        },
+                        "sep2": "---------",
+                        "profile": {name: "投稿者プロフィール"},
+                    }
+                };
+                try{
+                    menuobj.items.add_mylist.items['0_default'] = {name: 'とりあえずマイリスト'};
+                    for( let i = 0, item; item = NicoLiveMylist.mylists.mylistgroup[i]; i++ ){
+                        let k = `${i + 1}_${item.id}`;
+                        let v = item.name;
+                        menuobj.items.add_mylist.items[k] = {name: v};
+                    }
+                }catch( x ){
+                }
+                return menuobj;
+            }
+        } );
     }
 };
 
