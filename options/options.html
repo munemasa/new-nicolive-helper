@@ -13,6 +13,7 @@
   <script src="../libs/oauth.js"></script>
   <script src="../libs/twitter.js"></script>
   <script src="../libs/utils.js"></script>
+  <script src="../libs/webspeech.js"></script>
 
   <script src="../main/config.js"></script>
   <script src="options.js"></script>
@@ -24,7 +25,7 @@
   <fieldset>
     <legend>進行</legend>
     <label for="autoplay-interval">自動再生時のインターバル秒数</label>
-    <input id="autoplay-interval" type="number" value="10" placeholder="秒数">秒
+    <input id="autoplay-interval" type="number" min="0" max="60" value="10" placeholder="秒数">秒
 
   </fieldset>
 
@@ -32,7 +33,7 @@
     <legend>動画情報</legend>
     <div style="margin-bottom:0.5em;">
       <label for="videoinfo-interval" class="mr-2">送信間隔</label>
-      <input id="videoinfo-interval" type="number" value="7" size="2">秒
+      <input id="videoinfo-interval" type="number" min="1" max="60" value="7" size="2">秒
     </div>
     <div style="display:flex; width:100%;">
       <input id="vinfo-command-1" type="text" placeholder="コマンド">
@@ -100,12 +101,12 @@
     <div>
       <label>
         コメント表示行数
-        <input id="comment-dispay-lines" type="number" value="500" placeholder="コメントの表示行数">
+        <input id="comment-dispay-lines" type="number" min="1" max="5000" value="500" placeholder="コメントの表示行数">
       </label>
     </div>
     <div>
       <label>過去ログ取得行数
-        <input id="comment-backlog-num" type="number" value="50" placeholder="過去ログ取得行数">
+        <input id="comment-backlog-num" type="number" min="50" max="500" value="50" placeholder="過去ログ取得行数">
       </label>
     </div>
   </fieldset>
@@ -131,6 +132,34 @@
     </div>
     <div>
       <input id="tweet-text" type="text" placeholder="つぶやき内容" maxlength="140" style="width:100%;">
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>音声読み上げ</legend>
+    <div>
+      <label><input type="checkbox" id="do-speech">コメント読み上げを行う</label>
+    </div>
+    <div>
+      <label><input type="checkbox" id="do-speech-caster-comment">運営コメントも読み上げる</label>
+    </div>
+    <div>
+      話者:
+      <select id="webspeech-select-voice">
+      </select>
+    </div>
+    <div>
+      <label>ボリューム</label><input id="webspeech-volume" type="number" step="0.1" min="0" max="1" value="1.0"
+                                 placeholder="ボリューム">
+    </div>
+    <div>
+      <label>スピード　</label><input id="webspeech-speed" type="number" step="0.1" min="0" max="10" value="1.0"
+                                 placeholder="スピード">
+    </div>
+    <hr>
+    <div>
+      <input id="webspeech-test-text" type="text" placeholder="テキスト...">
+      <button id="btn-test-talk" type="button">読み上げテスト</button>
     </div>
   </fieldset>
 

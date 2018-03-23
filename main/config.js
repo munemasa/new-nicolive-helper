@@ -51,4 +51,10 @@ var Config = {
     'tweet-on-play': false,
     'tweet-text': '再生中:{title} http://nico.ms/{id} #{id} http://nico.ms/{live-id}',
     'twitter-screen-name': 'なし',
+
+    'do-speech': false,
+    'do-speech-caster-comment': false,
+    'webspeech-select-voice': 0,
+    'webspeech-volume': 1.0,
+    'webspeech-speed': 1.0
 };

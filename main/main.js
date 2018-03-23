@@ -847,6 +847,18 @@ var NicoLiveHelper = {
             if( chat.date < this.connecttime ) return;
             if( this.isCaster() ) return;
             this.processCasterComment( chat );
+
+            // コメント読み上げ
+            if( Config['do-speech'] && Config['do-speech-caster-comment'] ){
+                if( chat.date > this.connecttime ){
+                    if( chat.text_notag.indexOf( '/' ) !== 0 ){
+                        Talker.speech2(
+                            chat.text_notag, Config['webspeech-select-voice'],
+                            Config['webspeech-volume'], Config['webspeech-speed']
+                        );
+                    }
+                }
+            }
             break;
 
         case 1: // プレミアム会員
@@ -857,10 +869,13 @@ var NicoLiveHelper = {
             this.processListenersComment( chat );
             NicoLiveComment.reflection( chat );
 
-            // TODO コメント読み上げ
-            if( false && Config.speech.do_speech ){
+            // コメント読み上げ
+            if( Config['do-speech'] ){
                 if( chat.date > this.connecttime ){
-                    // NicoLiveTalker.webspeech2( chat.text_notag, Config.speech.speech_character_index );
+                    Talker.speech2(
+                        chat.text_notag, Config['webspeech-select-voice'],
+                        Config['webspeech-volume'], Config['webspeech-speed']
+                    );
                 }
             }
             break;
@@ -1699,6 +1714,7 @@ var NicoLiveHelper = {
 
         this.initUI();
 
+        Talker.init();
         Twitter.init();
         NicoLiveMylist.init();
         NicoLiveRequest.init();

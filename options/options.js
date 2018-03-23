@@ -41,6 +41,10 @@ function SaveInt( key, config ){
     config[key] = parseInt( document.querySelector( `#${key}` ).value );
 }
 
+function SaveNumber( key, config ){
+    config[key] = document.querySelector( `#${key}` ).value * 1;
+}
+
 function SaveBool( key, config, value ){
     config[key] = document.querySelector( `#${key}` ).checked;
 }
@@ -153,6 +157,24 @@ async function LoadOptions(){
         $( '#oauth-token' ).val( result['oauth_token'] );
         $( '#oauth-secret-token' ).val( result['oauth_token_secret'] );
     } );
+
+
+    /* コメント読み上げ */
+    LoadBool( 'do-speech', config, Config['do-speech'] );
+    LoadBool( 'do-speech-caster-comment', config, Config['do-speech-caster-comment'] );
+
+    let voice_select = $( '#webspeech-select-voice' );
+    // 音声キャラクタリストを作成
+    this._webvoices = speechSynthesis.getVoices();
+    for( let i = 0; i < this._webvoices.length; i++ ){
+        let item = document.createElement( 'option' );
+        item.setAttribute( 'value', i );
+        item.appendChild( document.createTextNode( this._webvoices[i].name ) );
+        voice_select.append( item );
+    }
+    LoadValue( 'webspeech-select-voice', config, Config['webspeech-select-voice'] );
+    LoadValue( 'webspeech-volume', config, Config['webspeech-volume'] );
+    LoadValue( 'webspeech-speed', config, Config['webspeech-speed'] );
 }
 
 function SaveOptions( ev ){
@@ -195,6 +217,13 @@ function SaveOptions( ev ){
     SaveValue( 'oauth-secret-token', config );
     config['twitter-screen-name'] = $( '#twitter-screen-name' ).text();
 
+    /* コメント読み上げ */
+    SaveBool( 'do-speech', config );
+    SaveBool( 'do-speech-caster-comment', config );
+    SaveValue( 'webspeech-select-voice', config );
+    SaveNumber( 'webspeech-volume', config );
+    SaveNumber( 'webspeech-speed', config );
+
     browser.storage.local.set( {
         'config': config
     } );
@@ -203,7 +232,19 @@ function SaveOptions( ev ){
 window.addEventListener( 'load', function( ev ){
     LoadOptions();
 
-    document.querySelector( "#btn-save-config" ).addEventListener( "click", function( ev ){
+    Talker.init();
+
+    $( '#btn-test-talk' ).on( 'click', ( ev ) =>{
+        let text = $( '#webspeech-test-text' ).val();
+        let select = $( '#webspeech-select-voice' );
+        let n = select.get( 0 ).selectedIndex;
+        let vol = $( '#webspeech-volume' ).val() * 1;
+        let spd = $( '#webspeech-speed' ).val() * 1;
+
+        Talker.speech2( text, n, vol, spd );
+    } );
+
+    $( '#btn-save-config' ).on( 'click', ( ev ) =>{
         SaveOptions( ev );
     } );
 } );
