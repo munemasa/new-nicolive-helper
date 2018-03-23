@@ -1710,6 +1710,8 @@ var NicoLiveHelper = {
                 request_id: lvid
             } );
             console.log( this.liveProp );
+            this.live_begintime = this.liveProp.program.beginTime * 1000;
+            this.live_endtime = this.liveProp.program.endTime * 1000;
         }
 
         this.initUI();
@@ -1738,7 +1740,7 @@ var NicoLiveHelper = {
             $( '#live-title' ).text( this.liveProp.program.title );
 
             if( !this.isCaster() ){
-
+                // コメント送信タイプを視聴者に設定
                 $( '#type-of-comment' ).val( 1 );
             }
         }
