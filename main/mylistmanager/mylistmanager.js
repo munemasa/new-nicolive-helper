@@ -887,7 +887,7 @@ let MyListManager = {
     },
 
     /**
-     * ストックのコンテキストメニューの実行.
+     * コンテキストメニューの実行.
      * @param key
      * @param options
      */

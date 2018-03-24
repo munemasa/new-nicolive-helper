@@ -22,6 +22,7 @@
 
 
 var VideoDB = {
+    search_result: [],
 
     initDB: async function(){
         let db = new Dexie( "NicoVideoDatabase" );
@@ -207,8 +208,119 @@ var VideoDB = {
             let elem = this.createListElement( vinfo );
             $( '#tbl-result' ).append( elem );
         }
-        return result;
+        this.search_result = result;
     },
+
+    copyToClipboard: function( type ){
+        let items = $( '.item_selected' );
+        let str = "";
+
+        let videos = this.search_result;
+        for( let i = 0; i < items.length; i++ ){
+            let ind = items[i].rowIndex;
+            switch( type ){
+            case 0:
+                // 動画ID
+                str += videos[ind].video_id + "\n";
+                break;
+            case 1:
+                // タイトル
+                str += videos[ind].title + "\n";
+                break;
+            case 2:
+                // 動画ID+タイトル
+                str += videos[ind].video_id + "\t" + videos[ind].title + "\n";
+                break;
+            }
+        }
+        CopyToClipboard( str );
+    },
+
+    /**
+     * ファイルに保存する
+     */
+    saveToFile: function(){
+        let videos = this.search_result;
+
+        let str = "";
+        for( let i = 0; i < videos.length; i++ ){
+            str += videos[i].video_id + "\t" + videos[i].title + "\r\n";
+        }
+
+        SaveText( 'videodb.txt', str );
+    },
+
+    /**
+     * ストックに追加する
+     */
+    addToStock: function(){
+        let items = $( '.item_selected' );
+        let str = "";
+        let videos = this.search_result;
+        for( let i = 0; i < items.length; i++ ){
+            let ind = items[i].rowIndex;
+            str += videos[ind].video_id + " ";
+        }
+        window.opener.NicoLiveStock.addStocks( str );
+    },
+
+    /**
+     * チェックした動画を削除する.
+     */
+    delete: function(){
+        if( !window.confirm( "選択した動画を動画DBから削除しますか?" ) ) return;
+
+        let items = $( '.item_selected' );
+        let videos = this.search_result;
+        let ids = [];
+        for( let i = 0; i < items.length; i++ ){
+            let ind = items[i].rowIndex;
+            let video_id = videos[ind].video_id;
+            ids.push( video_id );
+        }
+        this.db.videodb.bulkDelete( ids );
+    },
+
+
+    /**
+     * コンテキストメニューの実行.
+     * @param key
+     * @param options
+     */
+    contextMenu: function( key, options ){
+        let elem = options.$trigger[0];
+        let n = elem.sectionRowIndex;
+        console.log( key );
+
+        switch( key ){
+        case 'copy_vid':
+            this.copyToClipboard( 0 );
+            break;
+        case 'copy_title':
+            this.copyToClipboard( 1 );
+            break;
+        case 'copy_vid_title':
+            this.copyToClipboard( 2 );
+            break;
+
+        case 'save':
+            this.saveToFile();
+            break;
+
+        case 'stock':
+            this.addToStock();
+            break;
+
+        case 'delete':
+            this.delete();
+            break;
+
+        default:
+            break;
+        }
+        // console.log( options.$trigger );
+    },
+
 
     init: async function(){
         console.log( 'Video database init.' );
@@ -246,7 +358,7 @@ var VideoDB = {
                 let menuobj = {
                     zIndex: 10,
                     callback: function( key, options ){
-                        MyListManager.contextMenu( key, options );
+                        VideoDB.contextMenu( key, options );
                     },
                     items: {
                         "copy": {
