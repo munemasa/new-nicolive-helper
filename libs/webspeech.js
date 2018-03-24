@@ -25,11 +25,15 @@ var Talker = {
     _volume: 1.0,
 
     speech: function( text, n ){
-        let synthes = new SpeechSynthesisUtterance( text );
-        synthes.voice = this._webvoices[n];
-        synthes.rate = this._speed;
-        synthes.volume = this._volume;
-        speechSynthesis.speak( synthes );
+        try{
+            let synthes = new SpeechSynthesisUtterance( text );
+            synthes.voice = this._webvoices[n];
+            synthes.rate = this._speed;
+            synthes.volume = this._volume;
+            speechSynthesis.speak( synthes );
+        }catch( e ){
+            console.log( e );
+        }
     },
 
     /**
@@ -40,11 +44,15 @@ var Talker = {
      * @param spd 速度
      */
     speech2: function( text, n, vol, spd ){
-        let synthes = new SpeechSynthesisUtterance( text );
-        synthes.voice = this._webvoices[n];
-        synthes.rate = spd;
-        synthes.volume = vol;
-        speechSynthesis.speak( synthes );
+        try{
+            let synthes = new SpeechSynthesisUtterance( text );
+            synthes.voice = this._webvoices[n];
+            synthes.rate = spd;
+            synthes.volume = vol;
+            speechSynthesis.speak( synthes );
+        }catch( e ){
+            console.log( e );
+        }
     },
 
     setVolume: function( v ){
