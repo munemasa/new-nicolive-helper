@@ -12,3 +12,7 @@ body {
 #tbl-result {
     width: 100%;
 }
+
+.item_selected {
+    background-color: #a8e4ff !important;
+}

@@ -180,7 +180,9 @@ var VideoDB = {
                 break;
             }
         }
-        let result = await this.db.videodb.filter( ( item ) =>{
+
+        let limit = $( '#display-num' ).val() * 1;
+        let result = await this.db.videodb.limit( limit ).filter( ( item ) =>{
             for( let f of filter_func ){
                 let flg = f( item );
                 if( !flg ) return false;
@@ -190,6 +192,14 @@ var VideoDB = {
 
         console.log( result );
         $( '#information' ).text( `${result.length}件見つかりました。` );
+
+        let sorttype = $( '#sort-type' ).val() * 1;
+        let order = $( '#sort-order' ).val() * 1;
+        if( order != 0 ){
+            window.opener.NicoLiveHelper.sortVideoList( result, sorttype, order );
+        }else{
+            ShuffleArray( result );
+        }
 
         $( '#tbl-result' ).empty();
         for( let vinfo of result ){
@@ -206,6 +216,57 @@ var VideoDB = {
 
         let n = await this.db.videodb.count();
         $( '#information' ).text( `動画DBには${n}件あります` );
+
+        $( document ).on( 'click', '#tbl-result tr', ( ev ) =>{
+            console.log( ev );
+            let tr = FindParentElement( ev.target, 'tr' );
+            console.log( tr );
+
+            if( ev.originalEvent.metaKey || ev.originalEvent.ctrlKey ){
+                if( $( tr ).hasClass( 'item_selected' ) ){
+                    $( tr ).removeClass( 'item_selected' );
+                }else{
+                    $( tr ).addClass( 'item_selected' );
+                }
+            }else if( ev.originalEvent.shiftKey ){
+                // TODO 範囲選択を載せる
+                console.log( 'range selection not supported.' );
+            }else{
+                $( '#tbl-result tr' ).removeClass( 'item_selected' );
+                $( tr ).addClass( 'item_selected' );
+            }
+
+            $( '#information' ).text( `選択: ${$( '.item_selected' ).length}` );
+        } );
+
+        $.contextMenu( {
+            selector: '.nico-video-row',
+            build: function( $triggerElement, e ){
+                let menuobj = {
+                    zIndex: 10,
+                    callback: function( key, options ){
+                        MyListManager.contextMenu( key, options );
+                    },
+                    items: {
+                        "copy": {
+                            name: "選択した動画をコピー",
+                            items: {
+                                "copy_vid": {name: "動画ID"},
+                                "copy_title": {name: "タイトル"},
+                                "copy_vid_title": {name: "動画ID＋タイトル"},
+                            }
+                        },
+                        "stock": {name: "選択した動画をストックに追加"},
+
+                        "sep1": "---------",
+                        "delete": {name: "選択した動画を削除"},
+                        "sep2": "---------",
+                        "save": {name: 'ファイルに保存'}
+                    }
+                };
+                return menuobj;
+            },
+        } );
 
         $( '#btn-add-db' ).on( 'click', ( ev ) =>{
             this.addVideos();

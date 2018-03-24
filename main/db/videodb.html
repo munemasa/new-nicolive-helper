@@ -34,6 +34,27 @@
   </div>
 
   <div>
+    <select id="display-num">
+      <option value="10">10件</option>
+      <option value="50">50件</option>
+      <option value="100">100件</option>
+      <option value="500">500件</option>
+      <option value="1000">1000件</option>
+      <option value="99999999">すべて</option>
+    </select>
+    <select id="sort-type">
+      <option value="6">タイトル</option>
+      <option value="3">再生時間</option>
+      <option value="0">再生数</option>
+      <option value="1">コメント数</option>
+      <option value="2">マイリスト数</option>
+      <option value="4">投稿日</option>
+    </select>
+    <select id="sort-order">
+      <option value="1">昇順</option>
+      <option value="-1">降順</option>
+      <option value="0">ランダム</option>
+    </select>
     <button id="btn-search">検索</button>
     <button id="btn-test" style="display:none;">test</button>
     <label id="information"></label>
