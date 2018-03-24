@@ -42,6 +42,27 @@ window.addEventListener( 'resize', ( ev ) =>{
 window.addEventListener( 'load', async ( ev ) =>{
     WindowManage.onResize();
 
+    // Macだとウィンドウ開いた直後に画面が表示されないので
+    // ちょっとサイズを変更して再描画がかかるようにする
+    let x = window.screenX;
+    let y = window.screenY;
+    let w = window.outerWidth;
+    let h = window.outerHeight;
+    let win = await browser.windows.getCurrent();
+    await browser.windows.update( win.id, {
+        left: x,
+        top: y,
+        width: w + 1,
+        height: h
+    } );
+    await browser.windows.update( win.id, {
+        left: x,
+        top: y,
+        width: w,
+        height: h
+    } );
+
+
     let tmp = localStorage.getItem( 'window_position' );
     if( tmp ){
         // TODO ウィンドウ位置とサイズを復元
