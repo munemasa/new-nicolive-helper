@@ -939,13 +939,19 @@ let MyListManager = {
                     $( tr ).removeClass( 'mylist_item_selected' );
                 }else{
                     $( tr ).addClass( 'mylist_item_selected' );
+                    this._index = tr.rowIndex;
                 }
             }else if( ev.originalEvent.shiftKey ){
-                // TODO 範囲選択を載せる
-                console.log( 'range selection not supported.' );
+                let rows = $( '#folder-item-listbox tr' );
+                let start = Math.min( this._index, tr.rowIndex );
+                let end = Math.max( this._index, tr.rowIndex );
+                for( let i = start; i <= end; i++ ){
+                    $( rows[i] ).addClass( 'mylist_item_selected' );
+                }
             }else{
                 $( '#folder-item-listbox tr' ).removeClass( 'mylist_item_selected' );
                 $( tr ).addClass( 'mylist_item_selected' );
+                this._index = tr.rowIndex;
             }
 
             SetStatusBarText( `選択: ${$( '.mylist_item_selected' ).length}` );

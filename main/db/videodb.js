@@ -32,11 +32,6 @@ var VideoDB = {
 
         this.db = db;
         console.log( db );
-
-        let vinfo = await window.opener.NicoLiveHelper.getVideoInfo( 'sm9' );
-        console.log( vinfo );
-
-        db.videodb.put( vinfo );
     },
 
     /**
@@ -331,22 +326,28 @@ var VideoDB = {
         $( '#information' ).text( `動画DBには${n}件あります` );
 
         $( document ).on( 'click', '#tbl-result tr', ( ev ) =>{
-            console.log( ev );
             let tr = FindParentElement( ev.target, 'tr' );
-            console.log( tr );
 
             if( ev.originalEvent.metaKey || ev.originalEvent.ctrlKey ){
+                // 複数選択
                 if( $( tr ).hasClass( 'item_selected' ) ){
                     $( tr ).removeClass( 'item_selected' );
                 }else{
                     $( tr ).addClass( 'item_selected' );
+                    this._index = tr.rowIndex;
                 }
             }else if( ev.originalEvent.shiftKey ){
-                // TODO 範囲選択を載せる
-                console.log( 'range selection not supported.' );
+                let rows = $( '#tbl-result tr' );
+                let start = Math.min( this._index, tr.rowIndex );
+                let end = Math.max( this._index, tr.rowIndex );
+                for( let i = start; i <= end; i++ ){
+                    $( rows[i] ).addClass( 'item_selected' );
+                }
             }else{
+                // 1個選択
                 $( '#tbl-result tr' ).removeClass( 'item_selected' );
                 $( tr ).addClass( 'item_selected' );
+                this._index = tr.rowIndex;
             }
 
             $( '#information' ).text( `選択: ${$( '.item_selected' ).length}` );
