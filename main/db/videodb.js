@@ -182,16 +182,13 @@ var VideoDB = {
         }
 
         let limit = $( '#display-num' ).val() * 1;
-        let result = await this.db.videodb.limit( limit ).filter( ( item ) =>{
+        let result = await this.db.videodb.filter( ( item ) =>{
             for( let f of filter_func ){
                 let flg = f( item );
                 if( !flg ) return false;
             }
             return true;
         } ).toArray();
-
-        console.log( result );
-        $( '#information' ).text( `${result.length}件見つかりました。` );
 
         let sorttype = $( '#sort-type' ).val() * 1;
         let order = $( '#sort-order' ).val() * 1;
@@ -200,6 +197,10 @@ var VideoDB = {
         }else{
             ShuffleArray( result );
         }
+
+        result = result.slice( 0, limit )
+        console.log( result );
+        $( '#information' ).text( `${result.length}件見つかりました。` );
 
         $( '#tbl-result' ).empty();
         for( let vinfo of result ){
