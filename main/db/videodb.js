@@ -42,6 +42,7 @@ var VideoDB = {
         let clone2 = document.importNode( t.content, true );
         let elem = clone2.firstElementChild;
         $( '#db-condition' ).append( elem );
+        return elem;
     },
 
     /**
@@ -123,6 +124,7 @@ var VideoDB = {
             let t = $( types[i] ).val();
             let c = $( conds[i] ).val();
             let v = $( vals[i] ).val();
+            if( !v ) continue;
             if( t == 'length_ms' ){
                 v *= 1000;
             }
@@ -276,6 +278,111 @@ var VideoDB = {
         this.db.videodb.bulkDelete( ids );
     },
 
+    loadSavedSearch: async function(){
+        let result = await browser.storage.local.get( 'saved-search' );
+        let saved = result['saved-search'] || {};
+        console.log( saved );
+
+        $( '#saved-search' ).empty();
+
+        let option = document.createElement( 'option' );
+        $( option ).attr( 'value', '' );
+        $( option ).text( `保存された検索` );
+        $( '#saved-search' ).append( option );
+
+        for( let k of Object.keys( saved ) ){
+            let option = document.createElement( 'option' );
+            $( option ).attr( 'value', k );
+            $( option ).text( `${k}` );
+            $( '#saved-search' ).append( option );
+        }
+    },
+
+    /**
+     * 検索条件を保存する.
+     */
+    saveSearchCondition: async function(){
+        let types = $( '.search-type' );
+        let conds = $( '.search-cond' );
+        let vals = $( '.search-value' );
+        let n = types.length;
+
+        let name = window.prompt( '検索条件に名前を指定してください' );
+        if( !name ) return;
+
+        let conditions = [];
+        for( let i = 0; i < n; i++ ){
+            let t = $( types[i] ).val();
+            let c = $( conds[i] ).val();
+            let v = $( vals[i] ).val();
+
+            conditions.push( {
+                'type': t,
+                'cond': c,
+                'value': v
+            } );
+        }
+
+        let result = await browser.storage.local.get( 'saved-search' );
+        let saved = result['saved-search'] || {};
+        saved[name] = conditions;
+        await browser.storage.local.set( {
+            'saved-search': saved
+        } );
+        this.loadSavedSearch();
+    },
+
+    clearCondition: function(){
+        let vals = $( '.search-value' );
+        for( let v of vals ){
+            $( v ).val( '' );
+        }
+    },
+
+    /**
+     * 保存した検索を削除
+     * @returns {Promise<void>}
+     */
+    removeSavedSearch: async function(){
+        let result = await browser.storage.local.get( 'saved-search' );
+        let saved = result['saved-search'] || {};
+
+        let k = $( '#saved-search' ).val();
+        delete saved[k];
+
+        await browser.storage.local.set( {
+            'saved-search': saved
+        } );
+        this.loadSavedSearch();
+    },
+
+
+    /**
+     * 保存した検索を実行する.
+     * @returns {Promise<void>}
+     */
+    execSavedSearch: async function(){
+        let key = $( '#saved-search' ).val();
+
+        let result = await browser.storage.local.get( 'saved-search' );
+        let saved = result['saved-search'] || {};
+
+        this.clearCondition();
+        let cond = $( '.cond-line' );
+        for( let i = 0; i < cond.length; i++ ){
+            RemoveElement( cond[i] );
+        }
+
+        let conditions = saved[key];
+        for( let cond of conditions ){
+            let elem = this.addCondLine();
+            $( elem.querySelector( '.search-type' ) ).val( cond.type );
+            $( elem.querySelector( '.search-cond' ) ).val( cond.cond );
+            $( elem.querySelector( '.search-value' ) ).val( cond.value );
+        }
+
+        this.searchVideos();
+    },
 
     /**
      * コンテキストメニューの実行.
@@ -321,6 +428,7 @@ var VideoDB = {
         console.log( 'Video database init.' );
 
         this.initDB();
+        this.loadSavedSearch();
 
         let n = await this.db.videodb.count();
         $( '#information' ).text( `動画DBには${n}件あります` );
@@ -387,6 +495,18 @@ var VideoDB = {
         } );
         $( '#btn-search' ).on( 'click', ( ev ) =>{
             this.searchVideos();
+        } );
+
+        $( '#btn-save' ).on( 'click', ( ev ) =>{
+            this.saveSearchCondition();
+        } );
+
+        $( '#btn-remove-saved-search' ).on( 'click', ( ev ) =>{
+            this.removeSavedSearch();
+        } );
+
+        $( '#saved-search' ).on( 'change', ( ev ) =>{
+            this.execSavedSearch();
         } );
 
         this.addCondLine();

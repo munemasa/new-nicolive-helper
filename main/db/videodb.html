@@ -55,15 +55,29 @@
       <option value="-1">降順</option>
       <option value="0">ランダム</option>
     </select>
-    <button id="btn-search">検索</button>
+    <button id="btn-search" class="btn btn-sm btn-outline-primary">検索</button>
+
+    <div class="btn-group" style="margin-right:2px;">
+      <button id="btn-save" class="btn btn-sm btn-outline-primary">検索条件を保存</button>
+      <button type="button" class="btn btn-outline-primary btn-sm dropdown-toggle dropdown-toggle-split"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+      <div class="dropdown-menu">
+        <a id="btn-remove-saved-search" class="dropdown-item" href="#">
+          <span class="glyphicon glyphicon-trash"></span> 保存した検索条件を削除</a>
+      </div>
+    </div>
+
+    <select id="saved-search">
+      <option value="">保存された検索</option>
+    </select>
     <button id="btn-test" style="display:none;">test</button>
-    <label id="information"></label>
   </div>
 
   <div id="db-result" style="overflow:auto;flex:1;">
     <table id="tbl-result">
     </table>
   </div>
+  <label id="information" style="border-top:1px solid gray;"></label>
 </div>
 
 
