@@ -35,41 +35,59 @@
 
   <div>
     <button id="btn-search">検索</button>
-    <button id="btn-test">test</button>
+    <button id="btn-test" style="display:none;">test</button>
+    <label id="information"></label>
   </div>
 
-  <div id="db-result" style="flex:1; border:1px solid green;">
+  <div id="db-result" style="overflow:auto;flex:1;">
+    <table id="tbl-result">
+    </table>
   </div>
 </div>
 
 
 <template id="template-db-cond">
   <div class="cond-line" style="display:flex;">
-    <select>
+    <select class="search-type">
       <option value="title">タイトル</option>
-      <option value="length">時間(秒)</option>
-      <option value="view_num">再生数</option>
+      <option value="length_ms">時間(秒)</option>
+      <option value="view_counter">再生数</option>
       <option value="comment_num">コメント数</option>
-      <option value="mylist_num">マイリスト数</option>
-      <option value="tag">タグ</option>
-      <option value="post_date">投稿日</option>
+      <option value="mylist_counter">マイリスト数</option>
+      <option value="tags_array">タグ</option>
+      <option value="first_retrieve">投稿日</option>
       <option value="video_id">動画ID</option>
-      <option value="details">詳細</option>
+      <option value="description">詳細</option>
     </select>
 
-    <select>
+    <select class="search-cond">
       <option value="include">含む</option>
       <option value="exclude">含まない</option>
-      <option value="greater_than">以上</option>
+      <option value="greater_than">より大</option>
       <option value="equal">同じ</option>
-      <option value="less_than">以下</option>
+      <option value="less_than">より小</option>
     </select>
 
-    <input type="text" style="flex:1;">
+    <input class="search-value" type="text" style="flex:1;">
 
     <button class="btn-add-cond">+</button>
     <button class="btn-remove-cond">-</button>
   </div>
+</template>
+
+<!-- 動画情報のテンプレート -->
+<template id="template-video-info">
+  <tr class="nico-video-row" draggable="true" style="border-bottom: 1px solid gray;">
+    <td>
+      <a class="open-page" target="_blank" href="">
+        <img class="video-thumbnail" src=""
+             style="width:65px;height:50px;margin-right:8px;"></a>
+    </td>
+    <td>
+      <div class="custom-control-description video-title"></div>
+      <span class="video-details"></span>
+    </td>
+  </tr>
 </template>
 
 </body>

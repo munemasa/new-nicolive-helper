@@ -8,3 +8,7 @@ html, body {
 body {
     margin: 0 4px;
 }
+
+#tbl-result {
+    width: 100%;
+}
