@@ -1698,6 +1698,7 @@ var NicoLiveHelper = {
                 MergeSimpleObject( Config, changes.config.newValue );
                 console.log( Config );
                 Twitter.init(); // 認証トークンをConfigから読ませるために
+                NicoLiveRequest.loadNGVideo();
             }
         } );
 

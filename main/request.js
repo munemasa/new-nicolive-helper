@@ -27,6 +27,20 @@ var NicoLiveRequest = {
     _queue: [],
 
     counter: {},    // リクエストカウンタ
+    ngvideos: {},   // NG動画
+
+    loadNGVideo: function(){
+        let str = Config['ng-video-list'];
+        let videos = str.match( /(sm|nm)\d+/g );
+        this.ngvideos = {};
+        try{
+            for( let i = 0, v; v = videos[i]; i++ ){
+                this.ngvideos[v] = true;
+            }
+        }catch( x ){
+            console.log( "No NG-video settings" );
+        }
+    },
 
     /**
      * リクエストの応答をする.
@@ -58,6 +72,11 @@ var NicoLiveRequest = {
      * @param vinfo{VideoInformation}
      */
     checkRequest: function( vinfo ){
+        if( Config['request-no-ngvideo'] && this.ngvideos[vinfo.video_id] ){
+            // NG動画
+            console.log( `${vinfo.video_id}はNG動画` );
+            return 4;
+        }
         if( Config['request-no-duplicated'] && this.findById( vinfo.video_id ) ){
             // 重複したリクエストを受け付けない
             return 2;
@@ -101,6 +120,7 @@ var NicoLiveRequest = {
 
             this.counter[vinfo.request_user_id] = this.counter[vinfo.request_user_id] || 0;
             if( code == 0 || code == 1 ){
+                // OKと引用不可はリストに追加する
                 if( !vinfo.no_live_play ){
                     this.counter[vinfo.request_user_id]++;
                     vinfo.request_counter = this.counter[vinfo.request_user_id];
@@ -114,7 +134,7 @@ var NicoLiveRequest = {
                 this.updateBadgeAndTime();
             }
 
-            if( vinfo.no_live_play ) code = 1; // 常に引用不可にする
+            if( code != 4 && vinfo.no_live_play ) code = 1; // 常に引用不可にする
 
             switch( code ){
             case 0: // OK
@@ -128,6 +148,9 @@ var NicoLiveRequest = {
                 break;
             case 3: // 再生済みリクエスト
                 this.sendReply( 'request-played', vinfo );
+                break;
+            case 4: // NG動画
+                this.sendReply( 'request-ngvideo', vinfo );
                 break;
             default:
                 NicoLiveHelper.showAlert( `不明なリクエストエラー:${code}` );
@@ -641,5 +664,6 @@ var NicoLiveRequest = {
     init: async function(){
         this.initUI();
         this.loadRequests();
+        this.loadNGVideo();
     }
 };

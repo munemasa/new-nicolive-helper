@@ -121,6 +121,9 @@ var NicoLiveStock = {
      * @param video_id 動画ID
      */
     addStock: function( video_id ){
+        if( Config['request-no-ngvideo'] && NicoLiveRequest.ngvideos[video_id] ){
+            return;
+        }
         let q = {
             'video_id': video_id
         };
