@@ -68,6 +68,7 @@ var VideoDB = {
                 this.db.videodb.put( vinfo );
                 console.log( `${id}を追加しました` );
             }catch( e ){
+                console.log( `動画DBに追加失敗: ${id}` );
             }
         }
         $( '#information' ).text( 'DB追加/更新完了しました' );
@@ -129,6 +130,21 @@ var VideoDB = {
                 v *= 1000;
             }
 
+            if( t == 'first_retrieve' ){
+                let date;
+                let d;
+                let tmp;
+                date = v.match( /\d+/g );
+                if( date.length == 6 ){
+                    d = new Date( date[0], date[1] - 1, date[2], date[3], date[4], date[5] );
+                    tmp = parseInt( d.getTime() / 1000 ); // integer
+                }else{
+                    d = new Date( date[0], date[1] - 1, date[2], 0, 0, 0 );
+                    tmp = parseInt( d.getTime() / 1000 ); // integer
+                }
+                v = tmp;
+            }
+
             switch( c ){
             case 'include':
                 filter_func.push( ( item ) =>{
@@ -162,12 +178,12 @@ var VideoDB = {
                 break;
             case 'greater_than':
                 filter_func.push( ( item ) =>{
-                    return item[t] > v;
+                    return item[t] >= v;
                 } );
                 break;
             case 'less_than':
                 filter_func.push( ( item ) =>{
-                    return item[t] < v;
+                    return item[t] <= v;
                 } );
                 break;
             case 'equal':
@@ -363,6 +379,7 @@ var VideoDB = {
      */
     execSavedSearch: async function(){
         let key = $( '#saved-search' ).val();
+        if( !key ) return;
 
         let result = await browser.storage.local.get( 'saved-search' );
         let saved = result['saved-search'] || {};

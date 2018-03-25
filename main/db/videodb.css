@@ -9,6 +9,10 @@ body {
     margin: 0 4px;
 }
 
+.custom-select {
+    width: auto !important;
+}
+
 #tbl-result {
     width: 100%;
 }

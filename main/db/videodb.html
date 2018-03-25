@@ -33,7 +33,7 @@
   <div id="db-condition">
   </div>
 
-  <div>
+  <div style="displa:flex;">
     <select id="display-num">
       <option value="10">10件</option>
       <option value="50">50件</option>
@@ -55,11 +55,11 @@
       <option value="-1">降順</option>
       <option value="0">ランダム</option>
     </select>
-    <button id="btn-search" class="btn btn-sm btn-outline-primary">検索</button>
+    <button id="btn-search" class="btn -btn-sm btn-outline-primary">検索</button>
 
     <div class="btn-group" style="margin-right:2px;">
-      <button id="btn-save" class="btn btn-sm btn-outline-primary">検索条件を保存</button>
-      <button type="button" class="btn btn-outline-primary btn-sm dropdown-toggle dropdown-toggle-split"
+      <button id="btn-save" class="btn -btn-sm btn-outline-primary">検索条件を保存</button>
+      <button type="button" class="btn btn-outline-primary -btn-sm dropdown-toggle dropdown-toggle-split"
               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
       <div class="dropdown-menu">
         <a id="btn-remove-saved-search" class="dropdown-item" href="#">
@@ -67,7 +67,7 @@
       </div>
     </div>
 
-    <select id="saved-search">
+    <select id="saved-search" class="custom-select">
       <option value="">保存された検索</option>
     </select>
     <button id="btn-test" style="display:none;">test</button>
@@ -98,9 +98,9 @@
     <select class="search-cond">
       <option value="include">含む</option>
       <option value="exclude">含まない</option>
-      <option value="greater_than">より大</option>
+      <option value="greater_than">以上(以後)</option>
       <option value="equal">同じ</option>
-      <option value="less_than">より小</option>
+      <option value="less_than">以下(以前)</option>
     </select>
 
     <input class="search-value" type="text" style="flex:1;">
