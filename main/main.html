@@ -14,6 +14,7 @@
   <script src="../libs/external/jquery.contextMenu.js"></script>
   <script src="../libs/external/popper.js"></script>
   <script src="../libs/external/bootstrap/bootstrap.js"></script>
+  <script src="../libs/external/dexie/dexie.js"></script>
   <link rel="stylesheet" href="../libs/external/bootstrap/glyphicons.css">
 
   <script src="../libs/sha1.js"></script>
@@ -25,6 +26,7 @@
   <script src="../libs/utils.js"></script>
   <script src="../libs/nicoapi.js"></script>
 
+  <script src="db/initdb.js"></script>
   <script src="config.js"></script>
   <script src="datastruct.js"></script>
   <script src="windowmanage.js"></script>
@@ -82,7 +84,7 @@
       </button>
     </legend>
     <div style="display:flex;">
-      <div class="progress flex1" style="font-size:10.5px; height:1.5em;">
+      <div id="progressbar" class="progress flex1" style="font-size:10.5px; height:1.5em;">
         <span id="remaining-time-main" style="position:fixed;padding-left: 0.5em;">---(-0:00)</span>
         <div id="progressbar-main" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
              style="width: 0%" aria-valuemin="0" aria-valuemax="100"></div>

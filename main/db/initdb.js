@@ -22,11 +22,25 @@
 
 
 var DB = {
+    db: null,
+
     initDB: function(){
         let db = new Dexie( "NicoVideoDatabase" );
         db.version( 1 ).stores( {
             videodb: "&video_id,user_id,user_nickname,title,description,first_retrieve,length,view_counter,comment_num,mylist_counter,*tags_array,highbitrate,lowbitrate,movie_type,no_live_play"
         } );
+
+        this.db = db;
         return db;
     },
+
+    put: function( vinfo ){
+        console.log( `動画DBに ${vinfo.video_id} を追加更新しました` );
+        this.db.videodb.put( vinfo );
+    },
+
+    delete: function( video_id ){
+        console.log( `動画DBから ${video_id} を削除しました` );
+        this.db.videodb.bulkDelete( [video_id] );
+    }
 };

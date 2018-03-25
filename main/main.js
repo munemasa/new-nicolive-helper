@@ -29,6 +29,7 @@ var NicoLiveHelper = {
 
     live_begintime: 0,  ///< 放送開始時刻(UNIX時間ms)
     live_endtime: 0,    ///< 放送終了時刻(UNIX時間ms)
+    /** @type {VideoInformation} */
     currentVideo: null, ///< 現在再生中の動画
 
     // コメント送信に必要な要素
@@ -1603,10 +1604,12 @@ var NicoLiveHelper = {
 
     initUI: async function(){
         $( '#btn-play-next' ).on( 'click', ( ev ) =>{
+            // 次を再生
             this.playNext();
         } );
 
         $( '#btn-stop-play' ).on( 'click', ( ev ) =>{
+            // 再生停止
             this.stopVideo();
         } );
 
@@ -1626,30 +1629,35 @@ var NicoLiveHelper = {
         let ps = (await browser.storage.local.get( 'playstyle' )).playstyle || 0;
         $( '#sel-playstyle' ).val( ps );
 
+        // マイリストマネージャーを開く
         $( '#mylist-manager' ).on( 'click', ( ev ) =>{
             window.open( 'mylistmanager/mylistmanager.html', 'nicolivehelperx_mylistmanager',
                 'width=640,height=480,menubar=no,toolbar=no,location=no' );
         } );
 
+        // 動画DBを開く
         $( '#open-video-db' ).on( 'click', ( ev ) =>{
             window.open( 'db/videodb.html', 'nicolivehelperx_videodb',
                 'width=640,height=480,menubar=no,toolbar=no,location=no' );
         } );
 
+        // コメントを保存する
         $( '#save-comment' ).on( 'click', ( ev ) =>{
             NicoLiveComment.saveFile();
         } );
 
+        // 設定を開く
         $( '#open-settings' ).on( 'click', ( ev ) =>{
             browser.runtime.openOptionsPage();
         } );
 
+        // ウィンドウを閉じる
         $( '#close-window' ).on( 'click', ( ev ) =>{
             window.close();
         } );
 
 
-        /* リクエスト受付中 */
+        /* リクエスト受付状態の変更 */
         let frequest = () =>{
             switch( this.getRequestAllowedStatus() ){
             case 0:
@@ -1677,6 +1685,55 @@ var NicoLiveHelper = {
             slide: function( event, ui ){
                 handle.text( ui.value * 10 );
                 NicoLiveHelper.changeVolume();
+            }
+        } );
+
+        /* 再生中動画インジケーターのメニュー操作 */
+        $.contextMenu( {
+            selector: '#progressbar',
+            build: ( $triggerElement, e ) =>{
+                let menuobj = {
+                    zIndex: 10,
+                    callback: ( key, options ) =>{
+                        if( !this.currentVideo ) return;
+                        switch( key ){
+                        case 'copy':
+                            CopyToClipboard( this.currentVideo.video_id );
+                            break;
+                        case 'add_db':
+                            DB.put( this.currentVideo );
+                            break;
+                        case 'del_db':
+                            DB.delete( this.currentVideo.video_id );
+                            break;
+                        default:
+                            let mylist_id = key.match( /^\d+_(.*)/ )[1];
+                            let video_id = this.currentVideo.video_id;
+                            NicoLiveMylist.addMylist( mylist_id, video_id, '' );
+                            break;
+                        }
+                    },
+                    items: {
+                        "copy": {name: "動画IDをコピー"},
+                        "add_mylist": {
+                            name: "マイリストに追加",
+                            items: {}
+                        },
+                        "sep1": "---------",
+                        "add_db": {name: '動画DBに追加'},
+                        "del_db": {name: '動画DBから削除'}
+                    }
+                };
+                try{
+                    menuobj.items.add_mylist.items['0_default'] = {name: 'とりあえずマイリスト'};
+                    for( let i = 0, item; item = NicoLiveMylist.mylists.mylistgroup[i]; i++ ){
+                        let k = `${i + 1}_${item.id}`;
+                        let v = item.name;
+                        menuobj.items.add_mylist.items[k] = {name: v};
+                    }
+                }catch( x ){
+                }
+                return menuobj;
             }
         } );
     },
@@ -1717,6 +1774,7 @@ var NicoLiveHelper = {
 
         this.initUI();
 
+        DB.initDB();
         Talker.init();
         Twitter.init();
         NicoLiveMylist.init();
