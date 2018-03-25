@@ -115,6 +115,7 @@ var VideoDB = {
 
 
     searchVideos: async function(){
+        $( '#information' ).text( '検索しています...' );
         let types = $( '.search-type' );
         let conds = $( '.search-cond' );
         let vals = $( '.search-value' );
