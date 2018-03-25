@@ -24,14 +24,9 @@
 var VideoDB = {
     search_result: [],
 
-    initDB: async function(){
-        let db = new Dexie( "NicoVideoDatabase" );
-        db.version( 1 ).stores( {
-            videodb: "&video_id,user_id,user_nickname,title,description,first_retrieve,length,view_counter,comment_num,mylist_counter,*tags_array,highbitrate,lowbitrate,movie_type,no_live_play"
-        } );
-
-        this.db = db;
-        console.log( db );
+    initDB: function(){
+        this.db = DB.initDB();
+        console.log( this.db );
     },
 
     /**
