@@ -659,6 +659,25 @@ var NicoLiveRequest = {
                 return menuobj;
             }
         } );
+
+        $.contextMenu( {
+            selector: '#request-table-body .nico-video-row .btn-remove',
+            build: function( $triggerElement, e ){
+                let menuobj = {
+                    zIndex: 10,
+                    callback: function( key, options ){
+                        let elem = FindParentElement( options.$trigger[0], 'tr' );
+                        let n = elem.sectionRowIndex;
+                        DB.delete( NicoLiveRequest.request[n].video_id );
+                    },
+                    items: {
+                        "del_db": {name: "動画DBから削除"}
+                    }
+                };
+                return menuobj;
+            }
+        } );
+
     },
 
     init: async function(){
