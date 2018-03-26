@@ -265,14 +265,24 @@ var NicoLiveStock = {
 
     loadStocks: async function(){
         try{
-            let result = await browser.storage.local.get( 'stock' );
-            console.log( result );
-            if( !result.stock ) return;
+            let table = $( '#stock-table-body' );
+            table.empty();
 
-            for( let vinfo of result.stock ){
+            let set_no = $( '#sel-stock-set' ).val() * 1;
+            let key = `stock${set_no || ''}`;
+            let result = await browser.storage.local.get( key );
+            console.log( result );
+            this.stock = [];
+
+            if( !result[key] ){
+                this.updateBadgeAndTime();
+                return;
+            }
+
+            for( let vinfo of result[key] ){
                 this.stock.push( vinfo );
                 let elem = NicoLiveHelper.createVideoInfoElement( vinfo );
-                $( '#stock-table-body' ).append( elem );
+                table.append( elem );
             }
             this.updateBadgeAndTime();
         }catch( e ){
@@ -287,9 +297,11 @@ var NicoLiveStock = {
      */
     saveStocks: async function(){
         try{
-            await browser.storage.local.set( {
-                'stock': this.stock
-            } );
+            let set_no = $( '#sel-stock-set' ).val() * 1;
+            let key = `stock${set_no || ''}`;
+            let obj = {};
+            obj[key] = this.stock;
+            await browser.storage.local.set( obj );
             console.log( 'stock saved.' );
         }catch( e ){
         }
@@ -608,6 +620,10 @@ var NicoLiveStock = {
         }
     },
 
+    changeSet: async function(){
+        this.loadStocks();
+    },
+
     initUI: function(){
         $( document ).on( 'click', '#stock-table-body .nico-video-row button', ( ev ) =>{
             this.onButtonClicked( ev );
@@ -659,6 +675,10 @@ var NicoLiveStock = {
             ev.preventDefault();
 
             this.dropToStock( ev );
+        } );
+
+        $( '#sel-stock-set' ).on( 'change', ( ev ) =>{
+            this.changeSet();
         } );
 
         //--- マイリスト読み込み
