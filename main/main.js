@@ -839,7 +839,7 @@ var NicoLiveHelper = {
         case 3: // 運営コメント
         case 7: // 運営コメントにnameパラメータ付けるとこれになる？ BSPもこれになる
             if( chat.text.match( /^\/disconnect/ ) ){
-                this.showAlert( `放送が終了しました` );
+                this.showAlert( `放送が終了しました`, true );
                 this.live_endtime = 0;
                 clearTimeout( this._autoplay_timer );
                 this._autoplay_timer = null;
@@ -1554,14 +1554,16 @@ var NicoLiveHelper = {
      * ウィンドウ下部にアラートメッセージを表示する.
      * @param text
      */
-    showAlert: function( text ){
+    showAlert: function( text, nohide ){
         $( '#my-alert-message' ).text( text );
         $( '#my-alert' ).show( 100 );
 
         clearTimeout( this._alert_timer );
-        this._alert_timer = setTimeout( function(){
-            $( '#my-alert' ).hide( 100 );
-        }, 4000 );
+        if( !nohide ){
+            this._alert_timer = setTimeout( function(){
+                $( '#my-alert' ).hide( 100 );
+            }, 4000 );
+        }
     },
 
 
