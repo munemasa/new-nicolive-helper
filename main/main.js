@@ -47,6 +47,10 @@ var NicoLiveHelper = {
         return !!this.connecttime;
     },
 
+    /**
+     * 生主なら真を返す
+     * @returns {boolean}
+     */
     isCaster: function(){
         try{
             // 公式放送だと isOperator が存在していない
@@ -58,6 +62,10 @@ var NicoLiveHelper = {
         }
     },
 
+    /**
+     * BSPを持っていたら真を返す
+     * @returns {boolean}
+     */
     hasBSP: function(){
         try{
             return this.liveProp.user.permissions.indexOf( 'POST_BSP_COMMENT' ) !== -1;
@@ -77,10 +85,20 @@ var NicoLiveHelper = {
         return parseInt( $( '#sel-playstyle' ).val() );
     },
 
+    /**
+     * リクエスト受付状態を返す
+     * 0:受け付け
+     * 1:不可
+     * @returns {number}
+     */
     getRequestAllowedStatus: function(){
         return parseInt( $( '#sel-allow-request' ).val() );
     },
 
+    /**
+     * 生放送のIDを返す
+     * @returns {String|*}
+     */
     getLiveId: function(){
         try{
             return this.liveProp.program.nicoliveProgramId;
@@ -89,6 +107,10 @@ var NicoLiveHelper = {
         }
     },
 
+    /**
+     * 放送しているコミュニティIDを返す
+     * @returns {String|*}
+     */
     getCommunityId: function(){
         try{
             return this.liveProp.community.id;
@@ -249,6 +271,7 @@ var NicoLiveHelper = {
 
     /**
      * 動画を再生する.
+     * 動画再生に成功したら自動的に動画情報コメント送信が行われる。
      * @param vinfo{VideoInformation} 再生したい動画情報
      * @param is_change_volume trueだとボリューム変更
      * @returns {Promise<any>}
@@ -617,7 +640,7 @@ var NicoLiveHelper = {
      * コメント送信待ち時間のミリ秒を返す.
      * コメント送信が短すぎると言われたときに何ミリ秒待機して再送信するかの時間を返す。
      * @param c エラー回数
-     * @returns {number}
+     * @returns {number} 待機すべきミリ秒数
      */
     calcBackoffTime: function( c ){
         if( c > 5 ) c = 5;
