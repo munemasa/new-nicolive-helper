@@ -171,10 +171,7 @@ var NicoLiveRequest = {
             this._runQueue();
         }
 
-        clearTimeout( this._timer );
-        this._timer = setTimeout( () =>{
-            this.saveRequests();
-        }, 1500 );
+        this.saveRequests();
     },
 
     /**
@@ -288,14 +285,25 @@ var NicoLiveRequest = {
 
     loadRequests: async function(){
         try{
-            let result = await browser.storage.local.get( 'request' );
-            console.log( result );
-            if( !result.request ) return;
+            let table = $( '#request-table-body' );
+            table.empty();
 
-            for( let vinfo of result.request ){
+            let set_no = $( '#sel-request-set' ).val() * 1;
+            let key = `request${set_no || ''}`;
+
+            let result = await browser.storage.local.get( key );
+            console.log( result );
+            this.request = [];
+
+            if( !result[key] ){
+                this.updateBadgeAndTime();
+                return;
+            }
+
+            for( let vinfo of result[key] ){
                 this.request.push( vinfo );
                 let elem = NicoLiveHelper.createVideoInfoElement( vinfo );
-                $( '#request-table-body' ).append( elem );
+                table.append( elem );
             }
             this.updateBadgeAndTime();
         }catch( e ){
@@ -312,9 +320,11 @@ var NicoLiveRequest = {
         if( !NicoLiveHelper.isCaster() ) return;
 
         try{
-            await browser.storage.local.set( {
-                'request': this.request
-            } );
+            let set_no = $( '#sel-request-set' ).val() * 1;
+            let key = `request${set_no || ''}`;
+            let obj = {};
+            obj[key] = this.request;
+            await browser.storage.local.set( obj );
             console.log( 'request saved.' );
         }catch( e ){
         }
@@ -593,6 +603,10 @@ var NicoLiveRequest = {
         // console.log( options.$trigger );
     },
 
+    changeSet: async function(){
+        this.loadRequests();
+    },
+
     initUI: function(){
         $( document ).on( 'click', '#request-table-body .nico-video-row button', ( ev ) =>{
             this.onButtonClicked( ev );
@@ -620,6 +634,10 @@ var NicoLiveRequest = {
                 let str = $( '#input-request-video' ).val();
                 this.addRequests( str );
             }
+        } );
+
+        $( '#sel-request-set' ).on( 'change', ( ev ) =>{
+            this.changeSet();
         } );
 
         //---------- request-table-body
