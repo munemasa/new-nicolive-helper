@@ -97,13 +97,13 @@ var NicoLiveHelper = {
 
     /**
      * 生放送のIDを返す
-     * @returns {String|*}
+     * @returns {String}
      */
     getLiveId: function(){
         try{
             return this.liveProp.program.nicoliveProgramId;
         }catch( e ){
-            return null;
+            return '';
         }
     },
 
@@ -780,7 +780,9 @@ var NicoLiveHelper = {
             mail += " 184";
         }
 
-        let vpos = Math.floor( (GetCurrentTime() - this.live_begintime / 1000) * 100 );
+        let t = Math.min( this.live_begintime, this.liveProp.program.openTime * 1000 );
+        let vpos = Math.floor( (GetCurrentTime() - t / 1000) * 100 );
+        // console.log( vpos );
         let chat = {
             "chat": {
                 "thread": this.threadId,
@@ -1664,6 +1666,12 @@ var NicoLiveHelper = {
         $( '#open-video-db' ).on( 'click', ( ev ) =>{
             window.open( 'db/videodb.html', 'nicolivehelperx_videodb',
                 'width=640,height=480,menubar=no,toolbar=no,location=no' );
+        } );
+
+        // 連続コメントを開く
+        $( '#continuous-comment' ).on( 'click', ( ev ) =>{
+            window.open( 'cc/continuouscomment.html', 'nicolivehelperx_cc',
+                'width=320,height=320,menubar=no,toolbar=no,location=no' );
         } );
 
         // コメントを保存する
