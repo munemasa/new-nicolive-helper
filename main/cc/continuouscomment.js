@@ -56,12 +56,67 @@ var ContinuousComment = {
         }
     },
 
+    dropFile: function( ev ){
+        console.log( ev.dataTransfer );
+
+        if( ev.dataTransfer.items ){
+            // Use DataTransferItemList interface to access the file(s)
+            for( var i = 0; i < ev.dataTransfer.items.length; i++ ){
+                // If dropped items aren't files, reject them
+                if( ev.dataTransfer.items[i].kind === 'file' ){
+                    var file = ev.dataTransfer.items[i].getAsFile();
+                    console.log( '... file[' + i + '].name = ' + file.name );
+                    if( file.name.match( /\.txt$/ ) ){
+                        let fileReader = new FileReader();
+                        fileReader.onload = ( ev ) =>{
+                            let txt = ev.target.result;
+                            $( '#multiline-comment' ).val( txt );
+                        };
+                        fileReader.readAsText( file );
+                    }
+                }
+            }
+            return;
+        }else{
+            // Use DataTransfer interface to access the file(s)
+            for( var i = 0; i < ev.dataTransfer.files.length; i++ ){
+                console.log( '... file[' + i + '].name = ' + ev.dataTransfer.files[i].name );
+                let file = ev.dataTransfer.files[i];
+                if( file.name.match( /\.txt$/ ) ){
+                    let fileReader = new FileReader();
+                    fileReader.onload = ( ev ) =>{
+                        let txt = ev.target.result;
+                        $( '#multiline-comment' ).val( txt );
+                    };
+                    fileReader.readAsText( file );
+                }
+            }
+            return;
+        }
+    },
+
     init: function(){
-        document.title = `連続コメント ${window.opener.NicoLiveHelper.getLiveId()}`;
+        try{
+            document.title = `連続コメント ${window.opener.NicoLiveHelper.getLiveId()}`;
+        }catch( e ){
+        }
 
         $( '#btn-cc-send' ).on( 'click', ( ev ) =>{
             this.sendLine();
         } );
+
+        $( window ).on( 'dragenter', ( ev ) =>{
+            ev.preventDefault();
+        } );
+        $( window ).on( 'dragover', ( ev ) =>{
+            ev.preventDefault();
+        } );
+        $( window ).on( 'drop', ( ev ) =>{
+            ev.preventDefault();
+
+            this.dropFile( ev.originalEvent );
+        } );
+
     }
 };
 
