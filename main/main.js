@@ -714,6 +714,8 @@ var NicoLiveHelper = {
             this.showAlert( `バックステージパスがありません` );
             return;
         }
+        if( !text ) return;
+        
         let url = `http://live2.nicovideo.jp/unama/api/v3/programs/${this.getLiveId()}/bsp_comment`;
         // let url = this.liveProp.program.bsp.commentPostApiUrl;
         color = color || 'cyan';

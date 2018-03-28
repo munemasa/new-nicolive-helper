@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <script src="../../libs/external/jquery-3.2.1.js"></script>
+  <script src="continuouscomment.js"></script>
+
+  <title>連続コメント</title>
+</head>
+<body style="font-size:9pt;">
+<div>
+  <div style="margin-bottom:1em;">
+    <button id="btn-cc-send" style="width:100%;">1行送信</button>
+  </div>
+  <div>
+    <div style="width:100%;display:flex;">
+      <label>コマンド:</label><input id="multiline-command" type="text" style="flex:1;" placeholder="コマンドor名前(BSP使用時)...">
+    </div>
+    <fieldset style="margin: 2px;">
+      <label>BSP使用<input id="use-bsp" type="checkbox"></label>
+      <select id="bsp-name-color">
+        <option style="background-color:white;" value="white">white</option>
+        <option style="background-color:red;" value="red">red</option>
+        <option style="background-color:green;" value="green">green</option>
+        <option style="background-color:blue;" value="blue">blue</option>
+        <option style="background-color:cyan;" value="cyan">cyan</option>
+        <option style="background-color:yellow;" value="yellow">yellow</option>
+        <option style="background-color:purple;" value="purple">purple</option>
+        <option style="background-color:pink;" value="pink">pink</option>
+        <option style="background-color:orange;" value="orange">orange</option>
+        <option style="background-color:#cc9;" value="niconicowhite">niconicowhite</option>
+      </select>
+    </fieldset>
+  </div>
+  <div>
+    <textarea id="multiline-comment" style="width:99%;height:10em;"></textarea>
+  </div>
+</div>
+</body>
+</html>

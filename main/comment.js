@@ -407,11 +407,12 @@ var NicoLiveComment = {
         }
     },
 
-    sendComment: function(){
-        let txt = $( '#txt-input-comment' )
-        let comment = txt.val();
-        let mail = $( '#comment-command' ).val();
-
+    /**
+     * コメントを送信する
+     * @param comment
+     * @param mail
+     */
+    sendCommentCore: function( comment, mail ){
         if( !comment ) return;
         mail = mail || '';
 
@@ -441,6 +442,17 @@ var NicoLiveComment = {
             NicoLiveHelper.postBSPComment( mail, comment, '' );
             break;
         }
+    },
+
+    /**
+     * コメントタブで送信ボタンを押したときの処理
+     */
+    sendComment: function(){
+        let txt = $( '#txt-input-comment' )
+        let comment = txt.val();
+        let mail = $( '#comment-command' ).val();
+
+        this.sendCommentCore( comment, mail );
 
         txt.val( '' );
 
