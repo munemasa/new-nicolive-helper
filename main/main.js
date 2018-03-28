@@ -27,8 +27,8 @@ var NicoLiveHelper = {
     nico_user_id: '',   ///< ニコニコ動画のユーザーID
     is_premium: 0,      ///< プレミアム会員かどうか
 
-    live_begintime: 0,  ///< 放送開始時刻(UNIX時間ms)
-    live_endtime: 0,    ///< 放送終了時刻(UNIX時間ms)
+    live_begintime: 0,  ///< 放送開始時刻(UNIX時間)
+    live_endtime: 0,    ///< 放送終了時刻(UNIX時間)
     /** @type {VideoInformation} */
     currentVideo: null, ///< 現在再生中の動画
 
@@ -284,7 +284,7 @@ var NicoLiveHelper = {
                 reject( null );
                 return;
             }
-            if( GetCurrentTime() >= this.live_endtime / 1000 ){
+            if( GetCurrentTime() >= this.live_endtime ){
                 this.showAlert( `放送終了時刻を過ぎたため再生できません` );
                 reject( null );
                 return null;
@@ -591,7 +591,7 @@ var NicoLiveHelper = {
 
             case 'end-time':
                 // 放送の終了時刻.
-                tmp = GetDateString( NicoLiveHelper.live_endtime, true );
+                tmp = GetDateString( NicoLiveHelper.live_endtime * 1000, true );
                 break;
 
             case 'live-id':
@@ -715,7 +715,7 @@ var NicoLiveHelper = {
             return;
         }
         if( !text ) return;
-        
+
         let url = `http://live2.nicovideo.jp/unama/api/v3/programs/${this.getLiveId()}/bsp_comment`;
         // let url = this.liveProp.program.bsp.commentPostApiUrl;
         color = color || 'cyan';
@@ -782,8 +782,8 @@ var NicoLiveHelper = {
             mail += " 184";
         }
 
-        let t = Math.min( this.live_begintime, this.liveProp.program.openTime * 1000 );
-        let vpos = Math.floor( (GetCurrentTime() - t / 1000) * 100 );
+        let t = Math.min( this.live_begintime, this.liveProp.program.openTime );
+        let vpos = Math.floor( (GetCurrentTime() - t) * 100 );
         // console.log( vpos );
         let chat = {
             "chat": {
@@ -1111,8 +1111,8 @@ var NicoLiveHelper = {
                 // body.update.endtime;
                 console.log( `begin time:${body.update.begintime}, end time:${body.update.endtime}` );
                 $( '#live-progress' ).attr( 'title', `終了日時: ${GetDateTimeString( body.update.endtime, 1 )}` );
-                this.live_begintime = body.update.begintime;
-                this.live_endtime = body.update.endtime;
+                this.live_begintime = parseInt( body.update.begintime / 1000 );
+                this.live_endtime = parseInt( body.update.endtime / 1000 );
                 break;
             case 'postkey':
                 this.postkey = body.params[0];
@@ -1623,7 +1623,7 @@ var NicoLiveHelper = {
 
         // 生放送の経過時間
         if( this.live_begintime ){
-            let liveprogress = now - parseInt( this.live_begintime / 1000 );
+            let liveprogress = now - this.live_begintime;
             $( '#live-progress' ).text( liveprogress < 0 ? `-${GetTimeString( -liveprogress )}` : GetTimeString( liveprogress ) );
         }
     },
@@ -1803,8 +1803,8 @@ var NicoLiveHelper = {
                 request_id: lvid
             } );
             console.log( this.liveProp );
-            this.live_begintime = this.liveProp.program.beginTime * 1000;
-            this.live_endtime = this.liveProp.program.endTime * 1000;
+            this.live_begintime = this.liveProp.program.beginTime;
+            this.live_endtime = this.liveProp.program.endTime;
         }
 
         this.initUI();
