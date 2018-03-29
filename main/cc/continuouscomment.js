@@ -120,12 +120,7 @@ var ContinuousComment = {
     },
 
     initDB: function(){
-        let db = new Dexie( "CCDatabase" );
-        db.version( 1 ).stores( {
-            ccfile: "&filename,text"
-        } );
-
-        this.db = db;
+        this.db = CCDB.initDB();
     },
 
     loadDB: async function(){
@@ -158,6 +153,7 @@ var ContinuousComment = {
 
         $( '#save-text' ).on( 'click', ( ev ) =>{
             let name = window.prompt( '名前を入力してください', 'noname' );
+            if( !name ) return;
             this.db.ccfile.put( {
                 filename: name,
                 text: $( '#multiline-comment' ).val()
