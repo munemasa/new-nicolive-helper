@@ -71,6 +71,18 @@ var ContinuousComment = {
                         fileReader.onload = ( ev ) =>{
                             let txt = ev.target.result;
                             $( '#multiline-comment' ).val( txt );
+
+                            // IndexedDBにファイルを保存
+                            this.db.ccfile.put( {
+                                filename: file.name,
+                                text: txt
+                            } );
+
+                            let sel = $( '#sel-file' );
+                            let option = document.createElement( 'option' );
+                            $( option ).text( file.name );
+                            $( option ).val( file.name );
+                            sel.append( option );
                         };
                         fileReader.readAsText( file );
                     }
@@ -87,6 +99,18 @@ var ContinuousComment = {
                     fileReader.onload = ( ev ) =>{
                         let txt = ev.target.result;
                         $( '#multiline-comment' ).val( txt );
+
+                        // IndexedDBにファイルを保存
+                        this.db.ccfile.put( {
+                            filename: file.name,
+                            text: txt
+                        } );
+
+                        let sel = $( '#sel-file' );
+                        let option = document.createElement( 'option' );
+                        $( option ).text( file.name );
+                        $( option ).val( file.name );
+                        sel.append( option );
                     };
                     fileReader.readAsText( file );
                 }
@@ -95,11 +119,61 @@ var ContinuousComment = {
         }
     },
 
+    initDB: function(){
+        let db = new Dexie( "CCDatabase" );
+        db.version( 1 ).stores( {
+            ccfile: "&filename,text"
+        } );
+
+        this.db = db;
+    },
+
+    loadDB: async function(){
+        let result = await this.db.ccfile.toArray();
+
+        let sel = $( '#sel-file' );
+        for( let f of result ){
+            let option = document.createElement( 'option' );
+            $( option ).text( f.filename );
+            $( option ).val( f.filename );
+            sel.append( option );
+        }
+    },
+
     init: function(){
         try{
             document.title = `連続コメント ${window.opener.NicoLiveHelper.getLiveId()}`;
         }catch( e ){
         }
+
+        this.initDB();
+        this.loadDB();
+
+        $( '#sel-file' ).on( 'change', async ( ev ) =>{
+            let file = $( '#sel-file' ).val();
+            let text = await this.db.ccfile.get( {filename: file} );
+            text = text || '';
+            $( '#multiline-comment' ).val( text.text );
+        } );
+
+        $( '#save-text' ).on( 'click', ( ev ) =>{
+            let name = window.prompt( '名前を入力してください', 'noname' );
+            this.db.ccfile.put( {
+                filename: name,
+                text: $( '#multiline-comment' ).val()
+            } );
+
+            let sel = $( '#sel-file' );
+            let option = document.createElement( 'option' );
+            $( option ).text( name );
+            $( option ).val( name );
+            sel.append( option );
+        } );
+
+        $( '#remove-file' ).on( 'click', ( ev ) =>{
+            let filename = $( '#sel-file' ).val();
+            this.db.ccfile.bulkDelete( [filename] );
+        } );
 
         $( '#btn-cc-send' ).on( 'click', ( ev ) =>{
             this.sendLine();
@@ -113,7 +187,6 @@ var ContinuousComment = {
         } );
         $( window ).on( 'drop', ( ev ) =>{
             ev.preventDefault();
-
             this.dropFile( ev.originalEvent );
         } );
 

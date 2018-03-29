@@ -2,7 +2,12 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+
+  <link rel="stylesheet" href="../../libs/external/bootstrap/glyphicons.css">
+
   <script src="../../libs/external/jquery-3.2.1.js"></script>
+  <script src="../../libs/external/dexie/dexie.js"></script>
+
   <script src="continuouscomment.js"></script>
 
   <title>連続コメント</title>
@@ -34,6 +39,13 @@
   </div>
   <div>
     <textarea id="multiline-comment" placeholder="テキストを入力またはテキストファイルをドロップ" style="width:99%;height:10em;"></textarea>
+  </div>
+  <div>
+    <button id="save-text">名前を付けて保存</button>
+    <select id="sel-file">
+      <option value="">---</option>
+    </select>
+    <span id="remove-file" style="cursor:pointer; color:red;" class="glyphicon glyphicon-remove" title="削除"></span>
   </div>
 </div>
 </body>
