@@ -152,7 +152,7 @@ var ContinuousComment = {
         } );
 
         $( '#save-text' ).on( 'click', ( ev ) =>{
-            let name = window.prompt( '名前を入力してください', 'noname' );
+            let name = window.prompt( '名前を入力してください', $( '#sel-file' ).val() || 'noname' );
             if( !name ) return;
             this.db.ccfile.put( {
                 filename: name,
