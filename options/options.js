@@ -21,6 +21,8 @@
  */
 
 
+var DB;
+
 function LoadValue( key, config, defvalue ){
     if( config[key] != undefined ){
         document.querySelector( `#${key}` ).value = config[key];
@@ -103,7 +105,10 @@ function InitTwitterUI(){
     } );
 }
 
-
+/**
+ * 設定をロードして画面に反映.
+ * @returns {Promise<void>}
+ */
 async function LoadOptions(){
     let result = await browser.storage.local.get( 'config' );
     console.log( result );
@@ -111,7 +116,8 @@ async function LoadOptions(){
     let config = result.config || {};
 
     /* 進行 */
-    LoadValue( 'autoplay-interval', config, 10 );
+    LoadValue( 'autoplay-interval', config, Config['autoplay-interval'] );
+    LoadValue( 'startup-comment', config, Config['startup-comment'] );
 
     /* リクエスト */
     LoadBool( 'request-no-duplicated', config, Config['request-no-duplicated'] );
@@ -189,6 +195,7 @@ function SaveOptions( ev ){
 
     /* 進行 */
     SaveInt( 'autoplay-interval', config );
+    SaveValue( 'startup-comment', config );
 
     /* リクエスト */
     SaveBool( 'request-no-duplicated', config );
@@ -237,10 +244,21 @@ function SaveOptions( ev ){
     } );
 }
 
-window.addEventListener( 'load', function( ev ){
-    LoadOptions();
-
+window.addEventListener( 'load', async function( ev ){
+    DB = CCDB.initDB();
     Talker.init();
+
+    let result = await DB.ccfile.toArray();
+
+    let sel = $( '#startup-comment' );
+    for( let f of result ){
+        let option = document.createElement( 'option' );
+        $( option ).text( f.filename );
+        $( option ).val( f.filename );
+        sel.append( option );
+    }
+
+    LoadOptions();
 
     $( '#btn-test-talk' ).on( 'click', ( ev ) =>{
         let text = $( '#webspeech-test-text' ).val();
