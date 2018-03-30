@@ -870,6 +870,11 @@
                     root = data.contextMenuRoot,
                     key = data.contextMenuKey,
                     callback;
+                // Add modifier key state
+                root.altKey = e.originalEvent.altKey;
+                root.metaKey = e.originalEvent.metaKey;
+                root.ctrlKey = e.originalEvent.ctrlKey;
+                root.shiftKey = e.originalEvent.shiftKey;
 
                 // abort if the key is unknown or disabled or is a menu
                 if (!opt.items[key] || $this.is('.' + root.classNames.disabled + ', .context-menu-separator, .' + root.classNames.notSelectable) || ($this.is('.context-menu-submenu') && root.selectableSubMenu === false )) {
