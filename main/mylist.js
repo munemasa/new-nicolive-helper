@@ -116,6 +116,12 @@ let NicoLiveMylist = {
         NicoApi.addMylist( item_id, mylist_id, token, additional_msg, f );
     },
 
+    /**
+     * マイリストに追加する.
+     * @param mylist_id マイリストID
+     * @param video_id 動画ID
+     * @param additional_msg 追加メッセージ
+     */
     addMylist: function( mylist_id, video_id, additional_msg ){
         console.log( `Add mylist: ${mylist_id}, ${video_id}` );
 

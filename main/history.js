@@ -143,7 +143,12 @@ var NicoLiveHistory = {
             console.log( options.$trigger );
             let mylist_id = key.match( /^\d+_(.*)/ )[1];
             let video_id = this.history[n].video_id;
-            NicoLiveMylist.addMylist( mylist_id, video_id, '' );
+            let additional_msg = '';
+            if( options.metaKey || options.ctrlKey ){
+                additional_msg = window.prompt( 'マイリストコメントを入力してください', '' );
+                additional_msg = additional_msg || '';
+            }
+            NicoLiveMylist.addMylist( mylist_id, video_id, additional_msg );
             break;
         }
         // console.log( options.$trigger );

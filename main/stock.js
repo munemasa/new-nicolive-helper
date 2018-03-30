@@ -40,8 +40,8 @@ var NicoLiveStock = {
             vinfo.video_id = q.video_id;
 
             if( !this.stock.find( ( s ) =>{
-                    return s.video_id == q.video_id;
-                } ) ){
+                return s.video_id == q.video_id;
+            } ) ){
                 // 重複していないものだけ追加
                 this.stock.push( vinfo );
                 let elem = NicoLiveHelper.createVideoInfoElement( vinfo );
@@ -573,13 +573,18 @@ var NicoLiveStock = {
             break;
 
         default:
-            // マイリスト追加処
-            console.log( key );
-            console.log( options.$trigger );
-            console.log( options );
+            // マイリスト追加
+            // console.log( key );
+            // console.log( options.$trigger );
+            // console.log( options );
             let mylist_id = key.match( /^\d+_(.*)/ )[1];
             let video_id = this.stock[n].video_id;
-            NicoLiveMylist.addMylist( mylist_id, video_id, '' );
+            let additional_msg = '';
+            if( options.metaKey || options.ctrlKey ){
+                additional_msg = window.prompt( 'マイリストコメントを入力してください', '' );
+                additional_msg = additional_msg || '';
+            }
+            NicoLiveMylist.addMylist( mylist_id, video_id, additional_msg );
             break;
         }
         // console.log( options.$trigger );
