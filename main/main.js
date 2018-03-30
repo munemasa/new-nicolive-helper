@@ -823,6 +823,31 @@ var NicoLiveHelper = {
     },
 
     /**
+     * スタートアップコメントを送信する.
+     * @returns {Promise<void>}
+     */
+    sendStartupComment: async function(){
+        if( !Config['startup-comment'] ) return;
+        if( !this.isCaster() ) return;
+
+        let liveprogress = GetCurrentTime() - this.live_begintime;
+        // 3分経過したらスタートアップコメントしない
+        if( liveprogress > 180 ) return;
+
+        let db = CCDB.initDB();
+        let file = await db.ccfile.get( Config['startup-comment'] );
+        let text = file && file.text;
+        if( !text ) return;
+
+        let text_array = text.split( /\n|\r|\r\n/ );
+        for( let line of text_array ){
+            await Wait( 5000 );
+            console.log( line );
+            this.postCasterComment( line, '', '', false );
+        }
+    },
+
+    /**
      * 視聴者コメントを処理する.
      */
     processListenersComment: function( chat ){
@@ -1033,6 +1058,7 @@ var NicoLiveHelper = {
                 }
             };
             this._comment_svr.send( JSON.stringify( str ) );
+            // TODO サーバーに接続した時の処理をここに書く
             this.showAlert( `コメントサーバーに接続しました` );
 
             // 再生履歴に番組名と開始時刻を記録
@@ -1041,6 +1067,8 @@ var NicoLiveHelper = {
             NicoLiveHistory.addHistoryText( hist );
 
             this.initProgressBar();
+
+            this.sendStartupComment();
         } );
         this._comment_svr.onReceive( ( ev ) =>{
             let data = JSON.parse( ev.data );
@@ -1074,6 +1102,9 @@ var NicoLiveHelper = {
                     }
                 };
                 this._comm.send( JSON.stringify( getpermit ) );
+                break;
+            case 'rooms':
+                // TODO body.rooms[] に立ち見席などの情報
                 break;
             case 'servertime':
                 // サーバー時刻
