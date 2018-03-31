@@ -1066,9 +1066,12 @@ var NicoLiveHelper = {
             hist = `${this.liveProp.program.nicoliveProgramId} ${this.liveProp.program.title} (${GetDateString( this.liveProp.program.beginTime * 1000, true )}-)\n`;
             NicoLiveHistory.addHistoryText( hist );
 
-            this.initProgressBar();
-
-            this.sendStartupComment();
+            (async () =>{
+                await this.initProgressBar();
+                if( !this.currentVideo ){
+                    this.sendStartupComment();
+                }
+            })();
         } );
         this._comment_svr.onReceive( ( ev ) =>{
             let data = JSON.parse( ev.data );
