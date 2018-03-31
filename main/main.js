@@ -96,6 +96,18 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 生放送タイトルを返す
+     * @returns {String}
+     */
+    getLiveTitle: function(){
+        try{
+            return this.liveProp.program.title;
+        }catch( e ){
+            return '';
+        }
+    },
+
+    /**
      * 生放送のIDを返す
      * @returns {String}
      */

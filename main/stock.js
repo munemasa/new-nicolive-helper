@@ -579,9 +579,10 @@ var NicoLiveStock = {
             // console.log( options );
             let mylist_id = key.match( /^\d+_(.*)/ )[1];
             let video_id = this.stock[n].video_id;
-            let additional_msg = '';
+            // coxxx lvxxx xxx から登録
+            let additional_msg = `${NicoLiveHelper.getCommunityId()} ${NicoLiveHelper.getLiveId()} ${NicoLiveHelper.getLiveTitle()} から登録`;
             if( options.metaKey || options.ctrlKey ){
-                additional_msg = window.prompt( 'マイリストコメントを入力してください', '' );
+                additional_msg = window.prompt( 'マイリストコメントを入力してください', additional_msg );
                 additional_msg = additional_msg || '';
             }
             NicoLiveMylist.addMylist( mylist_id, video_id, additional_msg );
