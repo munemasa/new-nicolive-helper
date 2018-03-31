@@ -71,12 +71,12 @@ window.addEventListener( 'load', async ( ev ) =>{
         // ウィンドウ位置サイズを復元
         let win = await browser.windows.getCurrent();
         if( pos ){
-            // browser.windows.update( win.id, {
-            //     left: pos.x,
-            //     top: pos.y,
-            //     width: pos.w,
-            //     height: pos.h
-            // } )
+            browser.windows.update( win.id, {
+                left: pos.x,
+                top: pos.y,
+                // width: pos.w,
+                // height: pos.h
+            } )
         }
     }
 
