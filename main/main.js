@@ -270,6 +270,20 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 動画IDを直接指定して動画を再生する.
+     * @param video_id
+     * @returns {Promise<void>}
+     */
+    playVideoDirect: async function( video_id ){
+        try{
+            let vinfo = await this.getVideoInfo( video_id );
+            this.playVideo( vinfo );
+        }catch( e ){
+            this.showAlert( `${video_id} を再生できませんでした` );
+        }
+    },
+
+    /**
      * 動画を再生する.
      * 動画再生に成功したら自動的に動画情報コメント送信が行われる。
      * @param vinfo{VideoInformation} 再生したい動画情報
@@ -649,6 +663,32 @@ var NicoLiveHelper = {
         return 250 + k * 0.25 * 1000;
     },
 
+
+    /**
+     * 特殊コマンドの実行
+     * @param text
+     */
+    commandComment: function( text, mail, name ){
+        let cmd = text.match( /^\/(\w+)\s+(.*)$/ );
+        if( !cmd ) return;
+
+        cmd = RegExp.$1;
+        let body = RegExp.$2;
+
+        switch( cmd ){
+        case 'choice':
+            let video_ids = body.split( /\s+/ );
+            let choice = video_ids[GetRandomInt( 0, video_ids.length - 1 )];
+            console.log( `play:${choice}` );
+            this.playVideoDirect( choice );
+            break;
+
+        case 'perm':
+            this.postCasterComment( body, mail, name, true );
+            break;
+        }
+    },
+
     /**
      * 新配信で運営コメント送信をする.
      *
@@ -668,8 +708,12 @@ var NicoLiveHelper = {
         isPerm = !!isPerm;
         cnt = cnt || 0;
 
-        let url = this.liveProp.program.broadcasterComment.postApiUrl;
+        if( text.indexOf( '/' ) == 0 ){
+            this.commandComment( text, mail, name );
+            return;
+        }
 
+        let url = this.liveProp.program.broadcasterComment.postApiUrl;
         // TODO 現状主コメは80文字までなのでマクロ展開する余地があるかどうか
         text = this.replaceMacros( text, this.currentVideo );
 

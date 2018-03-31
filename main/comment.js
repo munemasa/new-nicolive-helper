@@ -398,15 +398,6 @@ var NicoLiveComment = {
         }
     },
 
-    playVideoDirect: async function( video_id ){
-        try{
-            let vinfo = await NicoLiveHelper.getVideoInfo( video_id );
-            NicoLiveHelper.playVideo( vinfo );
-        }catch( e ){
-            NicoLiveHelper.showAlert( `${video_id} を再生できませんでした` );
-        }
-    },
-
     /**
      * コメントを送信する
      * @param comment
@@ -423,12 +414,8 @@ var NicoLiveComment = {
 
         switch( type ){
         case 0: // 主コメ
-            if( comment.indexOf( '/perm ' ) === 0 ){
-                comment = comment.substring( 6 );
-                isPerm = true;
-            }
             if( comment.match( /^sm\d+$/ ) ){
-                this.playVideoDirect( comment );
+                NicoLiveHelper.playVideoDirect( comment );
             }else{
                 NicoLiveHelper.postCasterComment( comment, mail, '', isPerm );
             }
