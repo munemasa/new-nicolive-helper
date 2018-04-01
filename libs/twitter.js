@@ -111,6 +111,7 @@ var Twitter = {
 
     // Twitterトークンをログインマネージャに保存.
     saveTwitterToken: function( oauthobj ){
+        // 現在未使用
         Config.twitter.token = oauthobj["oauth_token"];
         Config.twitter.secret_token = oauthobj["oauth_token_secret"];
         Config.twitter.screen_name = oauthobj["screen_name"];
@@ -188,7 +189,7 @@ var Twitter = {
      * ステータスを更新する(つぶやく)
      * @param text テキスト(文字数チェックしていない)
      */
-    updateStatus: function( text ){
+    updateStatus: function( text, retryflg ){
         if( !this.oauth["oauth_token_secret"] || !this.oauth["oauth_token"] ) return;
         let accessor = {
             consumerSecret: this.consumerSecret,
@@ -222,6 +223,12 @@ var Twitter = {
              */
             if( req.status != 200 ){
                 console.log( "Status=" + req.status );
+                if( !retryflg && req.status == 401 ){
+                    setTimeout( () =>{
+                        Twitter.updateStatus( text, true );
+                    }, 500 );
+                    return;
+                }
                 let result = JSON.parse( req.responseText );
                 NicoLiveHelper.showAlert( 'Twitter:' + result.errors[0].message );
             }
