@@ -53,19 +53,20 @@ var VideoDB = {
         let str = $( '#input-video' ).val();
         if( str.length < 3 ) return;
 
-
         $( '#information' ).text( '動画を追加/更新しています...' );
         let l = str.match( /(sm|nm|so)\d+|\d{10}/g );
-
-        for( let i = 0, id; id = l[i]; i++ ){
-            try{
-                let vinfo = await window.opener.NicoLiveHelper.getVideoInfo( id );
-                this.db.videodb.put( vinfo );
-                console.log( `${id}を追加しました` );
-            }catch( e ){
-                console.log( `動画DBに追加失敗: ${id}` );
+        if( l ){
+            for( let i = 0, id; id = l[i]; i++ ){
+                try{
+                    let vinfo = await window.opener.NicoLiveHelper.getVideoInfo( id );
+                    this.db.videodb.put( vinfo );
+                    console.log( `${id}を追加しました` );
+                }catch( e ){
+                    console.log( `動画DBに追加失敗: ${id}` );
+                }
             }
         }
+
         $( '#information' ).text( 'DB追加/更新完了しました' );
         $( '#input-video' ).val( '' );
     },
@@ -436,6 +437,41 @@ var VideoDB = {
         // console.log( options.$trigger );
     },
 
+    dropFile: function( ev ){
+        console.log( ev.dataTransfer );
+        if( ev.dataTransfer.items ){
+            // Use DataTransferItemList interface to access the file(s)
+            for( let i = 0; i < ev.dataTransfer.items.length; i++ ){
+                // If dropped items aren't files, reject them
+                switch( ev.dataTransfer.items[i].kind ){
+                case 'string':
+                    if( ev.dataTransfer.items[i].type === 'text/plain' ){
+                        ev.dataTransfer.items[i].getAsString( ( str ) =>{
+                            console.log( str );
+
+                            $( '#input-video' ).val( str );
+                            this.addVideos();
+                        } );
+                    }
+                    break;
+
+                case 'file':
+                    let file = ev.dataTransfer.items[i].getAsFile();
+                    console.log( '... file[' + i + '].name = ' + file.name );
+                    if( file.name.match( /\.txt$/ ) ){
+                        let fileReader = new FileReader();
+                        fileReader.onload = ( ev ) =>{
+                            let txt = ev.target.result;
+                            $( '#input-video' ).val( txt );
+                            this.addVideos();
+                        };
+                        fileReader.readAsText( file );
+                    }
+                    break;
+                }
+            }
+        }
+    },
 
     init: async function(){
         console.log( 'Video database init.' );
@@ -533,6 +569,18 @@ var VideoDB = {
         $( '#btn-test' ).on( 'click', ( ev ) =>{
             this.test();
         } );
+
+        $( '#db-result' ).on( 'dragenter', ( ev ) =>{
+            ev.preventDefault();
+        } );
+        $( '#db-result' ).on( 'dragover', ( ev ) =>{
+            ev.preventDefault();
+        } );
+        $( '#db-result' ).on( 'drop', ( ev ) =>{
+            ev.preventDefault();
+            this.dropFile( ev.originalEvent );
+        } );
+
     }
 };
 
