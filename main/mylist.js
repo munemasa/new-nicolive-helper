@@ -24,6 +24,59 @@ let NicoLiveMylist = {
     mylists: [],            // マイリストグループ
     mylist_itemdata: {},    // 動画のマイリスト登録日とマイリストコメント
 
+
+    /**
+     * 指定のマイリスト内の動画IDリストを取得.
+     * マイリストコメントも拾って保存する。
+     * @param mylist_id
+     * @returns {Promise<any>}
+     */
+    retrieveVideoIdFromRSS: async function( mylist_id ){
+        let p = new Promise( ( resolve, reject ) =>{
+            let f = ( xml, req ) =>{
+                if( req.readyState == 4 ){
+                    if( req.status == 200 ){
+                        let xml = req.responseXML;
+                        let items = xml.getElementsByTagName( 'item' );
+                        let videos = [];
+                        console.log( 'mylist rss items:' + items.length );
+                        for( let i = 0, item; item = items[i]; i++ ){
+                            let video_id;
+                            let description;
+                            try{
+                                video_id = item.getElementsByTagName( 'link' )[0].textContent.match( /(sm|nm)\d+|\d{10}/ );
+                            }catch( x ){
+                                video_id = "";
+                            }
+                            if( video_id ){
+                                videos.push( video_id[0] );
+                                try{
+                                    description = item.getElementsByTagName( 'description' )[0].textContent;
+                                    description = description.replace( /[\r\n]/mg, '<br>' );
+                                    description = description.match( /<p class="nico-memo">(.*?)<\/p>/ )[1];
+                                }catch( x ){
+                                    description = "";
+                                }
+
+                                let d = new Date( item.getElementsByTagName( 'pubDate' )[0].textContent );
+                                let dat = {
+                                    "pubDate": d.getTime() / 1000,  // 登録日 UNIX time
+                                    "description": description
+                                };
+                                this.mylist_itemdata[video_id[0]] = dat;
+                            }
+                        }// end for.
+                        resolve( videos );
+                    }else{
+                        resolve( [] );
+                    }
+                }
+            };
+            NicoApi.mylistRSS( mylist_id, f );
+        } );
+        return p;
+    },
+
     getName: function( mylist_id ){
         for( let i = 0, item; item = this.mylists.mylistgroup[i]; i++ ){
             if( item.id == mylist_id ){

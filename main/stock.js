@@ -145,9 +145,21 @@ var NicoLiveStock = {
         // console.log( video_id );
         if( video_id.length < 3 ) return;
         let l = video_id.match( /(sm|nm|so)\d+|\d{10}/g );
+        if( l ){
+            for( let i = 0, id; id = l[i]; i++ ){
+                this.addStock( id );
+            }
+        }
 
-        for( let i = 0, id; id = l[i]; i++ ){
-            this.addStock( id );
+        l = video_id.match( /mylist\/\d+/g );
+        if( l ){
+            for( let i = 0, mylist; mylist = l[i]; i++ ){
+                let id = mylist.match( /mylist\/(\d+)/ )[1];
+                let video_ids = await NicoLiveMylist.retrieveVideoIdFromRSS( id );
+                for( let v of video_ids ){
+                    this.addStock( v );
+                }
+            }
         }
 
         $( '#input-stock-video' ).val( '' );
