@@ -20,7 +20,7 @@
  THE SOFTWARE.
  */
 
-let NicoLiveMylist = {
+var NicoLiveMylist = {
     mylists: [],            // マイリストグループ
     mylist_itemdata: {},    // 動画のマイリスト登録日とマイリストコメント
 
