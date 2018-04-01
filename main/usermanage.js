@@ -32,6 +32,8 @@ var UserManage = {
             let clone2 = document.importNode( t.content, true );
             let elem = clone2.firstElementChild;
 
+            $( elem ).attr( 'user_id', user );
+
             let user_id = elem.querySelector( '.um-user_id' );
             let kotehan = elem.querySelector( '.um-kotehan' );
             let request_num = elem.querySelector( '.um-request_num' );
@@ -44,6 +46,8 @@ var UserManage = {
             $( reflection_type ).attr( 'id', `um-reflection_type-${user}` );
             $( reflection_color ).attr( 'id', `um-reflection_color-${user}` );
             $( display_name ).attr( 'id', `um-display_name-${user}` );
+            $( kotehan ).attr( 'user_id', user );
+            $( display_name ).attr( 'user_id', user );
 
             $( user_id ).text( user );
             $( kotehan ).text( NicoLiveComment.namemap[user] && NicoLiveComment.namemap[user].name || '' );
@@ -136,6 +140,44 @@ var UserManage = {
                 reflectionmap.color = color;
             }
             $this.css( 'background-color', color == 'niconicowhite' ? '#cc9' : color );
+        } );
+
+        let updateVal = function( currentEle, value ){
+            $( currentEle ).html( '<input class="thVal" type="text" value="' + value + '" />' );
+            $( ".thVal" ).focus();
+            $( ".thVal" ).keydown( function( event ){
+                if( event.keyCode == 13 ){
+                    let val = $( ".thVal" ).val().trim();
+                    $( currentEle ).text( val );
+
+                    let user_id = $( currentEle ).attr( 'user_id' );
+                    if( $( currentEle ).hasClass( 'um-kotehan' ) ){
+                        NicoLiveComment.namemap[user_id].name = val;
+                    }
+                    if( $( currentEle ).hasClass( 'um-display_name' ) ){
+                        NicoLiveComment.reflectionmap[user_id].name = val;
+                    }
+                }
+            } );
+
+            // $( document ).click( function(){ // you can use $('html')
+            //     $( currentEle ).html( $( ".thVal" ).val().trim() );
+            // } );
+        };
+
+        $( document ).on( 'dblclick', '.um-kotehan', function( e ){
+            console.log( 'dblclick kotehan' );
+            e.stopPropagation();
+            var currentEle = $( this );
+            var value = $( this ).text();
+            updateVal( currentEle, value );
+        } );
+        $( document ).on( 'dblclick', '.um-display_name', function( e ){
+            console.log( 'dblclick display_name' );
+            e.stopPropagation();
+            var currentEle = $( this );
+            var value = $( this ).text();
+            updateVal( currentEle, value );
         } );
     }
 };
