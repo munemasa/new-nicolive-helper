@@ -168,11 +168,14 @@ let NicoLiveMylist = {
                     NicoLiveMylist.mylists = JSON.parse( req.responseText );
                     NicoLiveMylist.processMylistGroup();
                 }catch( x ){
+                    if( NicoLiveMylist.mylists.status == 'fail' ){
+                        NicoLiveHelper.showAlert( NicoLiveMylist.mylists.error.description );
+                    }
                     return;
                 }
 
                 if( NicoLiveMylist.mylists.status == 'fail' ){
-                    console.log( NicoLiveMylist.mylists.error.description );
+                    NicoLiveHelper.showAlert( NicoLiveMylist.mylists.error.description );
                     return;
                 }
             }
