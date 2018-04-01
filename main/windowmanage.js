@@ -55,13 +55,6 @@ window.addEventListener( 'load', async ( ev ) =>{
         width: w + 1,
         height: h
     } );
-    await browser.windows.update( win.id, {
-        left: x,
-        top: y,
-        width: w,
-        height: h
-    } );
-
 
     let tmp = localStorage.getItem( 'window_position' );
     if( tmp ){
@@ -76,6 +69,8 @@ window.addEventListener( 'load', async ( ev ) =>{
                 top: pos.y,
                 // width: pos.w,
                 // height: pos.h
+                width: w,
+                height: h
             } )
         }
     }
