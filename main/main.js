@@ -408,6 +408,8 @@ var NicoLiveHelper = {
             // 順次再生
             for( let i = 0, vinfo; vinfo = request[i]; i++ ){
                 if( vinfo.no_live_play == 0 ){
+                    let remain = (this.live_endtime - GetCurrentTime()) * 1000;
+                    if( vinfo.length_ms > remain ) continue;
                     let result = await NicoLiveRequest.playVideo( i );
                     if( result ) return;
                     await Wait( 2500 );
@@ -415,6 +417,8 @@ var NicoLiveHelper = {
             }
             for( let i = 0, vinfo; vinfo = stock[i]; i++ ){
                 if( vinfo.no_live_play == 0 && !vinfo.is_played ){
+                    let remain = (this.live_endtime - GetCurrentTime()) * 1000;
+                    if( vinfo.length_ms > remain ) continue;
                     let result = await NicoLiveStock.playVideo( i );
                     if( result ) return;
                     await Wait( 2500 );
@@ -434,6 +438,8 @@ var NicoLiveHelper = {
             for( let i = 0; i < ridx.length; i++ ){
                 let vinfo = request[ridx[i]];
                 if( vinfo.no_live_play == 0 ){
+                    let remain = (this.live_endtime - GetCurrentTime()) * 1000;
+                    if( vinfo.length_ms > remain ) continue;
                     let result = await NicoLiveRequest.playVideo( ridx[i] );
                     if( result ) return;
                     await Wait( 5000 );
@@ -442,6 +448,8 @@ var NicoLiveHelper = {
             for( let i = 0; i < sidx.length; i++ ){
                 let vinfo = stock[sidx[i]];
                 if( vinfo.no_live_play == 0 && !vinfo.is_played ){
+                    let remain = (this.live_endtime - GetCurrentTime()) * 1000;
+                    if( vinfo.length_ms > remain ) continue;
                     let result = await NicoLiveStock.playVideo( sidx[i] );
                     if( result ) return;
                     await Wait( 5000 );
