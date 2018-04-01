@@ -39,6 +39,7 @@ var Config = {
     'comment-dispay-lines': 500,
     'comment-backlog-num': 50,
 
+    'max-request': 0,
     'request-send-reply': false,
     'request-no-duplicated': false,
     'request-no-played': false,
@@ -51,6 +52,7 @@ var Config = {
     'request-played': '>>{comment_no} 再生済みの動画です',
     'request-ngvideo': '>>{comment_no} NG動画です',
     'ng-video-list': '',
+    'request-max-request': '>>{comment_no} リクエスト回数超過しています',
 
     'tweet-on-play': false,
     'tweet-text': '再生中:{title} http://nico.ms/{id} #{id} http://nico.ms/{live-id}',

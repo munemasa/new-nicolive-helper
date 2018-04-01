@@ -86,10 +86,18 @@ var NicoLiveRequest = {
             vinfo.is_played = true;
             return 3;
         }
+
+        if( Config['max-request'] > 0 &&
+            this.counter[vinfo.request_user_id] >= Config['max-request'] ){
+            // リクエスト回数超過
+            return 5;
+        }
+
         if( vinfo.no_live_play ){
             // 生拒否
             return 1;
         }
+
         return 0;
     },
 
@@ -116,9 +124,8 @@ var NicoLiveRequest = {
                 vinfo.no_live_play = flg ? 0 : 1;
             }
 
-            let code = this.checkRequest( vinfo );
-
             this.counter[vinfo.request_user_id] = this.counter[vinfo.request_user_id] || 0;
+            let code = this.checkRequest( vinfo );
             if( code == 0 || code == 1 ){
                 // OKと引用不可はリストに追加する
                 if( !vinfo.no_live_play ){
@@ -134,7 +141,9 @@ var NicoLiveRequest = {
                 this.updateBadgeAndTime();
             }
 
-            if( code != 4 && vinfo.no_live_play ) code = 1; // 常に引用不可にする
+            if( vinfo.no_live_play ){
+                if( code != 4 ) code = 1; // 常に引用不可にする
+            }
 
             switch( code ){
             case 0: // OK
@@ -151,6 +160,9 @@ var NicoLiveRequest = {
                 break;
             case 4: // NG動画
                 this.sendReply( 'request-ngvideo', vinfo );
+                break;
+            case 5: // リクエスト超過
+                this.sendReply( 'request-max-request', vinfo );
                 break;
             default:
                 NicoLiveHelper.showAlert( `不明なリクエストエラー:${code}` );

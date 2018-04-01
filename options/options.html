@@ -66,6 +66,10 @@
 
   <fieldset>
     <legend>リクエスト</legend>
+    <div style="margin-bottom:0.5em;">
+      <label for="max-request" title="1枠あたりの最大リクエスト回数を指定します">最大リクエスト回数</label>
+      <input id="max-request" type="number" min="0" max="99" value="0" placeholder="">回（0:無制限）
+    </div>
     <div style="margin-bottom: 0.5em;">
       <label><input type="checkbox" id="request-no-duplicated">重複したリクエストを受け付けない</label><br>
       <label><input type="checkbox" id="request-no-played">再生済み動画のリクエストを受け付けない</label><br>
@@ -99,6 +103,10 @@
     <div style="display:flex; width:100%;">
       <div class="label">再生済み動画の時</div>
       <input id="request-played" type="text" style="flex:1;" placeholder="再生済み動画を受け取った時">
+    </div>
+    <div style="display:flex; width:100%;">
+      <div class="label">リクエスト回数の上限の時</div>
+      <input id="request-max-request" type="text" style="flex:1;" placeholder="リクエスト回数超過の時">
     </div>
     <div style="display:flex; width:100%;">
       <div class="label">NG動画の時</div>

@@ -120,6 +120,7 @@ async function LoadOptions(){
     LoadValue( 'startup-comment', config, Config['startup-comment'] );
 
     /* リクエスト */
+    LoadValue( 'max-request', config, Config['max-request'] );
     LoadBool( 'request-no-duplicated', config, Config['request-no-duplicated'] );
     LoadBool( 'request-no-played', config, Config['request-no-played'] );
     LoadBool( 'request-no-ngvideo', config, Config['request-no-ngvideo'] );
@@ -132,6 +133,7 @@ async function LoadOptions(){
     LoadValue( 'request-duplicated', config, Config['request-duplicated'] );
     LoadValue( 'request-played', config, Config['request-played'] );
     LoadValue( 'request-ngvideo', config, Config['request-ngvideo'] );
+    LoadValue( 'request-max-request', config, Config['request-max-request'] );
 
     LoadValue( 'ng-video-list', config, Config['ng-video-list'] );
 
@@ -198,6 +200,7 @@ function SaveOptions( ev ){
     SaveValue( 'startup-comment', config );
 
     /* リクエスト */
+    SaveInt( 'max-request', config );
     SaveBool( 'request-no-duplicated', config );
     SaveBool( 'request-no-played', config );
     SaveBool( 'request-no-ngvideo', config );
@@ -210,6 +213,7 @@ function SaveOptions( ev ){
     SaveValue( 'request-duplicated', config );
     SaveValue( 'request-played', config );
     SaveValue( 'request-ngvideo', config );
+    SaveValue( 'request-max-request', config );
 
     SaveValue( 'ng-video-list', config );
 
