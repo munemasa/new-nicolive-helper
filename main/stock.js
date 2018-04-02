@@ -542,6 +542,20 @@ var NicoLiveStock = {
     },
 
     /**
+     * 指定の動画IDの動画を再生済みにする.
+     * @param video_id
+     */
+    setPlayed: function( video_id ){
+        for( let vinfo of this.stock ){
+            if( vinfo.video_id == video_id ){
+                vinfo.is_played = true;
+                this.redrawStocks();
+                this.saveStocks();
+            }
+        }
+    },
+
+    /**
      * ストックのコンテキストメニューの実行.
      * @param key
      * @param options

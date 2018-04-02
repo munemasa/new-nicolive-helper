@@ -53,6 +53,8 @@ var NicoLiveHistory = {
 
         let elem = this.createView( vinfo );
         $( '#tbl-play-history-body' ).append( elem );
+
+        NicoLiveStock.setPlayed( vinfo.video_id );
     },
 
     /**
