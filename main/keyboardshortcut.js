@@ -26,13 +26,11 @@ var KeyboardShortcut = {
             // console.log( ev );
 
             if( ev.keyCode == 84 /* T */ && ev.altKey && ev.ctrlKey ){
-                console.log( 'tweet' );
                 let defstring = '';
                 if( NicoLiveHelper.currentVideo ){
                     defstring = NicoLiveHelper.replaceMacros( Config['tweet-text'], NicoLiveHelper.currentVideo );
                 }
                 let text = window.prompt( 'つぶやきを入力してください', defstring );
-                console.log( text );
                 if( text ){
                     Twitter.updateStatus( text );
                 }
