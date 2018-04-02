@@ -709,8 +709,11 @@ var NicoLiveStock = {
             this.dropToStock( ev );
         } );
 
+        let no = localStorage.getItem( 'stock-setno' ) || 0;
+        $( '#sel-stock-set' ).val( no );
         $( '#sel-stock-set' ).on( 'change', ( ev ) =>{
             this.changeSet();
+            localStorage.setItem( 'stock-setno', $( '#sel-stock-set' ).val() * 1 );
         } );
 
         //--- マイリスト読み込み

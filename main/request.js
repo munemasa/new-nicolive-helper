@@ -654,8 +654,11 @@ var NicoLiveRequest = {
             }
         } );
 
+        let no = localStorage.getItem( 'request-setno' ) || 0;
+        $( '#sel-request-set' ).val( no );
         $( '#sel-request-set' ).on( 'change', ( ev ) =>{
             this.changeSet();
+            localStorage.setItem( 'request-setno', $( '#sel-request-set' ).val() * 1 );
         } );
 
         //---------- request-table-body
