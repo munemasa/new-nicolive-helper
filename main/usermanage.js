@@ -160,7 +160,7 @@ var UserManage = {
                 }
             } );
 
-            // $( document ).click( function(){ // you can use $('html')
+            // $( 'html' ).click( function(){ // you can use $('html')
             //     $( currentEle ).html( $( ".thVal" ).val().trim() );
             // } );
         };
@@ -168,6 +168,7 @@ var UserManage = {
         $( document ).on( 'dblclick', '.um-kotehan', function( e ){
             console.log( 'dblclick kotehan' );
             e.stopPropagation();
+            if( document.querySelector( ".thVal" ) ) return;
             var currentEle = $( this );
             var value = $( this ).text();
             updateVal( currentEle, value );
@@ -175,6 +176,7 @@ var UserManage = {
         $( document ).on( 'dblclick', '.um-display_name', function( e ){
             console.log( 'dblclick display_name' );
             e.stopPropagation();
+            if( document.querySelector( ".thVal" ) ) return;
             var currentEle = $( this );
             var value = $( this ).text();
             updateVal( currentEle, value );
