@@ -189,6 +189,8 @@ var NicoLiveHistory = {
             $( '#tbl-play-history-body' ).empty();
             $( '#txt-play-history' ).val( '' );
             this.save();
+
+            NicoLiveStock.clearAllPlayed();
         } );
 
         $( '#txt-play-history' ).on( 'change', ( ev ) =>{

@@ -556,6 +556,17 @@ var NicoLiveStock = {
     },
 
     /**
+     * ストックの全ての再生済みフラグをクリアする.
+     */
+    clearAllPlayed: function(){
+        for( let vinfo of this.stock ){
+            vinfo.is_played = false;
+        }
+        this.redrawStocks();
+        this.saveStocks();
+    },
+
+    /**
      * ストックのコンテキストメニューの実行.
      * @param key
      * @param options
