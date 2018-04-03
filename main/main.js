@@ -402,68 +402,48 @@ var NicoLiveHelper = {
 
         let request = NicoLiveRequest.request;
         let stock = NicoLiveStock.stock;
-
         let ps = this.getPlayStyle();
-        if( ps == 0 || ps == 1 ){
-            // 順次再生
-            for( let i = 0, vinfo; vinfo = request[i]; i++ ){
-                if( vinfo.no_live_play == 0 ){
-                    if( Config['play-in-time'] ){
-                        let remain = (this.live_endtime - GetCurrentTime()) * 1000;
-                        if( vinfo.length_ms > remain ) continue;
-                    }
-                    let result = await NicoLiveRequest.playVideo( i );
-                    if( result ) return;
-                    await Wait( 2500 );
-                }
-            }
-            for( let i = 0, vinfo; vinfo = stock[i]; i++ ){
-                if( vinfo.no_live_play == 0 && !vinfo.is_played ){
-                    if( Config['play-in-time'] ){
-                        let remain = (this.live_endtime - GetCurrentTime()) * 1000;
-                        if( vinfo.length_ms > remain ) continue;
-                    }
-                    let result = await NicoLiveStock.playVideo( i );
-                    if( result ) return;
-                    await Wait( 2500 );
-                }
-            }
-        }else if( ps == 2 ){
-            // ランダム再生
-            let ridx = request.map( ( v, i ) =>{
-                return i;
-            } );
-            let sidx = stock.map( ( v, i ) =>{
-                return i;
-            } );
-            ShuffleArray( ridx );
-            ShuffleArray( sidx );
+        let is_random = document.querySelector( '#play-stock-random' ).checked;
 
-            for( let i = 0; i < ridx.length; i++ ){
-                let vinfo = request[ridx[i]];
-                if( vinfo.no_live_play == 0 ){
-                    if( Config['play-in-time'] ){
-                        let remain = (this.live_endtime - GetCurrentTime()) * 1000;
-                        if( vinfo.length_ms > remain ) continue;
-                    }
-                    let result = await NicoLiveRequest.playVideo( ridx[i] );
-                    if( result ) return;
-                    await Wait( 5000 );
+        let ridx = request.map( ( v, i ) =>{
+            return i;
+        } );
+        let sidx = stock.map( ( v, i ) =>{
+            return i;
+        } );
+
+        if( ps == 2 ){
+            ShuffleArray( ridx );
+        }
+        if( ps == 2 || is_random ){
+            ShuffleArray( sidx );
+        }
+
+        for( let i = 0; i < ridx.length; i++ ){
+            let vinfo = request[ridx[i]];
+            if( vinfo.no_live_play == 0 ){
+                if( Config['play-in-time'] ){
+                    let remain = (this.live_endtime - GetCurrentTime()) * 1000;
+                    if( vinfo.length_ms > remain ) continue;
                 }
-            }
-            for( let i = 0; i < sidx.length; i++ ){
-                let vinfo = stock[sidx[i]];
-                if( vinfo.no_live_play == 0 && !vinfo.is_played ){
-                    if( Config['play-in-time'] ){
-                        let remain = (this.live_endtime - GetCurrentTime()) * 1000;
-                        if( vinfo.length_ms > remain ) continue;
-                    }
-                    let result = await NicoLiveStock.playVideo( sidx[i] );
-                    if( result ) return;
-                    await Wait( 5000 );
-                }
+                let result = await NicoLiveRequest.playVideo( ridx[i] );
+                if( result ) return;
+                await Wait( 2500 );
             }
         }
+        for( let i = 0; i < sidx.length; i++ ){
+            let vinfo = stock[sidx[i]];
+            if( vinfo.no_live_play == 0 && !vinfo.is_played ){
+                if( Config['play-in-time'] ){
+                    let remain = (this.live_endtime - GetCurrentTime()) * 1000;
+                    if( vinfo.length_ms > remain ) continue;
+                }
+                let result = await NicoLiveStock.playVideo( sidx[i] );
+                if( result ) return;
+                await Wait( 2500 );
+            }
+        }
+
         this.showAlert( `再生できる動画がありませんでした` );
         this.setAutoplayIndicator( false );
     },
@@ -1755,6 +1735,24 @@ var NicoLiveHelper = {
         $( '#btn-stop-play' ).on( 'click', ( ev ) =>{
             // 再生停止
             this.stopVideo();
+        } );
+
+        /* ストックのランダム再生オプション */
+        let flg = localStorage.getItem( 'stock-random' ) || false;
+        document.querySelector( '#play-stock-random' ).checked = flg;
+
+        let fstockplay = () =>{
+            let flg = document.querySelector( '#play-stock-random' ).checked;
+            if( flg ){
+                $( '#icon-stock-random' ).show();
+            }else{
+                $( '#icon-stock-random' ).hide();
+            }
+        };
+        fstockplay();
+        $( '#play-stock-random' ).on( 'change', ( ev ) =>{
+            fstockplay();
+            localStorage.setItem( 'stock-random', flg );
         } );
 
         /* プレイスタイルの変更 */

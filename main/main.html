@@ -108,6 +108,7 @@
     </li>
     <li class="nav-item">
       <a class="nav-link" data-toggle="tab" href="#tab-stock" role="tab">
+        <span id="icon-stock-random" class="glyphicon glyphicon-random"></span>
         ストック
         <span id="number-of-stocks" class="badge badge-secondary">0</span>
       </a>
@@ -187,6 +188,14 @@
           <button type="button" class="btn btn-outline-primary btn-sm dropdown-toggle dropdown-toggle-split"
                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
           <div class="dropdown-menu">
+            <div class="form-check">
+              <a class="dropdown-item" href="#stock-random">
+                <label>
+                  ランダム再生&nbsp;
+                  <input type="checkbox" class="form-check-input" id="play-stock-random">
+                </label>
+              </a>
+            </div>
 
             <div class="dropdown-submenu">
               <a class="dropdown-item" href="#"><span
