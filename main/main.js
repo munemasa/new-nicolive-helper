@@ -408,7 +408,7 @@ var NicoLiveHelper = {
             // 順次再生
             for( let i = 0, vinfo; vinfo = request[i]; i++ ){
                 if( vinfo.no_live_play == 0 ){
-                    if ( Config['play-in-time'] ){
+                    if( Config['play-in-time'] ){
                         let remain = (this.live_endtime - GetCurrentTime()) * 1000;
                         if( vinfo.length_ms > remain ) continue;
                     }
@@ -419,7 +419,7 @@ var NicoLiveHelper = {
             }
             for( let i = 0, vinfo; vinfo = stock[i]; i++ ){
                 if( vinfo.no_live_play == 0 && !vinfo.is_played ){
-                    if ( Config['play-in-time'] ){
+                    if( Config['play-in-time'] ){
                         let remain = (this.live_endtime - GetCurrentTime()) * 1000;
                         if( vinfo.length_ms > remain ) continue;
                     }
@@ -442,7 +442,7 @@ var NicoLiveHelper = {
             for( let i = 0; i < ridx.length; i++ ){
                 let vinfo = request[ridx[i]];
                 if( vinfo.no_live_play == 0 ){
-                    if ( Config['play-in-time'] ){
+                    if( Config['play-in-time'] ){
                         let remain = (this.live_endtime - GetCurrentTime()) * 1000;
                         if( vinfo.length_ms > remain ) continue;
                     }
@@ -454,7 +454,7 @@ var NicoLiveHelper = {
             for( let i = 0; i < sidx.length; i++ ){
                 let vinfo = stock[sidx[i]];
                 if( vinfo.no_live_play == 0 && !vinfo.is_played ){
-                    if ( Config['play-in-time'] ){
+                    if( Config['play-in-time'] ){
                         let remain = (this.live_endtime - GetCurrentTime()) * 1000;
                         if( vinfo.length_ms > remain ) continue;
                     }
@@ -713,6 +713,15 @@ var NicoLiveHelper = {
 
         case 'perm':
             this.postCasterComment( body, mail, name, true );
+            break;
+
+        case 'press':
+            if( body.match( /(.*?)\s+(.*?)\s+(.*)/ ) ){
+                let color = RegExp.$1;
+                let name = RegExp.$2;
+                let t = RegExp.$3;
+                this.postBSPComment( color, t, name );
+            }
             break;
         }
     },
