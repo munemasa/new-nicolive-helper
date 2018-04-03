@@ -676,7 +676,7 @@ var NicoLiveHelper = {
      * 特殊コマンドの実行
      * @param text
      */
-    commandComment: function( text, mail, name ){
+    commandComment: async function( text, mail, name ){
         let cmd = text.match( /^\/(\w+)\s+(.*)$/ );
         if( !cmd ) return;
 
@@ -688,6 +688,11 @@ var NicoLiveHelper = {
             let video_ids = body.split( /\s+/ );
             let choice = video_ids[GetRandomInt( 0, video_ids.length - 1 )];
             console.log( `play:${choice}` );
+            if( choice.indexOf( 'db:' ) === 0 ){
+                choice = await DB.choice( choice.substring( 3 ) );
+                console.log( choice );
+                choice = choice.video_id;
+            }
             this.playVideoDirect( choice );
             break;
 
@@ -1752,6 +1757,7 @@ var NicoLiveHelper = {
         fstockplay();
         $( '#play-stock-random' ).on( 'change', ( ev ) =>{
             fstockplay();
+            let flg = document.querySelector( '#play-stock-random' ).checked;
             localStorage.setItem( 'stock-random', flg );
         } );
 
