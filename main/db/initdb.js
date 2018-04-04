@@ -55,6 +55,7 @@ var DB = {
 
         let conditions = saved[name];
         console.log( conditions );
+        if( !conditions ) return null;
 
         let n = conditions.length;
         let filter_func = [];

@@ -691,6 +691,9 @@ var NicoLiveHelper = {
             if( choice.indexOf( 'db:' ) === 0 ){
                 choice = await DB.choice( choice.substring( 3 ) );
                 console.log( choice );
+                if( !choice ){
+                    return;
+                }
                 choice = choice.video_id;
             }
             this.playVideoDirect( choice );
