@@ -1744,20 +1744,16 @@ var NicoLiveHelper = {
 
         /* ストックのランダム再生オプション */
         let flg = localStorage.getItem( 'stock-random' ) || false;
+        flg = flg === 'true';
         document.querySelector( '#play-stock-random' ).checked = flg;
 
-        let fstockplay = () =>{
-            let flg = document.querySelector( '#play-stock-random' ).checked;
-            if( flg ){
-                $( '#icon-stock-random' ).show();
-            }else{
-                $( '#icon-stock-random' ).hide();
-            }
+        let fstockplay = ( f ) =>{
+            document.querySelector( '#icon-stock-random' ).style.display = f ? 'inline' : 'none';
         };
-        fstockplay();
+        fstockplay( flg );
         $( '#play-stock-random' ).on( 'change', ( ev ) =>{
-            fstockplay();
             let flg = document.querySelector( '#play-stock-random' ).checked;
+            fstockplay( flg );
             localStorage.setItem( 'stock-random', flg );
         } );
 
