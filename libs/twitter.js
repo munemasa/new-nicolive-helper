@@ -185,6 +185,10 @@ var Twitter = {
         return p;
     },
 
+    fixedEncodeURIComponent: function( str ){
+        return encodeURIComponent( str ).replace( /[!'()]/g, escape ).replace( /\*/g, "%2A" );
+    },
+
     /**
      * ステータスを更新する(つぶやく)
      * @param text テキスト(文字数チェックしていない)
@@ -225,7 +229,10 @@ var Twitter = {
                 console.log( "Status=" + req.status );
                 let result = JSON.parse( req.responseText );
                 NicoLiveHelper.showAlert( 'Twitter:' + result.errors[0].message );
+                console.log( result );
+                return;
             }
+            console.log( JSON.parse( req.responseText ) );
             //console.log('update result:'+req.responseText);
         };
         let url = this.updateURL;
@@ -233,7 +240,9 @@ var Twitter = {
         req.setRequestHeader( 'Authorization',
             OAuth.getAuthorizationHeader( 'http://miku39.jp/', message.parameters ) );
         req.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
-        req.send( "status=" + encodeURIComponent( text ) );
+
+        text = this.fixedEncodeURIComponent( text );
+        req.send( "status=" + text );
     },
 
     /**
