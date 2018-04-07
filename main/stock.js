@@ -714,7 +714,7 @@ var NicoLiveStock = {
             ev.preventDefault();
         } );
         $( '#stock-view' ).on( 'drop', ( ev ) =>{
-            console.log( ev );
+            // console.log( ev );
             ev.preventDefault();
 
             this.dropToStock( ev );
