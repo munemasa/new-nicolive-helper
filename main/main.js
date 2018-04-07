@@ -708,6 +708,7 @@ var NicoLiveHelper = {
                 let color = RegExp.$1;
                 let name = RegExp.$2;
                 let t = RegExp.$3;
+                t = this.replaceMacros( t, this.currentVideo );
                 this.postBSPComment( color, t, name );
             }
             break;
