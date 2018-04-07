@@ -1829,8 +1829,9 @@ var NicoLiveHelper = {
 
         /* 音量スライダー */
         let handle = $( "#custom-handle" );
+        let vol = parseInt( Config['play-default-volume'] / 10 );
         $( "#volume-slider" ).slider( {
-            value: 5,  // TODO デフォルト値を記録・復元したい
+            value: vol,
             max: 10,
             min: 0,
             create: function(){

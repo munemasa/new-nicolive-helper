@@ -22,6 +22,7 @@
 
 
 var Config = {
+    'play-default-volume': 50,
     'autoplay-interval': 10,
     'startup-comment': '',
     'play-in-time': false,

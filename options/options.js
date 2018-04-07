@@ -116,6 +116,7 @@ async function LoadOptions(){
     let config = result.config || {};
 
     /* 進行 */
+    LoadValue( 'play-default-volume', config, Config['play-default-volume'] );
     LoadValue( 'autoplay-interval', config, Config['autoplay-interval'] );
     LoadValue( 'startup-comment', config, Config['startup-comment'] );
     LoadBool( 'play-in-time', config, Config['play-in-time'] );
@@ -198,6 +199,7 @@ function SaveOptions( ev ){
     let config = {};
 
     /* 進行 */
+    SaveInt( 'play-default-volume', config );
     SaveInt( 'autoplay-interval', config );
     SaveValue( 'startup-comment', config );
     SaveBool( 'play-in-time', config );
