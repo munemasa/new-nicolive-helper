@@ -122,6 +122,11 @@ function handleMessage( request, sender, sendResponse ){
     case 'get-liveinfo':
         return getLiveInfo( request, sender, sendResponse );
         break;
+
+    default:
+        console.log( request );
+        console.log( sender );
+        break;
     }
 }
 
@@ -135,12 +140,26 @@ browser.browserAction.onClicked.addListener( ( tab ) =>{
 //browser.browserAction.setBadgeText( {text: 'NEW'} );
 
 
+async function CopyVideoId( tab ){
+    let result = await browser.tabs.sendMessage( tab.id, {cmd: 'get-video-id'} );
+    console.log( result );
+
+}
+
 browser.contextMenus.onClicked.addListener( ( info, tab ) =>{
     console.log( "Item " + info.menuItemId + " clicked " + "in tab " + tab.id );
     let request_id = tab.url.match( /nicovideo.jp\/watch\/((lv|co|ch)\d+)/ );
 
-    OpenNicoLiveHelperX2( request_id );
-    // Notification("Start Live", "Starting a live lv9999999999");
+    switch( info.menuItemId ){
+    case 'menu_open_nicolivehelper_x':
+        OpenNicoLiveHelperX2( request_id );
+        // Notification("Start Live", "Starting a live lv9999999999");
+        break;
+
+    case 'menu_copy_video_id':
+        CopyVideoId( tab );
+        break;
+    }
 } );
 
 browser.contextMenus.create( {
@@ -150,8 +169,15 @@ browser.contextMenus.create( {
     contexts: ["all"]
 } );
 
-
-// chrome.devtools.network.onRequestFinished.addListener(
-//     function( request ){
-//         console.log( request );
-//     } );
+browser.contextMenus.create( {
+    id: 'menu_copy_video_id',
+    type: 'normal',
+    title: 'ページ内の動画IDをコピー',
+    contexts: ['all'],
+    documentUrlPatterns: [
+        "*://www.nicovideo.jp/tag/*",
+        "*://www.nicovideo.jp/search/*",
+        "*://com.nicovideo.jp/video/*",
+        "*://www.nicovideo.jp/ranking*"
+    ]
+} );

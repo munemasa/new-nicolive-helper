@@ -381,7 +381,7 @@ function CopyToClipboard( text ){
     let textarea = document.createElement( 'textarea' );
 
     document.body.appendChild( textarea );
-    $( textarea ).val( text );
+    textarea.value = text;
     textarea.select();
     document.execCommand( "Copy" );
     document.body.removeChild( textarea );

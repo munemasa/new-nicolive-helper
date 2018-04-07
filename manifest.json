@@ -37,6 +37,30 @@
         "content_scripts/nicolivehelperx.js"
       ],
       "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://com.nicovideo.jp/video/*"
+      ],
+      "js": [
+        "libs/browser-polyfill.js",
+        "libs/utils.js",
+        "content_scripts/communityvideo.js"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://www.nicovideo.jp/tag/*",
+        "*://www.nicovideo.jp/search/*",
+        "*://www.nicovideo.jp/ranking*"
+      ],
+      "js": [
+        "libs/browser-polyfill.js",
+        "libs/utils.js",
+        "content_scripts/nicovideosearch.js"
+      ],
+      "run_at": "document_end"
     }
   ],
   "browser_action": {
