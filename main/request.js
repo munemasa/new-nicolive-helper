@@ -52,6 +52,7 @@ var NicoLiveRequest = {
             let str = NicoLiveHelper.replaceMacros( Config[msg], vinfo );
             NicoLiveHelper.postCasterComment( str );
         }
+        console.log( Config[msg] );
     },
 
     /**
@@ -81,10 +82,14 @@ var NicoLiveRequest = {
             // 重複したリクエストを受け付けない
             return 2;
         }
-        if( Config['request-no-played'] && NicoLiveHistory.isExists( vinfo.video_id ) ){
-            // 再生済みリクエストを受け付けない
-            vinfo.is_played = true;
-            return 3;
+        if( Config['request-no-played'] ){
+            // 再生済みを受け付けない
+            let v = NicoLiveHistory.isExists( vinfo.video_id );
+            let now = GetCurrentTime();
+            if( v && (now - v.play_time) < Config['request-allow-n-min-elapsed'] * 60 ){
+                vinfo.is_played = true;
+                return 3;
+            }
         }
 
         if( Config['max-request'] > 0 &&

@@ -125,6 +125,7 @@ async function LoadOptions(){
     LoadBool( 'request-no-duplicated', config, Config['request-no-duplicated'] );
     LoadBool( 'request-no-played', config, Config['request-no-played'] );
     LoadBool( 'request-no-ngvideo', config, Config['request-no-ngvideo'] );
+    LoadValue( 'request-allow-n-min-elapsed', config, Config['request-allow-n-min-elapsed'] );
 
     LoadBool( 'request-send-reply', config, Config['request-send-reply'] );
     LoadValue( 'request-accept', config, Config['request-accept'] );
@@ -206,6 +207,7 @@ function SaveOptions( ev ){
     SaveBool( 'request-no-duplicated', config );
     SaveBool( 'request-no-played', config );
     SaveBool( 'request-no-ngvideo', config );
+    SaveInt( 'request-allow-n-min-elapsed', config );
 
     SaveBool( 'request-send-reply', config );
     SaveValue( 'request-accept', config );

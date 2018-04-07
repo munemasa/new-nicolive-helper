@@ -20,6 +20,7 @@
  THE SOFTWARE.
  */
 
+
 var Config = {
     'autoplay-interval': 10,
     'startup-comment': '',
@@ -44,6 +45,7 @@ var Config = {
     'request-send-reply': false,
     'request-no-duplicated': false,
     'request-no-played': false,
+    'request-allow-n-min-elapsed': 9999,
     'request-no-ngvideo': false,
     'request-accept': '>>{comment_no} リクエストを受け付けました',
     'request-not-allow': '>>{comment_no} 現在リクエストを受け付けていません',

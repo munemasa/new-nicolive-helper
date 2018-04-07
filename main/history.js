@@ -25,12 +25,15 @@ var NicoLiveHistory = {
 
     /**
      * 再生履歴に指定の動画があるかチェックする.
+     * 複数同じ動画がある場合は最近再生した方を返す。
      * @param video_id
-     * @returns {boolean}
+     * @returns {boolean|VideoInformation}
      */
     isExists: function( video_id ){
-        for( let v of this.history ){
-            if( v.video_id == video_id ) return true;
+        let n = this.history.length;
+        for( let i = n - 1; i >= 0; i-- ){
+            let v = this.history[i];
+            if( v.video_id == video_id ) return v;
         }
         return false;
     },

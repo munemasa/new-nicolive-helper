@@ -29,7 +29,7 @@
     <legend>進行</legend>
     <div>
       <label for="autoplay-interval">自動再生時のインターバル秒数</label>
-      <input id="autoplay-interval" type="number" min="0" max="60" value="10" placeholder="秒数">秒
+      <input id="autoplay-interval" type="number" min="0" max="60" value="10" style="width:4em;" placeholder="秒数">秒
     </div>
     <div style="margin-top: 0.5em;">
       <label><input type="checkbox" id="play-in-time">枠内に収まるように再生する動画を選択する</label><br>
@@ -47,7 +47,7 @@
     <legend>動画情報</legend>
     <div style="margin-bottom:0.5em;">
       <label for="videoinfo-interval" class="mr-2">送信間隔</label>
-      <input id="videoinfo-interval" type="number" min="1" max="60" value="7" size="2">秒
+      <input id="videoinfo-interval" type="number" min="1" max="60" value="7" style="width:6em;">秒
     </div>
     <div style="display:flex; width:100%;">
       <input id="vinfo-command-1" type="text" placeholder="コマンド">
@@ -71,12 +71,19 @@
     <legend>リクエスト</legend>
     <div style="margin-bottom:0.5em;">
       <label for="max-request" title="1枠あたりの最大リクエスト回数を指定します">最大リクエスト回数</label>
-      <input id="max-request" type="number" min="0" max="99" value="0" placeholder="">回（0:無制限）
+      <input id="max-request" type="number" min="0" max="99" value="0" style="width:6em;" placeholder="">回（0:無制限）
     </div>
     <div style="margin-bottom: 0.5em;">
-      <label><input type="checkbox" id="request-no-duplicated">重複したリクエストを受け付けない</label><br>
-      <label><input type="checkbox" id="request-no-played">再生済み動画のリクエストを受け付けない</label><br>
-      <label><input type="checkbox" id="request-no-ngvideo">NG動画を受け付けない</label><br>
+      <div>
+        <label><input type="checkbox" id="request-no-duplicated">重複したリクエストを受け付けない</label>
+      </div>
+      <div>
+        <label><input type="checkbox" id="request-no-played">再生済み動画のリクエストを受け付けない</label>
+        <input id="request-allow-n-min-elapsed" type="number" min="0" max="9999" value="9999" style="width:6em;">分経過無効
+      </div>
+      <div>
+        <label><input type="checkbox" id="request-no-ngvideo">NG動画を受け付けない</label>
+      </div>
     </div>
     <div>
       <label><input type="checkbox" id="request-send-reply">リクエストへ応答コメントする</label>

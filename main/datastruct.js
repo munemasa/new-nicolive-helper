@@ -46,6 +46,7 @@ class VideoInformation {
         this.classify = '';
 
         this.is_played = false;         ///< 再生済みフラグ
+        this.play_time = 0;             ///< 再生時刻
         this.self_request = false;      ///< 自貼り
         this.request_comment_no = 0;    ///< リクエストのコメント番号
         this.request_user_id = '';      ///< リク主のユーザーID
