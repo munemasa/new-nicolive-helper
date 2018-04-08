@@ -26,6 +26,7 @@ var Config = {
     'autoplay-interval': 10,
     'startup-comment': '',
     'play-in-time': false,
+    'startup-comment-by-community': false,
 
     'videoinfo-interval': 7,
     'vinfo-command-1': '',

@@ -175,6 +175,7 @@ var ContinuousComment = {
             this.sendLine();
         } );
 
+        // ファイルのD&D
         $( window ).on( 'dragenter', ( ev ) =>{
             ev.preventDefault();
         } );

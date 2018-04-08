@@ -120,6 +120,7 @@ async function LoadOptions(){
     LoadValue( 'autoplay-interval', config, Config['autoplay-interval'] );
     LoadValue( 'startup-comment', config, Config['startup-comment'] );
     LoadBool( 'play-in-time', config, Config['play-in-time'] );
+    LoadBool( 'startup-comment-by-community', config, Config['startup-comment-by-community'] );
 
     /* リクエスト */
     LoadValue( 'max-request', config, Config['max-request'] );
@@ -203,6 +204,7 @@ function SaveOptions( ev ){
     SaveInt( 'autoplay-interval', config );
     SaveValue( 'startup-comment', config );
     SaveBool( 'play-in-time', config );
+    SaveBool( 'startup-comment-by-community', config );
 
     /* リクエスト */
     SaveInt( 'max-request', config );

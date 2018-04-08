@@ -897,16 +897,29 @@ var NicoLiveHelper = {
      * @returns {Promise<void>}
      */
     sendStartupComment: async function(){
-        if( !Config['startup-comment'] ) return;
         if( !this.isCaster() ) return;
-
         let liveprogress = GetCurrentTime() - this.live_begintime;
         // 3分経過したらスタートアップコメントしない
         if( liveprogress > 180 ) return;
 
         let db = CCDB.initDB();
-        let file = await db.ccfile.get( Config['startup-comment'] );
-        let text = file && file.text;
+
+        // コミュニティID、スタートアップコメント設定の順で連続コメントを探す
+        let keys = [];
+        let by_community = Config['startup-comment-by-community'];
+        if( by_community ){
+            keys.push( this.getCommunityId() );
+        }
+        if( Config['startup-comment'] ){
+            keys.push( Config['startup-comment'] );
+        }
+
+        let text;
+        for( let k of keys ){
+            let file = await db.ccfile.get( k );
+            text = file && file.text;
+            if( text ) break;
+        }
         if( !text ) return;
 
         let text_array = text.split( /\n|\r|\r\n/ );

@@ -28,8 +28,9 @@
   <fieldset>
     <legend>進行</legend>
     <div>
-      <label for="play-default-volume">デフォルト音量:</label><input id="play-default-volume" type="number" min="0" max="100" value="50"
-                                                      style="width:4em;">
+      <label for="play-default-volume">デフォルト音量:</label>
+      <input id="play-default-volume" type="number" min="0" max="100" step="10" value="50"
+             style="width:4em;">
     </div>
     <div>
       <label for="autoplay-interval">自動再生時のインターバル秒数</label>
@@ -44,6 +45,9 @@
         <option value="">なし</option>
       </select>
       <label>※連続コメント機能を使ってテキストを用意します</label>
+    </div>
+    <div>
+      <label title="連続コメントで coXXX の名前で保存したもテキストを使用します"><input type="checkbox" id="startup-comment-by-community">コミュニティ別スタートアップコメントを行う</label>
     </div>
   </fieldset>
 
