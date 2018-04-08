@@ -704,6 +704,33 @@ var NicoLiveRequest = {
             }
         } );
 
+        // JWID検索
+        $.contextMenu( {
+            selector: '#request-table-body .rights-code',
+            build: function( $triggerElement, e ){
+                let menuobj = {
+                    zIndex: 10,
+                    callback: function( key, options ){
+                        let elem = FindParentElement( options.$trigger[0], 'tr' );
+                        let n = elem.sectionRowIndex;
+                        let code = NicoLiveRequest.request[n].rights_code;
+                        let jwid = {
+                            'code': code,
+                            'title': ''
+                        };
+                        (async () =>{
+                            await browser.storage.local.set( {'jwid': jwid} );
+                            OpenLink( 'http://www2.jasrac.or.jp/eJwid/main.jsp?trxID=F00100' );
+                        })();
+                    },
+                    items: {
+                        "search_rights_code": {name: "J-WID検索"}
+                    }
+                };
+                return menuobj;
+            }
+        } );
+
         $.contextMenu( {
             selector: '#request-table-body .nico-video-row .btn-remove',
             build: function( $triggerElement, e ){

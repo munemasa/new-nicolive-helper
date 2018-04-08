@@ -940,10 +940,9 @@ var NicoLiveHelper = {
             let video_id = RegExp.$1;
             let is_self_request = !!text.match( /[^他](貼|張)|自|関/ );
             let code = "";
-            // TODO 作品コードの処理
-            // code = chat.text.match( /(...[-+=/]....[-+=/].)/ )[1];
-            // code = code.replace( /[-+=/]/g, "-" ); // JWID用作品コード.
-            // NicoLiveHelper.product_code["_" + video_id] = code;
+            // 作品コードの処理
+            code = chat.text.match( /(...[-+=/]....[-+=/].)/ )[1];
+            code = code.replace( /[-+=/]/g, "-" ); // JWID用作品コード.
 
             if( this.getRequestAllowedStatus() == 0 ){
                 NicoLiveRequest.addRequest( video_id, chat.comment_no, chat.user_id, is_self_request, code );
@@ -1562,6 +1561,9 @@ var NicoLiveHelper = {
         let description = elem.querySelector( '.nico-description' );
         let tags = elem.querySelector( '.nico-tags' );
         let link = elem.querySelector( '.nico-link' );
+        let rights_code = elem.querySelector( '.rights-code' );
+
+        $( rights_code ).text( vinfo.rights_code );
 
         if( vinfo.no_live_play ){
             $( title ).addClass( 'no_live_play' );
@@ -1752,6 +1754,13 @@ var NicoLiveHelper = {
     },
 
     test: async function(){
+        let obj = {
+            code: '12345',
+            title: 'title-name'
+        };
+        browser.storage.local.set( {
+            'jwid': obj
+        } );
     },
 
     initUI: async function(){

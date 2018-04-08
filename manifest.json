@@ -61,6 +61,17 @@
         "content_scripts/nicovideosearch.js"
       ],
       "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "http://www2.jasrac.or.jp/eJwid/main.jsp*"
+      ],
+      "js": [
+        "libs/browser-polyfill.js",
+        "libs/utils.js",
+        "content_scripts/jwidsearch.js"
+      ],
+      "run_at": "document_end"
     }
   ],
   "browser_action": {
