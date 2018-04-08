@@ -53,6 +53,12 @@ Comm.prototype.onReceive = function( f ){
     } );
 };
 
+Comm.prototype.onError = function( f ){
+    this.socket.addEventListener( 'error', ( event ) =>{
+        f( event );
+    } );
+};
+
 Comm.prototype.send = function( str ){
     this.socket.send( str );
 };

@@ -1160,6 +1160,12 @@ var NicoLiveHelper = {
             let data = JSON.parse( ev.data );
             this.onCommentReceived( data );
         } );
+        this._comment_svr.onError( ( ev ) =>{
+            console.log( ev );
+            let str = `コメントサーバーとの接続でエラーが発生しました`;
+            this.showAlert( str, true );
+            alert( str );
+        } );
     },
 
     onWatchCommandReceived: function( data ){
