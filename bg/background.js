@@ -27,6 +27,9 @@ browser.runtime.onInstalled.addListener( function(){
         url: "bg/verup.html",
         active: false
     } );
+    browser.browserAction.setBadgeText( {
+        text: 'NEW'
+    } );
 } );
 
 
@@ -34,6 +37,10 @@ let windowList = {};
 let liveProp = {};
 
 function OpenWindow( url, lvid ){
+    browser.browserAction.setBadgeText( {
+        text: ''
+    } );
+
     let mainURL = browser.extension.getURL( url );
     let creating = browser.windows.create( {
         url: mainURL,
