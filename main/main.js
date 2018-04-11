@@ -159,6 +159,76 @@ var NicoLiveHelper = {
         }
     },
 
+
+    /**
+     * アンケートする.
+     * @param q
+     * @param a1
+     * @param a2
+     * @param a3
+     * @param a4
+     * @param a5
+     * @param a6
+     * @param a7
+     * @param a8
+     * @param a9
+     */
+    enquete: function( q, a1, a2, a3, a4, a5, a6, a7, a8, a9 ){
+        if( !q || !a1 || !a2 ) return;
+        // アンケートを実装する
+        let url = `http://live2.nicovideo.jp/unama/api/v3/programs/${this.getLiveId()}/enquete`;
+        let xhr = CreateXHR( 'POST', url );
+        xhr.onreadystatechange = () =>{
+            if( xhr.readyState != 4 ) return;
+            if( xhr.status != 200 ){
+                console.log( `${xhr.status} ${xhr.responseText}` );
+                return;
+            }
+        };
+
+        xhr.setRequestHeader( 'Content-type', 'application/json;charset=utf-8' );
+        xhr.setRequestHeader( 'X-Public-Api-Token', this.liveProp.site.relive.csrfToken );
+
+        let tmp = [a1, a2, a3, a4, a5, a6, a7, a8, a9];
+        let tmp2 = [];
+        for( let v of tmp ){
+            if( v ) tmp2.push( v );
+        }
+        let data = {
+            question: q,
+            items: tmp2
+        };
+        xhr.send( JSON.stringify( data ) );
+    },
+
+    enqueteShowResult: function(){
+        let url = `http://live2.nicovideo.jp/unama/api/v3/programs/${this.getLiveId()}/enquete/show_result`;
+        let xhr = CreateXHR( 'POST', url );
+        xhr.onreadystatechange = () =>{
+            if( xhr.readyState != 4 ) return;
+            if( xhr.status != 200 ){
+                console.log( `${xhr.status} ${xhr.responseText}` );
+                return;
+            }
+        };
+        xhr.setRequestHeader( 'X-Public-Api-Token', this.liveProp.site.relive.csrfToken );
+        xhr.send();
+    },
+
+    enqueteEnd: function(){
+        let url = `http://live2.nicovideo.jp/unama/api/v3/programs/${this.getLiveId()}/enquete/end`;
+        let xhr = CreateXHR( 'POST', url );
+        xhr.onreadystatechange = () =>{
+            if( xhr.readyState != 4 ) return;
+            if( xhr.status != 200 ){
+                console.log( `${xhr.status} ${xhr.responseText}` );
+                return;
+            }
+        };
+        xhr.setRequestHeader( 'X-Public-Api-Token', this.liveProp.site.relive.csrfToken );
+        xhr.send();
+    },
+
     /**
      * ボリューム変更をする.
      * スライダーを動かすたびにリクエストするとエラーになるので
@@ -1821,6 +1891,12 @@ var NicoLiveHelper = {
         $( '#continuous-comment' ).on( 'click', ( ev ) =>{
             window.open( 'cc/continuouscomment.html', 'nicolivehelperx_cc',
                 'width=320,height=320,menubar=no,toolbar=no,location=no' );
+        } );
+
+        // アンケートを開く
+        $( '#enquete' ).on( 'click', ( ev ) =>{
+            window.open( 'q/enquete.html', 'nicolivehelperx_enquete',
+                'width=480,height=320,menubar=no,toolbar=no,location=no' );
         } );
 
         // コメントを保存する
