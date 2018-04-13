@@ -120,6 +120,31 @@ function getLiveInfo( request, sender, sendResponse ){
 }
 
 
+function isAvailableInNewLive( request, sender, sendResponse ){
+    console.log( sender );
+    console.log( request );
+    let video_id = request.video_id;
+    let url = `http://live2.nicovideo.jp/unama/api/v3/contents/${video_id}`;
+    let p = new Promise( ( resolve, reject ) =>{
+        console.log( 'checking live available...' );
+        let xhr = CreateXHR( 'GET', url );
+        xhr.onreadystatechange = () =>{
+            if( xhr.readyState != 4 ) return;
+            if( xhr.status != 200 ){
+                //let err = JSON.parse( xhr.responseText );
+                resolve( false );
+                return;
+            }
+            let res = JSON.parse( xhr.responseText );
+            resolve( res.data );
+        };
+        console.log( 'aaa' );
+        xhr.send();
+    } );
+    return p;
+}
+
+
 function handleMessage( request, sender, sendResponse ){
     switch( request.cmd ){
     case 'put-liveinfo':
@@ -128,6 +153,10 @@ function handleMessage( request, sender, sendResponse ){
 
     case 'get-liveinfo':
         return getLiveInfo( request, sender, sendResponse );
+        break;
+
+    case 'is-available-live':
+        return isAvailableInNewLive( request, sender, sendResponse );
         break;
 
     default:
