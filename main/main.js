@@ -1011,8 +1011,11 @@ var NicoLiveHelper = {
             let is_self_request = !!text.match( /[^他](貼|張)|自|関/ );
             let code = "";
             // 作品コードの処理
-            code = chat.text.match( /(...[-+=/]....[-+=/].)/ )[1];
-            code = code.replace( /[-+=/]/g, "-" ); // JWID用作品コード.
+            try{
+                code = chat.text.match( /(...[-+=/]....[-+=/].)/ )[1];
+                code = code.replace( /[-+=/]/g, "-" ); // JWID用作品コード.
+            }catch( e ){
+            }
 
             if( this.getRequestAllowedStatus() == 0 ){
                 NicoLiveRequest.addRequest( video_id, chat.comment_no, chat.user_id, is_self_request, code );
