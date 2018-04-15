@@ -655,12 +655,6 @@ var NicoLiveStock = {
             }
             return;
         }
-        if( ev.dataTransfer.types.includes( "application/x-moz-tabbrowser-tab" ) ){
-            // WebExtensionsだとタブは取得できない.
-            // TODO text/x-moz-text-internal でタブのURLは分かるので HTMLファイルを直接処理すればいける.
-            let tab = ev.dataTransfer.mozGetDataAt( "application/x-moz-tabbrowser-tab", 0 );
-            console.log( `Tab dropped: ${tab}` );
-        }
     },
 
     changeSet: async function(){
