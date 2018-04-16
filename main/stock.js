@@ -546,6 +546,7 @@ var NicoLiveStock = {
      * @param video_id
      */
     setPlayed: function( video_id ){
+        if( !NicoLiveHelper.isCaster() ) return;
         for( let vinfo of this.stock ){
             if( vinfo.video_id == video_id ){
                 vinfo.is_played = true;
