@@ -812,6 +812,7 @@ var NicoLiveHelper = {
         let url = this.liveProp.program.broadcasterComment.postApiUrl;
         // TODO 現状主コメは80文字までなのでマクロ展開する余地があるかどうか
         text = this.replaceMacros( text, this.currentVideo );
+        text = text.replace( /<br>/ig, "\n" );
 
         let xhr = CreateXHR( 'PUT', url );
         xhr.onreadystatechange = async () =>{
@@ -913,6 +914,7 @@ var NicoLiveHelper = {
         if( !text ) return;
         // JASRACコードの-を=に変換
         text = text.replace( /((...)[-](....)[-](.))/g, "$2=$3=$4" );
+        text = text.replace( /<br>/ig, "\n" );
 
         this._getpostkeyfunc = () =>{
             this.sendComment( mail, text );
