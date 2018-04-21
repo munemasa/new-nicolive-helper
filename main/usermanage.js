@@ -152,17 +152,13 @@ var UserManage = {
 
                     let user_id = $( currentEle ).attr( 'user_id' );
                     if( $( currentEle ).hasClass( 'um-kotehan' ) ){
-                        NicoLiveComment.namemap[user_id].name = val;
+                        NicoLiveComment.setKotehan( user_id, val );
                     }
                     if( $( currentEle ).hasClass( 'um-display_name' ) ){
                         NicoLiveComment.reflectionmap[user_id].name = val;
                     }
                 }
             } );
-
-            // $( 'html' ).click( function(){ // you can use $('html')
-            //     $( currentEle ).html( $( ".thVal" ).val().trim() );
-            // } );
         };
 
         $( document ).on( 'dblclick', '.um-kotehan', function( e ){

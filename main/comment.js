@@ -103,7 +103,8 @@ var NicoLiveComment = {
                 "name": name
             };
         }else{
-            delete this.namemap[user_id];
+            // delete this.namemap[user_id];
+            this.namemap[user_id] = '';
         }
         console.log( `Kotehan(${user_id})=${name}` );
 
@@ -454,18 +455,25 @@ var NicoLiveComment = {
         }
     },
 
-    contextMenu: function( key, options ){
+    contextMenu: async function( key, options ){
         let $elem = options.$trigger;
+        let user_id = $elem.attr( 'user_id' );
 
         switch( key ){
         case 'profile':
-            let user_id = $elem.attr( 'user_id' );
             OpenLink( `http://www.nicovideo.jp/user/${user_id}` );
             break;
 
         case 'set_reflection':
-            this.addCommentReflection( $elem.attr( 'user_id' ) );
+            this.addCommentReflection( user_id );
             break;
+
+        case 'set_kotehan':
+            let defvalue = await this.getProfileName( user_id, this.getKotehan( user_id ) );
+            let name = window.prompt( `${user_id}のコテハンを設定`, defvalue );
+            this.setKotehan( user_id, name );
+            break;
+
         default:
             console.log( key );
             console.log( options.$trigger );
@@ -502,20 +510,11 @@ var NicoLiveComment = {
                             value: `${user_id}`
                         },
                         "set_kotehan": {
-                            name: "コテハン設定",
-                            type: "text",
-                            value: `${NicoLiveComment.getKotehan( user_id )}`
+                            name: "コテハン設定"
                         },
                         "profile": {name: "プロフィールを開く"},
                         "set_reflection": {
                             name: "コメントリフレクション登録"
-                        }
-                    },
-                    events: {
-                        hide: function( opt ){
-                            let $this = $( this );
-                            let data = $.contextMenu.getInputValues( opt, $this.data() );
-                            NicoLiveComment.setKotehan( user_id, data.set_kotehan );
                         }
                     }
                 };
