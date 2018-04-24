@@ -301,6 +301,7 @@ var NicoLiveRequest = {
     },
 
     loadRequests: async function(){
+        if( !NicoLiveHelper.isCaster() ) return;
         try{
             let table = $( '#request-table-body' );
             table.empty();
