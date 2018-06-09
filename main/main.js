@@ -624,8 +624,7 @@ var NicoLiveHelper = {
                 // 1行40文字程度までかなぁ
                 if( !info.tags['jp'] ) break;
                 tmp = info.tags['jp'].join( '　' );
-                // TODO 新配信ではタグが使えないので改行しない
-                // tmp = tmp.replace( /(.{35,}?)　/g, "$1<br>" );
+                tmp = tmp.replace( /(.{35,}?)　/g, "$1<br>" );
                 break;
             case 'username':
                 // 動画の投稿者名
