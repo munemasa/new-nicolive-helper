@@ -631,7 +631,9 @@ var NicoLiveHelper = {
                 tmp = info.user_nickname || "";
                 break;
             case 'pname':
-                // TODO P名
+                // P名
+                if( info.video_id == null || info.tags['jp'] == null ) break;
+                tmp = NicoLiveHelper.getPName( info );
                 break;
             case 'additional':
                 // TODO 動画DBに登録してある追加情報
@@ -725,6 +727,85 @@ var NicoLiveHelper = {
             }
         }
         return r;
+    },
+
+    /**
+     *  与えられたstrがP名かどうか.
+     */
+    isPName: function( str ){
+        // if( pname_whitelist["_" + str] ){
+        //     return true;
+        // }
+
+        // if( Config.no_auto_pname ) return false;
+        if( str.match( /(PSP|アイドルマスターSP|m[a@]shup|drop|step|overlap|vocaloid_map|mikunopop|mikupop|ship|dump|sleep)$/i ) ) return false;
+        if( str.match( /(M[A@]D|joysound|MMD|HD|2D|3D|4D|vocaloud|world|頭文字D|イニシャルD|(吸血鬼|バンパイア)ハンターD|TOD|oid|clannad|2nd|3rd|second|third|append|CD|DVD|solid|vivid|hard)$/i ) ) return false;
+        let t = str.match( /.*([^jO][pP]|jP)[)]?$/ );
+        if( t ){
+            return true;
+        }
+        // D名
+        t = str.match( /.*[^E][D]$/ );
+        if( t ){
+            return true;
+        }
+        return false;
+    },
+
+    /**
+     * P名を取得する
+     */
+    getPName: function( item ){
+        // DBに設定してあるP名があればそれを優先.
+        let pname = null;//Database.getPName(item.video_id);
+        if( !pname ){
+            pname = [];
+            let i, j, tag;
+            try{
+                // まずはP名候補をリストアップ.
+                for( i = 0; tag = item.tags['jp'][i]; i++ ){
+                    if( this.isPName( tag ) ){
+                        pname.push( tag );
+                    }
+                }
+            }catch( x ){
+            }
+            if( pname.length ){
+                /* ラマーズP,嫁に囲まれて本気出すラマーズP
+                 * とあるときに、後者だけを出すようにフィルタ.
+                 * てきとう実装.
+                 * 組み合わせの問題なのでnlognで出来るけど、
+                 * P名タグは数少ないしn*nでもいいよね.
+                 */
+                let n = pname.length;
+                for( i = 0; i < n; i++ ){
+                    let omitflg = false;
+                    if( !pname[i] ) continue;
+                    for( j = 0; j < n; j++ ){
+                        if( i == j ) continue;
+
+                        if( 0 && pname[j].match( pname[i] + '$' ) ){
+                            omitflg = true;
+                        }
+                        /* 曲名(誰P)となっているものが含まれていたらそれを除外する
+                         * ために (誰P) を含むものを除外する.
+                         */
+                        if( pname[j].indexOf( '(' + pname[i] + ')' ) != -1 ){
+                            pname[j] = "";
+                        }
+                    }
+                    if( omitflg ) pname[i] = "";
+                }
+                let tmp = new Array();
+                for( i = 0; i < n; i++ ){
+                    if( pname[i] ) tmp.push( pname[i] );
+                }
+                pname = tmp.join( ', ' );
+            }else{
+                pname = "";
+            }
+        }
+        return pname;
     },
 
     /**
