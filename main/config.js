@@ -37,6 +37,7 @@ var Config = {
     'vinfo-comment-3': '',
     'vinfo-command-4': '',
     'vinfo-comment-4': '',
+    'pname-whitelist': '',
 
     'comment-184': false,
     'auto-kotehan': false,

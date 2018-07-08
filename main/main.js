@@ -20,6 +20,9 @@
  THE SOFTWARE.
  */
 
+var pname_whitelist = {};
+
+
 var NicoLiveHelper = {
     liveProp: {},       ///< 生放送情報(ニコ生から取得する)
 
@@ -742,9 +745,9 @@ var NicoLiveHelper = {
      *  与えられたstrがP名かどうか.
      */
     isPName: function( str ){
-        // if( pname_whitelist["_" + str] ){
-        //     return true;
-        // }
+        if( pname_whitelist["_" + str] ){
+            return true;
+        }
 
         // if( Config.no_auto_pname ) return false;
         if( str.match( /(PSP|アイドルマスターSP|m[a@]shup|drop|step|overlap|vocaloid_map|mikunopop|mikupop|ship|dump|sleep)$/i ) ) return false;
@@ -2118,6 +2121,19 @@ var NicoLiveHelper = {
         } );
     },
 
+    /**
+     * P名リストを更新する.
+     */
+    updatePNameWhitelist: function(){
+        let pnames = Config['pname-whitelist'];
+        pnames = pnames.split( /[\r\n]/gm );
+        for( let i = 0, pname; pname = pnames[i]; i++ ){
+            if( pname ){
+                pname_whitelist["_" + ZenToHan( pname )] = true;
+            }
+        }
+    },
+
     init: async function(){
         let extension_info = await browser.management.getSelf();
         console.log( `New NicoLive Helper ${extension_info.version}` );
@@ -2129,6 +2145,7 @@ var NicoLiveHelper = {
         console.log( 'Config loaded:' );
         MergeSimpleObject( Config, result.config );
         console.log( Config );
+        this.updatePNameWhitelist();
 
         browser.storage.onChanged.addListener( ( changes, area ) =>{
             if( changes.config ){
@@ -2136,6 +2153,7 @@ var NicoLiveHelper = {
                 console.log( Config );
                 Twitter.init(); // 認証トークンをConfigから読ませるために
                 NicoLiveRequest.loadNGVideo();
+                this.updatePNameWhitelist();
             }
         } );
 

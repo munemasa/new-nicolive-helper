@@ -154,6 +154,7 @@ async function LoadOptions(){
         LoadValue( k, config, g_vinfo_defvalue[i] );
         i++;
     }
+    LoadValue( 'pname-whitelist', config, '' );
 
     /* Twitter */
     LoadBool( 'tweet-on-play', config, Config['tweet-on-play'] );
@@ -236,6 +237,7 @@ function SaveOptions( ev ){
     for( let k of g_vinfokey ){
         SaveValue( k, config );
     }
+    SaveValue( 'pname-whitelist', config );
 
     /* Twitter */
     SaveBool( 'tweet-on-play', config );
