@@ -140,6 +140,14 @@ var NicoLiveHelper = {
     },
 
     /**
+     * マイク音量の設定値を返す.
+     * @returns {number}
+     */
+    getMicrophoneVolume: function(){
+        return $( '#slider-microphone-volume' ).slider( 'value' ) / 10;
+    },
+
+    /**
      * 経過時間表示のバー長を設定する.
      * @param p パーセンテージ数
      */
@@ -432,10 +440,11 @@ var NicoLiveHelper = {
             xhr.setRequestHeader( 'X-Public-Api-Token', this.liveProp.site.relive.csrfToken );
 
             let volume = this.getVolume();
+            let micvolume = this.getMicrophoneVolume();
             let data = {
                 'mixing': [
                     {
-                        'audio': 0,
+                        'audio': micvolume,
                         'content': this.liveProp.program.nicoliveProgramId,
                         'display': 'none'
                     },
@@ -2029,6 +2038,27 @@ var NicoLiveHelper = {
             slide: function( event, ui ){
                 handle.text( ui.value * 10 );
                 NicoLiveHelper.changeVolume();
+            }
+        } );
+
+        /* マイク音量スライダー */
+        $( "#slider-microphone-volume" ).slider( {
+            orientation: "vertical",
+            range: "min",
+            min: 0,
+            max: 10,
+            value: 0,
+            slide: function( event, ui ){
+                $( '#microphone-volume-setting' ).attr( 'title', `マイク音量:${ui.value}` );
+                NicoLiveHelper.changeVolume();
+            }
+        } );
+
+        $( '#microphone-volume-setting' ).on( 'click', ( ev ) =>{
+            if( $( '#slider-microphone-volume' ).is( ':visible' ) ){
+                $( '#slider-microphone-volume' ).hide();
+            }else{
+                $( '#slider-microphone-volume' ).show();
             }
         } );
 
