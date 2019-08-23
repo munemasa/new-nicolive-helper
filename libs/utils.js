@@ -27,8 +27,8 @@
  * @returns {Promise<any>}
  */
 function Wait( ms ){
-    let p = new Promise( ( resolve, reject ) =>{
-        setTimeout( ( ev ) =>{
+    let p = new Promise( ( resolve, reject ) => {
+        setTimeout( ( ev ) => {
             resolve( true );
         }, ms );
     } );
@@ -206,7 +206,7 @@ function SwapArrayElements( arr, n1, n2 ){
 function GetParameterByName( name, url ){
     if( !url ) url = window.location.href;
     name = name.replace( /[\[\]]/g, "\\$&" );
-    let regex   = new RegExp( "[?&]" + name + "(=([^&#]*)|&|#|$)" ),
+    let regex = new RegExp( "[?&]" + name + "(=([^&#]*)|&|#|$)" ),
         results = regex.exec( url );
     if( !results ) return null;
     if( !results[2] ) return '';
@@ -228,6 +228,32 @@ function CreateXHR( method, uri, substitution ){
     }
     req.timeout = 30 * 1000; // 30sec timeout for Gecko 12.0+
     return req;
+}
+
+function HttpGet( uri ){
+    let p = new Promise( ( resolve, reject ) => {
+        let xhr = CreateXHR( 'GET', uri );
+        xhr.onreadystatechange = () => {
+            if( xhr.readyState != 4 ) return;
+            resolve( xhr );
+        };
+        xhr.send();
+    } );
+    return p;
+}
+
+function HttpOption( uri ){
+    let p = new Promise( ( resolve, reject ) => {
+        let xhr = CreateXHR( 'OPTION', uri );
+        xhr.onreadystatechange = () => {
+            if( xhr.readyState != 4 ) return;
+            resolve( xhr );
+        };
+        console.log('option request');
+        xhr.setRequestHeader('Referer', `https://spi.nicovideo.jp/broadcast-tool/index.html?content_id=${NicoLiveHelper.getLiveId()}&content_type=live&frontend_id=12&frontend_version=90.0.0&id=0&item_list_disabled=false`);
+        xhr.send();
+    } );
+    return p;
 }
 
 
@@ -350,9 +376,9 @@ function SaveText( name, text ){
         url: dl,
         filename: name,
         saveAs: true,
-    } ).then( ( id ) =>{
+    } ).then( ( id ) => {
         console.log( `download: ${id}` )
-    }, ( err ) =>{
+    }, ( err ) => {
         console.log( 'download failed.' );
     } );
 }
