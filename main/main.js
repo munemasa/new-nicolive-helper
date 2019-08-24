@@ -1032,7 +1032,7 @@ var NicoLiveHelper = {
             // 視聴者のとき、主コメ内の動画IDを再生したものとみなして再生履歴に追加する.
             let video_id = RegExp.$1;
             let f = async () => {
-                let flg = await this.isAvailableInNewLive( video_id );
+                let flg = true;
                 if( flg ){
                     let vinfo = await this.getVideoInfo( video_id );
                     NicoLiveHistory.addHistory( vinfo );
@@ -1608,7 +1608,7 @@ var NicoLiveHelper = {
     },
 
     /**
-     * 新配信で再生できる動画かどうかを返す.
+     * 新配信で再生できる動画かどうかを返す. 現在使用不可。
      * 再生できなければ false, 再生できるなら動画IDとタイトルのオブジェクトを返す.
      * @param video_id
      * @returns {Promise<any>}

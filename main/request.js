@@ -125,7 +125,7 @@ var NicoLiveRequest = {
 
             if( !vinfo.no_live_play ){
                 // コンテンツが存在しないか、権限がないため引用できませんでした。
-                let flg = await NicoLiveHelper.isAvailableInNewLive( q.video_id );
+                let flg = true;
                 vinfo.no_live_play = flg ? 0 : 1;
             }
 

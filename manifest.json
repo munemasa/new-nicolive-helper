@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "New NicoLive Helper",
-  "version": "0.16",
+  "version": "0.17a1",
   "applications": {
     "gecko": {
       "id": "nicolivehelperxx@miku39.jp",
