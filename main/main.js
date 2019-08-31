@@ -468,7 +468,7 @@ var NicoLiveHelper = {
                         'volume': volume
                     },
                     'sub': {
-                        'isSoundOnly': false,
+                        'isSoundOnly': true,
                         'source': 'self',
                         'volume': micvolume
                     }
@@ -1178,7 +1178,7 @@ var NicoLiveHelper = {
      * @param data
      */
     onCommentReceived: function( data ){
-        console.log( data );    // TODO コメント受信したときのログ表示
+        //console.log( data );    // TODO コメント受信したときのログ表示
         if( data.thread ){
             // data.thread.ticket;
             // data.thread.last_res;
@@ -1322,7 +1322,7 @@ var NicoLiveHelper = {
     },
 
     onWatchCommandReceived: function( data ){
-        // console.log( data ); // TODO 受信時のログ表示
+        //console.log( data ); // TODO 受信時のログ表示
         let body = data.body;
         switch( data.type ){
         case 'watch':
