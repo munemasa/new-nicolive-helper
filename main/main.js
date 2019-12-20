@@ -1178,7 +1178,7 @@ var NicoLiveHelper = {
      * @param data
      */
     onCommentReceived: function( data ){
-        //console.log( data );    // TODO コメント受信したときのログ表示
+        console.log( data );    // TODO コメント受信したときのログ表示
         if( data.thread ){
             // data.thread.ticket;
             // data.thread.last_res;
@@ -1322,7 +1322,7 @@ var NicoLiveHelper = {
     },
 
     onWatchCommandReceived: function( data ){
-        //console.log( data ); // TODO 受信時のログ表示
+        // console.log( data ); // TODO 受信時のログ表示
         let body = data.body;
         switch( data.type ){
         case 'watch':
@@ -1416,7 +1416,7 @@ var NicoLiveHelper = {
      */
     connectServer: function(){
         console.log( 'connect websocket' );
-        let ws = this.liveProp.site.relive.webSocketUrl;
+        let ws = this.liveProp.site.relive.webSocketUrl + `&frontend_id=${this.liveProp.site.frontendId}`;
 
         this._comm = new Comm( ws );
         this._comm.connect();
